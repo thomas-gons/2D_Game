@@ -3,6 +3,7 @@
 
 #include "common.h"
 
+
 typedef struct {
     enum {
         EMPTY,

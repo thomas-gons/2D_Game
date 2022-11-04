@@ -2,7 +2,6 @@
 
 extern Map *map;
 
-
 void map_init(uint8_t dim) {
     map = malloc(sizeof *map);
     map->dim = dim;

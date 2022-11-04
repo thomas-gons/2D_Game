@@ -3,6 +3,7 @@
 
 #include "common.h"
 
+
 typedef struct {
     uint8_t x, y;
 } Pos;

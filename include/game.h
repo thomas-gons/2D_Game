@@ -5,9 +5,10 @@
 #include "player.h"
 #include "map.h"
 
+
 typedef struct {
-    Map map;
-    Player player;
+    Map *map;
+    Player *player;
     time_t date;
 } Game;
 

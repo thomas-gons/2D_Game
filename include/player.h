@@ -2,7 +2,7 @@
 #define __PLAYER_H__
 
 #include "common.h"
-
+#include "utils.h"
 
 
 typedef struct {
