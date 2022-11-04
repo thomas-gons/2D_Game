@@ -9,6 +9,6 @@ typedef struct {
     Pos position;
     uint8_t stamina;
     bool is_obstacle;
-} *Player;
+} Player;
 
 #endif
