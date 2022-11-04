@@ -3,8 +3,9 @@
 Map *map = NULL;
 
 int main() {
-    map_init(10);
-    map_display(map);
-    map_free(map);
+    map_init(MAP_MEDIUM, MEDIUM);
+    map_random_fill();
+    map_display();
+    map_free();
     return 0;
 }
