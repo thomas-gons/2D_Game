@@ -5,11 +5,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include <time.h> // for timestamp
-
-
-typedef enum {
-    false, true
-} bool;
+#include <ncurses.h>
 
 
 #endif
