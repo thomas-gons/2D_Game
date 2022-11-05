@@ -132,13 +132,13 @@ info:
 	@echo "[*] Target, Debug:"
 	@echo -e "\t$(DBG_TARGET)\n"
 
-# Display usage help. 
+# Display usage help.
 help:
 	@echo "USAGE:"
-	@echo "\tmake \t\t\tBuild project, in Release mode by default."
-	@echo "\tmake debug \t\tBuild project in Debug mode."
-	@echo "\tmake run \t\tRun target, by default Release target."
-	@echo "\tmake rundbg \t\tRun Debug target."
-	@echo "\tmake clean \t\tClean project directory."
-	@echo "\tmake info \t\tDisplay info about files in project directory."
-	@echo "\tmake help \t\tDisplay this help message."
+	@echo -e "\tmake \t\t\tBuild project, in Release mode by default."
+	@echo -e "\tmake debug \t\tBuild project in Debug mode."
+	@echo -e "\tmake run \t\tRun target, by default Release target."
+	@echo -e "\tmake rundbg \t\tRun Debug target."
+	@echo -e "\tmake clean \t\tClean project directory."
+	@echo -e "\tmake info \t\tDisplay info about files in project directory."
+	@echo -e "\tmake help \t\tDisplay this help message."
