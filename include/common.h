@@ -6,6 +6,6 @@
 #include <inttypes.h>
 #include <time.h> // for timestamp
 #include <ncurses.h>
-
+#include <math.h>
 
 #endif

@@ -22,7 +22,7 @@ void map_render(WINDOW *win) {
             switch (map->map_grid[i][j].cell_type) {
             case EMPTY:
             case ROAD:
-                mvwaddch(win, i, j, '.');
+                mvwaddch(win, i, j, ' ');
                 break;
             case OBSTACLE:
                 mvwaddch(win, i, j, '#');
