@@ -1,11 +1,29 @@
-#include "map.h"
+#include "game.h"
 
+Game game = {0};
 Map *map = NULL;
+Player *player = NULL;
 
 int main() {
-    map_init(MAP_MEDIUM, MEDIUM);
+    // Initialize ncurses window and sub windows.
+    ncs_init();
+    ncs_check_term_size();
+    ncs_create_windows();
+
+    // /!\ TEMP: Create the map, render it.
+    map_init(EASY);
     map_random_fill();
-    map_display();
+    map_render(game.game_win);
     map_free();
+    // /!\ TEMP: Render player and flag.
+    mvwaddch(game.game_win, 0, 0, 'P');
+    mvwaddch(game.game_win, MAP_SIZE - 1, MAP_SIZE*2 - 1, 'F');
+    wrefresh(game.game_win);
+
+    getch();
+    
+    // Clean resources and quit ncurses.
+    ncs_quit();
+
     return 0;
 }

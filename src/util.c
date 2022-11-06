@@ -33,7 +33,6 @@ void stack_pop(Stack *stack) {
         stack->head = stack->head->next;
         pop->next = NULL;
         free(pop);
-        printf("popped\n");
     }
 }
 

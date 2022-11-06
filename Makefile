@@ -13,7 +13,7 @@ LD := g++
 LDFLAGS := -I$(DIR_INC)/
 
 # Compiler flags.
-CFLAGS := -Wall -Wextra $(LDFLAGS)/
+CFLAGS := -Wall -Wextra $(LDFLAGS)
 CXXFLAGS := $(CFLAGS)
 
 # Library flags.

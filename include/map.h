@@ -3,9 +3,9 @@
 
 #include "common.h"
 
-#define MAP_SMALL 10
-#define MAP_MEDIUM 25
-#define MAP_LARGE 50
+#define MAP_SIZE 45
+#define BAR_SIZE 16
+#define MENU_SIZE 18
 
 // Cell state
 #define OPEN 0
@@ -15,8 +15,8 @@
 #define PROB_FRUIT 0.03
 #define PROB_OBS 0.2
 
-#define OBS_SYMBOL "\U0001faa8 "
-#define FRUIT_SYMBOL "\u2605 "
+#define OBS_SYMBOL "\U0001faa8"
+#define FRUIT_SYMBOL "\u2605"
 
 typedef enum {
     EASY = 1,
@@ -40,16 +40,38 @@ typedef struct {
 } Cell;
 
 typedef struct {
-    uint8_t dim;
     Level level;
     uint16_t step;
     Cell **map_grid;
 } Map;
 
 
-void map_init(uint8_t dim, Level level);
-void map_random_fill();
+/**
+ * 
+*/
+void map_init(Level level);
+
+/**
+ * 
+*/
+void map_render(WINDOW *win);
+
+/**
+ * 
+*/
 void map_free();
+
+/**
+ * 
+*/
+void map_random_fill();
+
+
+
+
+/**
+ * 
+*/
 void map_display();
 
 #endif
