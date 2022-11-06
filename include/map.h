@@ -11,16 +11,16 @@
 #define OPEN 0
 #define BLOCK 1
 
-#define CENTER_X 23
-#define CENTER_Y 45
+#define CENTER_X 45
+#define CENTER_Y 23
 
 #define MAX_DISTANCE 32.526913
 
 // The probabilties add up according to this order
-#define PROB_FRUIT 0.01
+#define PROB_FRUIT 0.015
 #define PROB_OBS 0.2
 
-// thresholds for 
+// thresholds for probabilties
 #define PROB_MAX_FRUIT 0.06
 #define PROB_MAX_OBS 0.2
 
