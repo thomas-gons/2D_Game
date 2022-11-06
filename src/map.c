@@ -11,7 +11,7 @@ void map_init(Level level) {
         // each line should be malloc
         map->map_grid[i] = calloc(MAP_SIZE*2, sizeof *map->map_grid[i]);
         for (j = 0; j < MAP_SIZE*2; j++) {
-            map->map_grid[i][j] = (Cell) {EMPTY, .visited = false};
+            map->map_grid[i][j] = (Cell) {EMPTY, .visited = false, .state = OPEN};
         }
     }
 }

@@ -2,6 +2,7 @@
 #define __MAP_H__
 
 #include "common.h"
+#include "util.h"
 
 #define MAP_SIZE 45
 #define BAR_SIZE 16
@@ -73,5 +74,12 @@ void map_random_fill();
  * 
 */
 void map_display();
+
+
+
+
+void path_finder();
+int recursiv_research1(uint8_t dim,Stack *path, Position coord,uint8_t verif_path);
+int recursiv_research2(uint8_t dim, Stack *path, Position coord,uint8_t verif_path);
 
 #endif
