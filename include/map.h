@@ -32,6 +32,15 @@
 #define OBS_SYMBOL "\U0001faa8"
 #define FRUIT_SYMBOL "\u2605"
 
+
+#define IS_NOT_INDEX_ERROR(tmp_x, tmp_y) (              \
+    tmp_x >= 0 && tmp_x < MAP_SIZE &&                   \
+    tmp_y >= 0 && tmp_y < MAP_SIZE ) ? true: false      \
+
+#define IS_NOT_PAST_POS(tmp_x, tmp_y, prev_pos) (       \
+    tmp_x != prev_pos.x &&                          \
+    tmp_y != prev_pos.y) ? true: false              \
+
 typedef enum {
     EASY = 1,
     MEDIUM,
@@ -91,8 +100,7 @@ void map_display();
 
 
 
-void path_finder();
-int recursiv_research1(uint8_t dim,Stack *path, Position coord,uint8_t verif_path);
-int recursiv_research2(uint8_t dim, Stack *path, Position coord,uint8_t verif_path);
+Stack *path_finder();
+bool rec_research(Stack *path, Position coord, bool check_path);
 
 #endif
