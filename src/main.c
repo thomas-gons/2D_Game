@@ -12,6 +12,17 @@ int main() {
 
     // /!\ TEMP: Create the map, render it.
     map_init(EASY);
+/* --- MELVYN PART --- */
+
+    Stack *path = NULL;
+    // do {
+        // add obstacle randomly
+        // if the obstacle is a part of the path we find another path
+        path = path_finder();
+    // while (path)
+    // write the path to the map
+
+/* --- MELVYN PART --- */
     map_random_fill();
     map_render(game.game_win);
     map_free();
