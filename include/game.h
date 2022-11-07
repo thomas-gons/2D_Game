@@ -11,7 +11,7 @@ typedef struct {
     WINDOW *main_win;
     WINDOW *game_win;
     WINDOW *bar_win;
-    WINDOW *menu_win;
+    WINDOW *help_win;
     time_t date;
 } Game;
 

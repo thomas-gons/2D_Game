@@ -17,7 +17,8 @@ void ncs_check_term_size() {
     getmaxyx(stdscr, game.win_y, game.win_x);
     if ((game.win_x < MAP_SIZE*2 + BAR_SIZE + 2) || (game.win_y < MAP_SIZE + 2)) {
         ncs_quit();
-        printf("[ERROR] > This window has %d rows and %d columns. Please enlarge it minimun %d rows.\n", game.win_y, game.win_x, MAP_SIZE);
+        printf("[ERROR] > Window is set to %d rows * %d cols.\n\t> Please enlarge it minimun %d rows * %d cols.\n",
+            game.win_y, game.win_x, (MAP_SIZE + 2), (MAP_SIZE*2 + BAR_SIZE + 2));
         exit(0);
     }
 }
@@ -40,20 +41,20 @@ void ncs_create_windows() {
                             BAR_SIZE,
                             game.win_y/2 - MAP_SIZE/2 - 1,
                             1 + game.win_x/2 + (MAP_SIZE*2 - BAR_SIZE)/2 );
-    game.menu_win = subwin( stdscr,
+    game.help_win = subwin( stdscr,
                             MENU_SIZE + 1,
                             BAR_SIZE,
-                            game.win_y/2 + MAP_SIZE/2 - MENU_SIZE + 1,
+                            game.win_y/2 + MAP_SIZE/2 - MENU_SIZE,
                             1 + game.win_x/2 + (MAP_SIZE*2 - BAR_SIZE)/2 );
     // Draw border for subwindows
     box(game.main_win, ACS_VLINE, ACS_HLINE);
     box(game.bar_win, ACS_VLINE, ACS_HLINE);
-    box(game.menu_win, ACS_VLINE, ACS_HLINE);
+    box(game.help_win, ACS_VLINE, ACS_HLINE);
     // Render windows
     wrefresh(game.main_win);
     wrefresh(game.game_win);
     wrefresh(game.bar_win);
-    wrefresh(game.menu_win);
+    wrefresh(game.help_win);
 }
 
 

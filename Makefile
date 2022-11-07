@@ -17,7 +17,7 @@ CFLAGS := -Wall -Wextra $(LDFLAGS)
 CXXFLAGS := $(CFLAGS)
 
 # Library flags.
-LDLIBS := -lm -lncurses
+LDLIBS := -lm $(shell pkg-config ncursesw --cflags --libs)
 
 # Sanitizer flags
 FSAN_FLAGS := -fsanitize=address

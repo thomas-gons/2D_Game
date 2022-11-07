@@ -17,6 +17,12 @@ void map_init(Level level) {
 }
 
 void map_render(WINDOW *win) {
+    use_default_colors();
+    start_color();
+    init_pair(FORMAT_COLOR_FRUIT, COLOR_GREEN, -1);
+    // if (can_change_color())
+    //     init_color(COLOR_YELLOW, 1000, 651, 0);
+    
     for (uint8_t i = 0, j; i < MAP_SIZE; i++) {
         for (j = 0; j < MAP_SIZE*2; j++) {
             switch (map->map_grid[i][j].cell_type) {
@@ -25,10 +31,11 @@ void map_render(WINDOW *win) {
                 mvwaddch(win, i, j, ' ');
                 break;
             case OBSTACLE:
+                // mvwaddstr(win, i, j, OBS_SYMBOL);
                 mvwaddch(win, i, j, '#');
                 break;
             case FRUIT:
-                mvwaddch(win, i, j, '@');
+                mvwaddch(win, i, j, '@' | COLOR_PAIR(FORMAT_COLOR_FRUIT));
                 break;
             default: break;
             }
@@ -56,7 +63,7 @@ void map_display() {
                     printf(OBS_SYMBOL); break;
                 case FRUIT:
                     printf(FRUIT_SYMBOL); break;
-                default:
+                default: break;
             }
         }
         printf("\n");
