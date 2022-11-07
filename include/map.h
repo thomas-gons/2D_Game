@@ -43,6 +43,7 @@
     (tmp_y != prev_pos.y)) ? true: false                    \
 
 
+
 typedef enum {
     EASY = 1,
     MEDIUM,
@@ -99,9 +100,12 @@ void map_random_fill();
 */
 void map_display();
 
+Stack *map_get_open_cells();
 Position map_get_random_obstacle(Stack *all_opened_cell);
-bool rec_research(Stack *path, Position coord, bool check_path);
+bool is_path_blocked(Stack *path, Position rand_block_pos);
 
+bool rec_research(Stack *path, Position coord, bool check_path);
 Stack *path_finder();
+void map_write_path(Stack *real_path);
 
 #endif

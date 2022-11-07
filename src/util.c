@@ -69,6 +69,7 @@ void stack_display(Stack *stack) {
     if (tmp == NULL) {
         printf("NULL\n");
     }
+    printf("\n");
 }
 
 bool stack_is_empty(Stack *stack) {

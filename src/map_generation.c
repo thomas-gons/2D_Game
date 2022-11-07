@@ -39,31 +39,41 @@ void map_random_fill() {
     }
 }
 
-Stack *map_take_cell() {
+Stack *map_get_open_cells() {
     Stack *all_opened_cell = stack_init();
-    uint8_t j;
     for (uint8_t i = 0, j; i < MAP_SIZE; i++) {
         for (j = 0; j < MAP_SIZE*2; j++) 
-            stack_push(all_opened_cell, (Position) {i,j});
+            stack_push(all_opened_cell, (Position) {i, j});
     }
     return all_opened_cell;
 }
 
 Position map_get_random_obstacle(Stack *all_opened_cell) {
     Node *tmp = all_opened_cell->head;
-    Position chosen_cell_pos;
+    Position cell_pos;
+    printf("len: %d\n", stack_len(all_opened_cell));
     uint16_t rand_idx = rand() % stack_len(all_opened_cell);
     for (uint16_t i = 0; tmp; tmp = tmp->next, i++) {
         if (i == rand_idx) {
-            chosen_cell_pos = stack_remove(all_opened_cell, rand_idx);
+            cell_pos = stack_remove(all_opened_cell, rand_idx);
             break;
         }
     }
-    if (chosen_cell_pos.x == 0 && chosen_cell_pos.y == 0) {
-        printf("ERROR : can not get the cell at index %u", rand_idx);
+    if (cell_pos.x == 0 && cell_pos.y == 0) {
+        printf("ERROR : can not get the cell at index %u\n", rand_idx);
         exit(1);
     }
-    return chosen_cell_pos;
+    map->map_grid[cell_pos.x][cell_pos.y].state = BLOCK;
+    return cell_pos;
+}
+
+bool is_path_blocked(Stack *path, Position rand_block_pos) {
+    for (; path->head; path->head = path->head->next) {
+        if (path->head->pos.x == rand_block_pos.x &&
+            path->head->pos.y == rand_block_pos.y)
+            return true;
+    }
+    return false;
 }
 
 bool rec_research(Stack *path, Position coord, bool check_path) {
@@ -81,7 +91,7 @@ bool rec_research(Stack *path, Position coord, bool check_path) {
                 // save the taken path
                 stack_push(path, coord);
                 // check if the current position is not the arrival
-                if (coord.x != MAP_SIZE - 1 || coord.y != MAP_SIZE*2 - 1)
+                if (coord.x != MAP_SIZE  - 1 || coord.y != MAP_SIZE - 1)
                     check_path = rec_research(path, coord, check_path);
                 else
                     // no path is available
@@ -102,6 +112,11 @@ Stack *path_finder() {
     stack_push(path, coord);
     rec_research(path, coord, true);
     return path;
+}
+
+void map_write_path(Stack* path) {
+    for (; path->head; path->head = path->head->next)
+        map->map_grid[path->head->pos.x][path->head->pos.y].cell_type = ROAD;
 }
 
 
