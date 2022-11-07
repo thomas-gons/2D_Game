@@ -35,9 +35,35 @@ void map_random_fill() {
                 map->map_grid[i][j].cell_type = (prob <= prob_fruit) ? FRUIT:
                     (prob <= prob_obs) ? OBSTACLE: ROAD;
             }
-
         }
     }
+}
+
+Stack *map_take_cell() {
+    Stack *all_opened_cell = stack_init();
+    uint8_t j;
+    for (uint8_t i = 0, j; i < MAP_SIZE; i++) {
+        for (j = 0; j < MAP_SIZE*2; j++) 
+            stack_push(all_opened_cell, (Position) {i,j});
+    }
+    return all_opened_cell;
+}
+
+Position map_get_random_obstacle(Stack *all_opened_cell) {
+    Node *tmp = all_opened_cell->head;
+    Position chosen_cell_pos;
+    uint16_t rand_idx = rand() % stack_len(all_opened_cell);
+    for (uint16_t i = 0; tmp; tmp = tmp->next, i++) {
+        if (i == rand_idx) {
+            chosen_cell_pos = stack_remove(all_opened_cell, rand_idx);
+            break;
+        }
+    }
+    if (chosen_cell_pos.x == 0 && chosen_cell_pos.y == 0) {
+        printf("ERROR : can not get the cell at index %u", rand_idx);
+        exit(1);
+    }
+    return chosen_cell_pos;
 }
 
 bool rec_research(Stack *path, Position coord, bool check_path) {
@@ -55,7 +81,7 @@ bool rec_research(Stack *path, Position coord, bool check_path) {
                 // save the taken path
                 stack_push(path, coord);
                 // check if the current position is not the arrival
-                if (coord.x != MAP_SIZE - 1 || coord.y != MAP_SIZE - 1)
+                if (coord.x != MAP_SIZE - 1 || coord.y != MAP_SIZE*2 - 1)
                     check_path = rec_research(path, coord, check_path);
                 else
                     // no path is available

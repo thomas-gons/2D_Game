@@ -3,11 +3,10 @@
 
 #include "common.h"
 #include "util.h"
-#include "util.h"
 
 #define MAP_SIZE 40
 #define BAR_SIZE 16
-#define MENU_SIZE 18
+#define MENU_SIZE 16
 
 /// Cell state
 #define OPEN 0
@@ -31,7 +30,7 @@
 #define LAMBDA_OBS 2.0
 
 #define OBS_SYMBOL "\U0001faa8"
-#define FRUIT_SYMBOL "b"
+#define FRUIT_SYMBOL "@"
 
 #define FORMAT_COLOR_FRUIT 1
 
@@ -100,7 +99,9 @@ void map_random_fill();
 */
 void map_display();
 
-Stack *path_finder();
+Position map_get_random_obstacle(Stack *all_opened_cell);
 bool rec_research(Stack *path, Position coord, bool check_path);
+
+Stack *path_finder();
 
 #endif

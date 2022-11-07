@@ -14,15 +14,17 @@ int main() {
     // /!\ TEMP: Create the map, render it.
     map_init(EASY);
 /* --- MELVYN PART --- */
-
+    
     Stack *path = NULL;
-    // do {
-        // add obstacle randomly
-        // if the obstacle is a part of the path we find another path
+    Stack *all_opened_cell = map_take_cell();
+    Position rand_open_pos;
+    do {
+        //add obstacle randomly
+        rand_open_pos = map_get_random_obstacle(all_opened_cell);
+        //if the obstacle is a part of the path we find another path
         path = path_finder();
-        stack_display(path);
-    // while (path)
-    // write the path to the map
+    } while (path);
+    //write the path to the map
     stack_free(path);
 
 /* --- MELVYN PART --- */

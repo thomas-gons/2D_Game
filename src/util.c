@@ -36,6 +36,23 @@ void stack_pop(Stack *stack) {
     }
 }
 
+Position stack_remove(Stack *stack, uint16_t index) {
+    Position ret = {0, 0};
+    if (!stack_is_empty(stack)) {
+        Node *tmp = NULL;
+        Node *curr = stack->head;
+        for (uint16_t count = 0; count < index; count++) {
+            tmp = curr;
+            curr = curr->next;
+        }
+        tmp->next = curr->next;
+        ret = curr->pos;
+        free(curr);
+        return ret;
+    }
+    return ret;
+}
+
 void stack_free(Stack *stack) {
     while (!stack_is_empty(stack)) {
         stack_pop(stack);
@@ -64,6 +81,5 @@ uint16_t stack_len(Stack *stack) {
     for (tmp = stack->head; tmp != NULL; tmp = tmp->next) {
         length++;
     }
-
     return length;
 }

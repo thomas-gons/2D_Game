@@ -14,6 +14,8 @@ void map_init(Level level) {
             map->map_grid[i][j] = (Cell) {EMPTY, .visited = false, .state = OPEN};
         }
     }
+    map->map_grid[0][0].cell_type = BLOCK;
+    map->map_grid[MAP_SIZE - 1][MAP_SIZE*2 - 1].cell_type = BLOCK;
 }
 
 void map_render(WINDOW *win) {

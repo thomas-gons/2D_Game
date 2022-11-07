@@ -48,6 +48,14 @@ void stack_push(Stack *stack, Position pos);
 void stack_pop(Stack *stack);
 
 /**
+ * Remove a node from stack.
+ * \param stack stack
+ * \param index index of node to remove
+ * \returns position field of removed node
+*/
+Position stack_remove(Stack *stack, uint16_t index);
+
+/**
  * Free all nodes in stack.
  * \param stack stack
 */
