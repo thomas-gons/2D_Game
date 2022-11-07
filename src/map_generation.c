@@ -48,7 +48,7 @@ bool rec_research(Stack *path, Position coord, bool check_path) {
         // check if the path exists and if it has not yet been taken
         if (IS_NOT_INDEX_ERROR(tmp_x, tmp_y) &&
             IS_NOT_PAST_POS(tmp_x, tmp_y, path->head->pos)) {
-            // we can not take a path with an obstacle²
+            // we can not take a path with an obstacle
             if (map->map_grid[tmp_x][tmp_y].state == OPEN && check_path) {
                 coord.x = tmp_x;
                 coord.y = tmp_y;

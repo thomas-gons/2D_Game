@@ -5,7 +5,9 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include <time.h> // for timestamp
-#include <ncurses.h>
 #include <math.h>
+#include <ncurses.h>
+#include <locale.h>
+#include <wchar.h>
 
 #endif

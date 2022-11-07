@@ -5,6 +5,7 @@ Map *map = NULL;
 Player *player = NULL;
 
 int main() {
+    setlocale(LC_ALL, "");
     // Initialize ncurses window and sub windows.
     ncs_init();
     ncs_check_term_size();
@@ -19,8 +20,10 @@ int main() {
         // add obstacle randomly
         // if the obstacle is a part of the path we find another path
         path = path_finder();
+        stack_display(path);
     // while (path)
     // write the path to the map
+    stack_free(path);
 
 /* --- MELVYN PART --- */
     map_random_fill();
