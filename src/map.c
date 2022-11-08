@@ -69,3 +69,27 @@ void map_display() {
         printf("\n");
     }
 }
+
+void map_display_path_building(Stack *path) {
+    Node *tmp = path->head;
+    for (uint8_t i = 0, j; i < MAP_SIZE; i++) {
+        for (j = 0; j < MAP_SIZE*2; j++) {
+            if (map->map_grid[i][j].state == BLOCK)
+                printf("#");
+            else {
+                for (; tmp; tmp = tmp->next) {
+                    if (tmp->pos.x == i && tmp->pos.y == j) {
+                        printf("\033[1;32m@\033[0m");
+                        break;
+                    }
+                }
+                if (!tmp)
+                    printf(".");
+                
+                tmp = path->head;
+            }
+        }
+        printf("\n");
+    }
+    printf("\n\n");
+}

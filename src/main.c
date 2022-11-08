@@ -5,6 +5,7 @@ Map *map = NULL;
 Player *player = NULL;
 
 int main() {
+    srand(time(NULL));
     setlocale(LC_ALL, "");
     // Initialize ncurses window and sub windows.
     ncs_init();

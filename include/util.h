@@ -27,6 +27,24 @@ typedef struct {
     Node *tail;
 } Stack;
 
+typedef struct {
+    Position pos;
+    unsigned height;
+    int f_score;
+    int g_score;
+    bool wall;
+    bool goal;
+    bool start;
+    int parent_x;
+    int parent_y;
+} Point;
+
+typedef struct {
+    Point *points;
+    uint16_t points_len;
+    uint16_t len;
+    unsigned memory_size;
+} PriorityQ;
 
 /**
  * Initialize a stack.
@@ -73,5 +91,13 @@ bool stack_is_empty(Stack *stack);
 */
 uint16_t stack_len(Stack *stack);
 
+#define PRIORITY_Q_IS_EMPTY(prio_q) (prio_q->points_len) ? true: false
+#define PRIORITY_Q_GET_POINT(prio_q, index) (index > prio_q->len) ? NULL: &prio_q->points[index]
+#define COMPARE_POINTS(p, q) (p.f_score > q.f_score) ? 1: (p.f_score > q.f_score) ? -1: 0
+
+void insert(PriorityQ *prio_q, Point p);
+Point pop(PriorityQ *prio_q);
+void heapify(PriorityQ *prio_q, unsigned index);
+void priorityQ_free(PriorityQ *prio_q);
 
 #endif
