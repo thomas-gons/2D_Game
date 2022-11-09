@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#define HEAP_TOP(heap) (heap->nb_points) ? (int)(heap->points->f): -1
+
 /**
  * Postion in x and y axes.
 */
@@ -27,24 +29,18 @@ typedef struct {
     Node *tail;
 } Stack;
 
-typedef struct {
+typedef struct Point {
     Position pos;
-    unsigned height;
-    int f_score;
-    int g_score;
-    bool wall;
-    bool goal;
-    bool start;
-    int parent_x;
-    int parent_y;
+    unsigned f;
+    unsigned g;
 } Point;
 
-typedef struct {
+
+typedef struct min_heap {
     Point *points;
-    uint16_t points_len;
-    uint16_t len;
-    unsigned memory_size;
-} PriorityQ;
+    unsigned nb_points;
+    unsigned size;
+} Heap;
 
 /**
  * Initialize a stack.
@@ -91,13 +87,13 @@ bool stack_is_empty(Stack *stack);
 */
 uint16_t stack_len(Stack *stack);
 
-#define PRIORITY_Q_IS_EMPTY(prio_q) (prio_q->points_len) ? true: false
-#define PRIORITY_Q_GET_POINT(prio_q, index) (index > prio_q->len) ? NULL: &prio_q->points[index]
-#define COMPARE_POINTS(p, q) (p.f_score > q.f_score) ? 1: (p.f_score > q.f_score) ? -1: 0
-
-void insert(PriorityQ *prio_q, Point p);
-Point pop(PriorityQ *prio_q);
-void heapify(PriorityQ *prio_q, unsigned index);
-void priorityQ_free(PriorityQ *prio_q);
+Heap *heap_create(); /*Creates a min_heap structure and returns a
+                                  pointer to the struct*/
+void heapify_down(Heap *heap, uint16_t index); /*Pushes an element downwards in the
+                                             heap to find its correct position*/
+void heapify_up(Heap *heap, uint16_t index); /*Pushes an element upwards in the heap
+                                           to find its correct position*/
+void heap_push(Heap *heap, Point p);           /*Inserts an element in the heap*/
+Point heap_pop(Heap *heap); /*Removes the top element from the heap*/
 
 #endif

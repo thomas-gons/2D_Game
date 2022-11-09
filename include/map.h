@@ -98,11 +98,10 @@ void map_random_fill();
  * 
 */
 void map_display();
+void map_display_path_building(Stack *path);
 
 
-
-
-Stack *path_finder();
-bool rec_research(Stack *path, Position coord, bool check_path);
+Stack *search_path(unsigned heuristic[MAP_SIZE][MAP_SIZE*2], Position init, Position goal, int cost);
+Stack *a_star();
 
 #endif

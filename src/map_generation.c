@@ -6,6 +6,7 @@ int8_t moveset[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 
 
 void map_random_fill() {
+    srand(time(NULL));
     float distance, dn;
     float prob;
     // Tiles' probability distribution according to the difficulty

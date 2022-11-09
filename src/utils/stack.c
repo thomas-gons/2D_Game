@@ -67,4 +67,3 @@ uint16_t stack_len(Stack *stack) {
 
     return length;
 }
-
