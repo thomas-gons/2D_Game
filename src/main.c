@@ -1,8 +1,10 @@
-#include "map.h"
-#include "util.h"
+#include "game.h"
 
+
+Game game = {0};
 Map *map = NULL;
+Player *player = NULL;
 
 int main() {
-    return 0;
+    game_loop();
 }
