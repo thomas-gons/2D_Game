@@ -3,8 +3,6 @@
 
 #include "common.h"
 
-#define HEAP_TOP(heap) (heap->nb_points) ? (int)(heap->points->f): -1
-
 /**
  * Postion in x and y axes.
 */
@@ -29,18 +27,31 @@ typedef struct {
     Node *tail;
 } Stack;
 
-typedef struct Point {
+/**
+ * Structure for opened cells in A* algorithm.
+*/
+typedef struct {
     Position pos;
     unsigned f;
     unsigned g;
 } Point;
 
+/**
+ * Node of queue.
+*/
+typedef struct NodeP{
+    Point p;
+    struct NodeP *next;
+} NodeP;
 
-typedef struct min_heap {
-    Point *points;
+/**
+ * Queue.
+*/
+typedef struct {
+    NodeP *head;
     unsigned nb_points;
-    unsigned size;
-} Heap;
+} Queue;
+
 
 /**
  * Initialize a stack.
@@ -87,13 +98,24 @@ bool stack_is_empty(Stack *stack);
 */
 uint16_t stack_len(Stack *stack);
 
-Heap *heap_create(); /*Creates a min_heap structure and returns a
-                                  pointer to the struct*/
-void heapify_down(Heap *heap, uint16_t index); /*Pushes an element downwards in the
-                                             heap to find its correct position*/
-void heapify_up(Heap *heap, uint16_t index); /*Pushes an element upwards in the heap
-                                           to find its correct position*/
-void heap_push(Heap *heap, Point p);           /*Inserts an element in the heap*/
-Point heap_pop(Heap *heap); /*Removes the top element from the heap*/
+/**
+ * 
+*/
+Queue *queue_init();
+
+/**
+ * 
+*/
+void queue_enqueue(Queue *q, Point p);
+
+/**
+ * 
+*/
+Point queue_dequeue(Queue *q);
+
+/**
+ * 
+*/
+void queue_free(Queue *q);
 
 #endif

@@ -5,6 +5,9 @@
 #include "player.h"
 #include "map.h"
 
+/**
+ * 
+*/
 typedef struct {
     uint16_t win_x;
     uint16_t win_y;
