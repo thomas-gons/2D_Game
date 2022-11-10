@@ -1,44 +1,42 @@
 #include "map.h"
+#include "util.h"
+
 
 extern Map *map;
 
-void map_init(uint8_t dim, Level level) {
-    map = calloc(1, sizeof *map);
-    *map = (Map) {dim, level, 0, NULL};
-    map->map_grid = calloc(1, sizeof *map->map_grid * dim);
-    // Fill the map with empty and unvisited cells
-    for (uint8_t i = 0, j; i < dim; i++) {
-        // each line should be malloc
-        map->map_grid[i] = calloc(dim, sizeof *map->map_grid[i]);
-        for (j = 0; j < dim; j++) {
-            map->map_grid[i][j] = (Cell) {EMPTY, .visited = false};
-        }
-    }
-}
-
-// TODO: random path generation algorithm (Tiles ROAD): Melvyn
-
 void map_random_fill() {
-    srand(time(NULL));
+    float distance, dn;
     float prob;
     // Tiles' probability distribution according to the difficulty
-    float prob_fruit = PROB_FRUIT / map->level;
-    float prob_obs = PROB_OBS + 0.05 * map->level;
-    for (uint8_t i = 0, j; i < map->dim; i++) {
-        for (j = 0; j < map->dim; j++) {
+    float prob_fruit, tmp_prob_fruit;
+    float prob_obs, tmp_prob_obs;
+
+    for (uint8_t i = 0, j; i < MAP_LINES; i++) {
+        for (j = 0; j < MAP_COLS; j++) {
+            prob_fruit = PROB_FRUIT / map->level;
+            prob_obs = PROB_OBS * map->level;
+            // distance between center and current position
+            distance = sqrt(pow(CENTER_X - i, 2) + pow(CENTER_Y - j, 2));
+            dn = distance / MAX_DISTANCE;
+            // prob between 0 and 1
             prob = (float) rand() / RAND_MAX;
-            // Tile type is based on the probability distribution
-            if (map->map_grid[i][j].cell_type == EMPTY) {
-                map->map_grid[i][j].cell_type = (prob <= prob_fruit) ? FRUIT:
-                    (prob <= prob_obs) ? OBSTACLE: ROAD;
-            }
+            tmp_prob_fruit = prob_fruit * (dn * LAMBDA_FRUIT);
+            tmp_prob_obs = prob_obs / (dn * LAMBDA_OBS);
+
+            // Tile type is based on the probability distribution model (radial here)
+            prob_fruit = (tmp_prob_fruit > PROB_MAX_FRUIT) ?
+                PROB_MAX_FRUIT: tmp_prob_fruit;
+            prob_obs = (tmp_prob_obs > PROB_MAX_OBS) ?
+                PROB_MAX_OBS: tmp_prob_obs;
+            
+            map->map_grid[i][j].cell_type = (prob <= prob_fruit) ? FRUIT:
+                (prob <= prob_obs) ? OBSTACLE: ROAD;
         }
     }
-}
-
-// Simple free of the map structure
-void map_free() {
-    for (uint8_t i = 0; i < map->dim; i++)
-        free(map->map_grid[i]);
-    free(map->map_grid);
+    if (cell_pos.x == 0 && cell_pos.y == 0) {
+        printf("ERROR : can not get the cell at index %u\n", rand_idx);
+        exit(1);
+    }
+    map->map_grid[cell_pos.x][cell_pos.y].state = BLOCK;
+    return cell_pos;
 }

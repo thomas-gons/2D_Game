@@ -4,7 +4,9 @@
 #include "common.h"
 #include "util.h"
 
-
+/**
+ * 
+*/
 typedef struct {
     Position pos;
     uint8_t stamina;
