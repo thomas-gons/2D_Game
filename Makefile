@@ -17,13 +17,13 @@ CFLAGS := -Wall -Wextra $(LDFLAGS)
 CXXFLAGS := $(CFLAGS)
 
 # Library flags.
-LDLIBS := -lm $(shell pkg-config ncursesw --cflags --libs)
+LDLIBS := -lm -lncurses # $(shell pkg-config ncursesw --cflags --libs)
 
 # Sanitizer flags
 FSAN_FLAGS := -fsanitize=address
 
 # Files set up.
-TARGET := app
+TARGET := game
 SRCS.c := $(shell find $(DIR_SRC)/ -name "*.c" 2> /dev/null)
 SRCS.cpp := $(shell find $(DIR_SRC)/ -name "*.cpp" 2> /dev/null)
 

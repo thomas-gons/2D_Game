@@ -27,6 +27,31 @@ typedef struct {
     Node *tail;
 } Stack;
 
+/**
+ * Structure for opened cells in A* algorithm.
+*/
+typedef struct {
+    Position pos;
+    unsigned f;
+    unsigned g;
+} Point;
+
+/**
+ * Node of queue.
+*/
+typedef struct NodeP{
+    Point p;
+    struct NodeP *next;
+} NodeP;
+
+/**
+ * Queue.
+*/
+typedef struct {
+    NodeP *head;
+    unsigned nb_points;
+} Queue;
+
 
 /**
  * Initialize a stack.
@@ -81,5 +106,24 @@ bool stack_is_empty(Stack *stack);
 */
 uint16_t stack_len(Stack *stack);
 
+/**
+ * 
+*/
+Queue *queue_init();
+
+/**
+ * 
+*/
+void queue_enqueue(Queue *q, Point p);
+
+/**
+ * 
+*/
+Point queue_dequeue(Queue *q);
+
+/**
+ * 
+*/
+void queue_free(Queue *q);
 
 #endif
