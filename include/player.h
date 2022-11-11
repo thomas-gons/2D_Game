@@ -13,12 +13,20 @@
 #define KEY_ESC 27
 
 /**
- * Stamina values at game start.
+ * Stamina settings.
 */
 #define STAMINA_EASY 100
 #define STAMINA_MEDIUM 70
 #define STAMINA_HARD 50
 
+#define STAMINA_LOSS 1
+#define STAMINA_LOSS_OBS 10
+#define STAMINA_GAIN 10
+
+/**
+ * Movements limit before losing stamina
+*/
+#define MV_LIMIT_COUNT 5
 
 /**
  * Player movements.
@@ -39,7 +47,7 @@ typedef struct Player {
     Move move;
     uint8_t nb_move;
     uint8_t stamina;
-    bool is_obstacle;
+    bool on_obstacle;
 } Player;
 
 
@@ -61,14 +69,22 @@ void player_inputs(bool *quit);
 void player_update();
 
 /**
- * Render player in terminal with ncurses.
- * \param win ncurses window
+ * Check if player is colliding with map borders or obstacles.
+ * \param line line of cell to be checked
+ * \param column column of cell to be checked
 */
-void player_render(WINDOW *win);
+void player_check_collisions(uint8_t line, uint8_t col);
+
+/**
+ * Render player in terminal with ncurses.
+ * \param game_win ncurses game window
+*/
+void player_render(WINDOW *game_win);
 
 /**
  * Free allocated memory for player.
 */
 void player_free();
+
 
 #endif

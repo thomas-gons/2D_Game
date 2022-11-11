@@ -12,8 +12,8 @@
 */
 typedef struct Game {
     bool quit;
-    uint16_t win_x;
-    uint16_t win_y;
+    uint16_t win_w;
+    uint16_t win_h;
     WINDOW *main_win;
     WINDOW *game_win;
     WINDOW *bar_win;

@@ -5,6 +5,10 @@ extern Map *map;
 
 void map_init(Level level) {
     map = calloc(1, sizeof *map);
+    if (!map) {
+        fprintf(stderr, "[ERROR] > calloc, in func map_init\n");
+        exit(1);
+    }
     *map = (Map) {level, 0, NULL};
     map->map_grid = calloc(MAP_LINES, sizeof *map->map_grid);
     // Fill the map with empty and unvisited cells
@@ -13,18 +17,18 @@ void map_init(Level level) {
     }
 }
 
-void map_render(WINDOW *win) {
-    for (uint8_t i = 0, j; i < MAP_LINES; i++) {
-        for (j = 0; j < MAP_COLS; j++) {
-            switch (map->map_grid[i][j].cell_type) {
+void map_render(WINDOW *game_win) {
+    for (uint8_t l = 0; l < MAP_LINES; l++) {
+        for (uint8_t c = 0; c < MAP_COLS; c++) {
+            switch (map->map_grid[l][c].cell_type) {
             case ROAD:
-                mvwaddch(win, i, j, ' ');
+                mvwaddch(game_win, l, c, ' ');
                 break;
             case OBSTACLE:
-                mvwaddch(win, i, j, '%' | COLOR_PAIR(FORMAT_COLOR_OBS));
+                mvwaddch(game_win, l, c, '%' | COLOR_PAIR(FORMAT_COLOR_OBS));
                 break;
             case FRUIT:
-                mvwaddch(win, i, j, '@' | COLOR_PAIR(FORMAT_COLOR_FRUIT));
+                mvwaddch(game_win, l, c, '@' | COLOR_PAIR(FORMAT_COLOR_FRUIT));
                 break;
             default: break;
             }
@@ -33,9 +37,9 @@ void map_render(WINDOW *win) {
 }
 
 void map_display() {
-    for (uint8_t i = 0, j; i < MAP_LINES; i++) {
-        for (j = 0; j < MAP_COLS; j++) {
-            switch (map->map_grid[i][j].cell_type) {
+    for (uint8_t l = 0; l < MAP_LINES; l++) {
+        for (uint8_t c = 0; c < MAP_COLS; c++) {
+            switch (map->map_grid[l][c].cell_type) {
             case ROAD:
                 printf("0 ");
                 break;
@@ -51,17 +55,17 @@ void map_display() {
     }
 }
 
-void map_render_path(WINDOW *win, Stack *path) {
+void map_render_path(WINDOW *game_win, Stack *path) {
     Node *tmp = path->head;
     for (; tmp; tmp = tmp->next)
-        mvwaddch(win, tmp->pos.x, tmp->pos.y, '+' | COLOR_PAIR(FORMAT_COLOR_PATH));
+        mvwaddch(game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(FORMAT_COLOR_PATH));
     
-    wrefresh(win);
+    wrefresh(game_win);
 }
 
 void map_free() {
-    for (uint8_t i = 0; i < MAP_LINES; i++) {
-        free(map->map_grid[i]);
+    for (uint8_t l = 0; l < MAP_LINES; l++) {
+        free(map->map_grid[l]);
     }
     free(map->map_grid);
 }

@@ -5,7 +5,7 @@ Stack *stack_init() {
     Stack *stack = calloc(1, sizeof *stack);
     if (!stack) {
         fprintf(stderr, "[ERROR] > calloc, in func stack_init\n");
-        exit(-1);
+        exit(1);
     }
     stack->head = NULL;
     stack->tail = NULL;
@@ -18,7 +18,7 @@ void stack_push(Stack *stack, Position pos) {
     Node *new = calloc(1, sizeof *new);
     if (!new) {
         fprintf(stderr, "[ERROR] > calloc, in func stack_push\n");
-        exit(-1);
+        exit(1);
     }
     new->next = NULL;
     new->pos = pos;
@@ -68,7 +68,7 @@ void stack_free(Stack *stack) {
 void stack_display(Stack *stack) {
     Node *tmp = stack->head;
     while (tmp != NULL) {
-        printf("(%d, %d)->", tmp->pos.x, tmp->pos.y);
+        printf("(%d, %d)->", tmp->pos.c, tmp->pos.l);
         tmp = tmp->next;
     }
     if (tmp == NULL) {

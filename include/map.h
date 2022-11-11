@@ -6,11 +6,6 @@
 #include "util.h"
 
 
-#define MAP_LINES 40
-#define MAP_COLS 80
-#define BAR_SIZE 16
-#define MENU_SIZE 16
-
 /**
  * Ncurses windows sizes settings.
 */
@@ -19,8 +14,8 @@
 #define BAR_SIZE 16
 #define MENU_SIZE 16
 
-#define CENTER_X (MAP_LINES / 2)
-#define CENTER_Y (MAP_COLS / 2)
+#define CENTER_L (MAP_LINES / 2)
+#define CENTER_C (MAP_COLS / 2)
 
 #define MAX_DISTANCE sqrt(pow(MAP_LINES, 2) + pow(MAP_COLS, 2))
 
@@ -46,8 +41,8 @@
 /**
  * Cells settings.
 */
-#define START ((Position) {0, 0})
-#define END ((Position) {MAP_LINES - 1, MAP_COLS - 1})
+#define START ((Position) {.l=0, .c=0})
+#define END ((Position) {.l=MAP_LINES - 1, .c=MAP_COLS - 1})
 #define MOVESET_LEN 4
 
 /**
@@ -58,9 +53,15 @@
 /**
  * Check if position is within the map range.
 */
-#define IS_NOT_INDEX_ERROR(tmp_x, tmp_y) (              \
-    (tmp_x >= 0 && tmp_x < MAP_LINES) &&                \
-    (tmp_y >= 0 && tmp_y < MAP_COLS)) ? true: false     \
+#define IS_OUT_OF_MAP(line, col) (             \
+    (line >= 0 && line < MAP_LINES) &&              \
+    (col >= 0 && col < MAP_COLS)) ? true : false    \
+
+/**
+ * Check if position is an obstacle cell.
+*/
+#define IS_OBSTACLE_CELL(line, col) (                               \
+    map->map_grid[line][col].cell_type == OBSTACLE) ? true : false  \
 
 
 /**
@@ -110,9 +111,9 @@ void map_init(Level level);
 
 /**
  * Render map in terminal with ncurses.
- * \param win ncurses window
+ * \param game_win ncurses game window
 */
-void map_render(WINDOW *win);
+void map_render(WINDOW *game_win);
 
 /**
  * Randomly fill the map with obstacles and fruits.
@@ -131,10 +132,10 @@ void map_display();
 
 /**
  * Display map in terminal with stdout, highlight the path and obstacles.
- * \param win ncurses window
+ * \param game_win ncurses game window
  * \param path valid path as a stack of cells
 */
-void map_render_path(WINDOW *win, Stack *path);
+void map_render_path(WINDOW *game_win, Stack *path);
 
 /**
  * Free allocated memory of map.
@@ -154,5 +155,6 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], int cost);
  * \returns a valid path (stack of cells) on success, NULL on error.
 */
 Stack *a_star();
+
 
 #endif

@@ -6,11 +6,11 @@
 
 
 /**
- * Postion in x and y axes.
+ * Postion in lines and columns.
 */
 typedef struct {
-    uint8_t x;
-    uint8_t y;
+    uint8_t l;
+    uint8_t c;
 } Position;
 
 /**
@@ -132,5 +132,6 @@ Point queue_dequeue(Queue *q);
  * Free allocated memory of queue.
 */
 void queue_free(Queue *q);
+
 
 #endif
