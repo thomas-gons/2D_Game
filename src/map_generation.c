@@ -33,10 +33,4 @@ void map_random_fill() {
                 (prob <= prob_obs) ? OBSTACLE: ROAD;
         }
     }
-    if (cell_pos.x == 0 && cell_pos.y == 0) {
-        printf("ERROR : can not get the cell at index %u\n", rand_idx);
-        exit(1);
-    }
-    map->map_grid[cell_pos.x][cell_pos.y].state = BLOCK;
-    return cell_pos;
 }
