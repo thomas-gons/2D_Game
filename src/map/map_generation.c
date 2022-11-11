@@ -13,6 +13,10 @@ void map_random_fill() {
 
     for (uint8_t i = 0, j; i < MAP_LINES; i++) {
         for (j = 0; j < MAP_COLS; j++) {
+            if ((!i && !j) || (i == MAP_LINES - 1 && j == MAP_COLS - 1)) {
+                map->map_grid[i][j].cell_type = ROAD;
+                continue;
+            }
             prob_fruit = PROB_FRUIT / map->level;
             prob_obs = PROB_OBS * map->level;
             // distance between center and current position
@@ -33,4 +37,16 @@ void map_random_fill() {
                 (prob <= prob_obs) ? OBSTACLE: ROAD;
         }
     }
+}
+
+void map_generate() {
+    // While there is no path in the map, generate the map randomly and search
+    // for at least one path using A* pathfinding algorithm (improved version of Dijkstra's algorithm)
+    srand(time(NULL));
+    Stack *path = NULL;
+    do {
+        map_random_fill();
+        path = a_star();
+    } while (!path);
+    stack_free(path);
 }

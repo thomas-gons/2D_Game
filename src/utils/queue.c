@@ -3,6 +3,10 @@
 
 Queue *queue_init() {
     Queue *q = calloc(1, sizeof *q);
+    if (!q) {
+        fprintf(stderr, "[ERROR] > calloc, in func queue_init\n");
+        exit(-1);
+    }
     *q = (Queue) {NULL, 0};
     return q;
 }
@@ -10,7 +14,7 @@ Queue *queue_init() {
 void queue_enqueue(Queue *q, Point p) {
     NodeP *new = calloc(1, sizeof *new);
     if (!new) {
-        printf("Allocation failed for new node in queue\n");
+        fprintf(stderr, "[ERROR] > calloc, in func queue_enqueue\n");
         exit(-1);
     }
     *new = (NodeP) {p, NULL};
@@ -19,9 +23,9 @@ void queue_enqueue(Queue *q, Point p) {
         return;
     }
     NodeP *tmp = q->head;
-    while (tmp->next)
+    while (tmp->next) {
         tmp = tmp->next;
-
+    }
     tmp->next = new;
     q->nb_points++;
 }
@@ -36,8 +40,8 @@ Point queue_dequeue(Queue *q) {
 }
 
 void queue_free(Queue *q) {
-    while (q->head)
+    while (q->head) {
         queue_dequeue(q);
-    
+    }
     free(q);
 }

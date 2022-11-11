@@ -17,7 +17,7 @@ CFLAGS := -Wall -Wextra $(LDFLAGS)
 CXXFLAGS := $(CFLAGS)
 
 # Library flags.
-LDLIBS := -lm -lncurses # $(shell pkg-config ncursesw --cflags --libs)
+LDLIBS := -lm -lncurses
 
 # Sanitizer flags
 FSAN_FLAGS := -fsanitize=address
@@ -132,7 +132,7 @@ info:
 	@echo "[*] Target, Debug:"
 	@echo -e "\t$(DBG_TARGET)\n"
 
-# Display usage help. 
+# Display usage help.
 help:
 	@echo "USAGE:"
 	@echo -e "\tmake \t\t\tBuild project, in Release mode by default."

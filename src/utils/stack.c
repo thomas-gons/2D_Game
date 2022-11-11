@@ -3,6 +3,10 @@
 
 Stack *stack_init() {
     Stack *stack = calloc(1, sizeof *stack);
+    if (!stack) {
+        fprintf(stderr, "[ERROR] > calloc, in func stack_init\n");
+        exit(-1);
+    }
     stack->head = NULL;
     stack->tail = NULL;
 
@@ -13,7 +17,8 @@ void stack_push(Stack *stack, Position pos) {
     // Create a new node to push
     Node *new = calloc(1, sizeof *new);
     if (!new) {
-        fprintf(stderr, "ERROR : malloc, in func stack_push\n");
+        fprintf(stderr, "[ERROR] > calloc, in func stack_push\n");
+        exit(-1);
     }
     new->next = NULL;
     new->pos = pos;
