@@ -1,5 +1,5 @@
 #include "player.h"
-
+#include "map.h"
 
 extern Player *player;
 extern Map *map;
@@ -24,56 +24,81 @@ void player_init(Level level) {
     }
 }
 
-void player_inputs(bool *quit) {
-    switch (getch()) {
-    case KEY_ESC:
-        *quit = true;
-        break;
-    case KEY_DOWN:
-    case 'S':
-    case 's':
-        player->move = DOWN;
-        break;
-    case KEY_RIGHT:
-    case 'D':
-    case 'd':
-        player->move = RIGHT;
-        break;
-    case KEY_UP:
-    case 'Z':
-    case 'z':
-        player->move = UP;
-        break;
-    case KEY_LEFT:
-    case 'Q':
-    case 'q':
-        player->move = LEFT;
-        break;
-    default: break;
+void input_player(){
+    initscr();         // initialize curses
+    noecho();          // doesn't display typed characters
+    keypad(stdscr, 1); // allows the capture of special keys, here the arrows from the keyboard
+    clear();
+    bool leave = false; //leave value
+ 
+    while (!leave)
+    {
+        int c = getch(); // Read the keyboard keys
+        switch (c)
+        {
+        case KEY_DOWN: 
+            leave = true;
+            player->move = UP;
+            player_update();  
+            break;
+        case KEY_UP:    
+            leave = true;
+            player->move = DOWN;
+            player_update();  
+            break;
+        case KEY_RIGHT: 
+            leave = true;
+            player->move = RIGHT;
+            player_update();  
+            break;
+        case KEY_LEFT:  
+            leave = true;
+            player->move = LEFT;
+            player_update();  
+            break; 
+        case 27:
+            leave = true;
+            //cas touche escape key
+            break;
+        }
     }
+ 
+    echo();
+    endwin(); // quits curses
 }
 
 void player_update() {
     // TODO :
-    // Check collisions : if move valid => player->nb_move++;
+    // Check collisions : if move valid => player->nb_move++; OK
     // nb_move reset to 0 if nv_move >= maximum value => player->stamina decreasing
 
     switch (player->move) {
     case DOWN:
-        player->pos.y++;
+        if (map->map_grid[player->pos.x][player->pos.y++].cell_type != OBSTACLE || map->map_grid[player->pos.x][player->pos.y++].cell_type != EMPTY){   //checks if the move is valid
+            player->pos.y++;                                                                                                                            // if the move is valid, the position of the payer is changed
+            player->nb_move++;
+        }
         break;
     case RIGHT:
-        player->pos.x++;
+        if (map->map_grid[player->pos.x++][player->pos.y].cell_type != OBSTACLE || map->map_grid[player->pos.x++][player->pos.y].cell_type != EMPTY){
+            player->pos.x++;
+            player->nb_move++;
+        }
         break;
     case UP:
-        player->pos.y--;
+        if (map->map_grid[player->pos.x][player->pos.y--].cell_type != OBSTACLE || map->map_grid[player->pos.x][player->pos.y--].cell_type != EMPTY){
+            player->pos.y--;
+            player->nb_move++;
+        }
         break;
     case LEFT:
-        player->pos.x--;
+        if (map->map_grid[player->pos.x--][player->pos.y].cell_type != OBSTACLE || map->map_grid[player->pos.x--][player->pos.y].cell_type != EMPTY){
+            player->pos.x--;
+            player->nb_move++;
+        }
         break;
     default: break;
     }
-    player->move = NONE;
 }
 
 void player_render(WINDOW *win) {
