@@ -12,6 +12,7 @@ void player_init(Level level) {
         exit(1);
     }
     player->pos = (Position) {.l=0, .c=0};
+    map->map_grid[player->pos.l][player->pos.c].visited = true;
     player->move = NONE;
     player->nb_move = 0;
     player->on_obstacle = false;

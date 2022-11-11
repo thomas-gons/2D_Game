@@ -9,7 +9,7 @@ void map_init(Level level) {
         fprintf(stderr, "[ERROR] > calloc, in func map_init\n");
         exit(1);
     }
-    *map = (Map) {level, 0, NULL};
+    *map = (Map) {.level=level, .map_grid=NULL};
     map->map_grid = calloc(MAP_LINES, sizeof *map->map_grid);
     // Fill the map with empty and unvisited cells
     for (uint8_t i = 0; i < MAP_LINES; i++) {
@@ -22,7 +22,8 @@ void map_render(WINDOW *game_win) {
         for (uint8_t c = 0; c < MAP_COLS; c++) {
             switch (map->map_grid[l][c].cell_type) {
             case ROAD:
-                mvwaddch(game_win, l, c, ' ');
+                mvwaddch(game_win, l, c,
+                    ((map->map_grid[l][c].visited) ? '.' : ' ') | COLOR_PAIR(FORMAT_COLOR_PLAYER));
                 break;
             case OBSTACLE:
                 mvwaddch(game_win, l, c, '%' | COLOR_PAIR(FORMAT_COLOR_OBS));
@@ -57,9 +58,9 @@ void map_display() {
 
 void map_render_path(WINDOW *game_win, Stack *path) {
     Node *tmp = path->head;
-    for (; tmp; tmp = tmp->next)
+    for (; tmp; tmp = tmp->next) {
         mvwaddch(game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(FORMAT_COLOR_PATH));
-    
+    }
     wrefresh(game_win);
 }
 

@@ -98,7 +98,6 @@ typedef struct Cell {
 */
 typedef struct Map {
     Level level;
-    uint16_t step;
     Cell **map_grid;
 } Map;
 
