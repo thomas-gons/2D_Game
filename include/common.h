@@ -1,14 +1,25 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
-#include <time.h> // for timestamp
+#include <time.h>
+#include <math.h>
+#include <ncurses.h>
+#include <locale.h>
+#include <wchar.h>
+#include <unistd.h>
 
-typedef enum {
-    false, true
-} bool;
+
+/**
+ * Colors for ncurses output.
+*/
+#define FORMAT_COLOR_PATH 1
+#define FORMAT_COLOR_OBS 2
+#define FORMAT_COLOR_FRUIT 3
+#define FORMAT_COLOR_PLAYER 4
 
 
 #endif

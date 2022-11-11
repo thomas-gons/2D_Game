@@ -13,17 +13,17 @@ LD := g++
 LDFLAGS := -I$(DIR_INC)/
 
 # Compiler flags.
-CFLAGS := -Wall -Wextra $(LDFLAGS)/
+CFLAGS := -Wall -Wextra -Wno-type-limits $(LDFLAGS)
 CXXFLAGS := $(CFLAGS)
 
 # Library flags.
-LDLIBS := -lm
+LDLIBS := -lm -lncurses
 
 # Sanitizer flags
 FSAN_FLAGS := -fsanitize=address
 
 # Files set up.
-TARGET := app
+TARGET := game
 SRCS.c := $(shell find $(DIR_SRC)/ -name "*.c" 2> /dev/null)
 SRCS.cpp := $(shell find $(DIR_SRC)/ -name "*.cpp" 2> /dev/null)
 
@@ -132,13 +132,13 @@ info:
 	@echo "[*] Target, Debug:"
 	@echo -e "\t$(DBG_TARGET)\n"
 
-# Display usage help. 
+# Display usage help.
 help:
 	@echo "USAGE:"
-	@echo "\tmake \t\t\tBuild project, in Release mode by default."
-	@echo "\tmake debug \t\tBuild project in Debug mode."
-	@echo "\tmake run \t\tRun target, by default Release target."
-	@echo "\tmake rundbg \t\tRun Debug target."
-	@echo "\tmake clean \t\tClean project directory."
-	@echo "\tmake info \t\tDisplay info about files in project directory."
-	@echo "\tmake help \t\tDisplay this help message."
+	@echo -e "\tmake \t\t\tBuild project, in Release mode by default."
+	@echo -e "\tmake debug \t\tBuild project in Debug mode."
+	@echo -e "\tmake run \t\tRun target, by default Release target."
+	@echo -e "\tmake rundbg \t\tRun Debug target."
+	@echo -e "\tmake clean \t\tClean project directory."
+	@echo -e "\tmake info \t\tDisplay info about files in project directory."
+	@echo -e "\tmake help \t\tDisplay this help message."

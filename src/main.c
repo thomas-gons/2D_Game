@@ -1,6 +1,11 @@
 #include "game.h"
 
+
+Game game = {0};
+Map *map = NULL;
+Player *player = NULL;
+
 int main() {
-    printf("Init\n");
+    game_loop();
     return 0;
 }
