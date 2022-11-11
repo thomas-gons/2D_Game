@@ -18,6 +18,7 @@ typedef struct Game {
     WINDOW *game_win;
     WINDOW *bar_win;
     WINDOW *help_win;
+    Stack *path;
     time_t date;
 } Game;
 
@@ -26,6 +27,11 @@ typedef struct Game {
  * Initialize ncurses library. 
 */
 void ncs_init();
+
+/**
+ * Initialize ncurses colors. 
+*/
+void ncs_init_colors();
 
 /**
  * Check the terminal size and quit if to small.

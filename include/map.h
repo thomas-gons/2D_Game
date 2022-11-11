@@ -6,6 +6,11 @@
 #include "util.h"
 
 
+#define MAP_LINES 40
+#define MAP_COLS 80
+#define BAR_SIZE 16
+#define MENU_SIZE 16
+
 /**
  * Ncurses windows sizes settings.
 */
@@ -14,29 +19,29 @@
 #define BAR_SIZE 16
 #define MENU_SIZE 16
 
-#define CENTER_X MAP_LINES / 2
-#define CENTER_Y MAP_COLS / 2
+#define CENTER_X (MAP_LINES / 2)
+#define CENTER_Y (MAP_COLS / 2)
 
-#define MAX_DISTANCE 32.526913
+#define MAX_DISTANCE sqrt(pow(MAP_LINES, 2) + pow(MAP_COLS, 2))
 
 /**
  * The probabilties add up according to this order.
 */
-#define PROB_FRUIT 0.015
-#define PROB_OBS 0.2
+#define PROB_FRUIT 0.03
+#define PROB_OBS 0.175
 
 /** 
  * Max values for probabilties.
 */
-#define PROB_MAX_FRUIT 0.02
-#define PROB_MAX_OBS 0.35
+#define PROB_MAX_FRUIT 0.06
+#define PROB_MAX_OBS 0.25
 
 /**
  * Lambda factors to adjust probabilties.
  * Extend or restrict the scope of the maximum probability.
 */
-#define LAMBDA_FRUIT 0.8
-#define LAMBDA_OBS 1.7
+#define LAMBDA_FRUIT 2
+#define LAMBDA_OBS 2.2
 
 /**
  * Cells settings.
@@ -44,6 +49,11 @@
 #define START ((Position) {0, 0})
 #define END ((Position) {MAP_LINES - 1, MAP_COLS - 1})
 #define MOVESET_LEN 4
+
+/**
+ * Path settings.
+*/
+#define PATH_LEN (MAX_DISTANCE * 2)
 
 /**
  * Check if position is within the map range.
@@ -112,7 +122,7 @@ void map_random_fill();
 /**
  * Generate the random map.
 */
-void map_generate();
+Stack *map_generate();
 
 /**
  * Display map in terminal with stdout.
@@ -121,9 +131,10 @@ void map_display();
 
 /**
  * Display map in terminal with stdout, highlight the path and obstacles.
+ * \param win ncurses window
  * \param path valid path as a stack of cells
 */
-void map_display_path_building(Stack *path);
+void map_render_path(WINDOW *win, Stack *path);
 
 /**
  * Free allocated memory of map.

@@ -39,7 +39,7 @@ void map_random_fill() {
     }
 }
 
-void map_generate() {
+Stack *map_generate() {
     // While there is no path in the map, generate the map randomly and search
     // for at least one path using A* pathfinding algorithm (improved version of Dijkstra's algorithm)
     srand(time(NULL));
@@ -47,6 +47,7 @@ void map_generate() {
     do {
         map_random_fill();
         path = a_star();
+        // think about path lenght
     } while (!path);
-    stack_free(path);
+    return path;
 }

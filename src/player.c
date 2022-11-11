@@ -77,7 +77,6 @@ void player_update() {
 }
 
 void player_render(WINDOW *win) {
-    init_pair(FORMAT_COLOR_PLAYER, COLOR_MAGENTA, -1);
     mvwaddch(win, player->pos.y, player->pos.x, 'P' | COLOR_PAIR(FORMAT_COLOR_PLAYER));
 }
 

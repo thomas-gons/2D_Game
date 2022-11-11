@@ -16,7 +16,9 @@
 /**
  * Colors for ncurses output.
 */
-#define FORMAT_COLOR_FRUIT 1
-#define FORMAT_COLOR_PLAYER 2
+#define FORMAT_COLOR_PATH 1
+#define FORMAT_COLOR_OBS 2
+#define FORMAT_COLOR_FRUIT 3
+#define FORMAT_COLOR_PLAYER 4
 
 #endif

@@ -14,9 +14,6 @@ void map_init(Level level) {
 }
 
 void map_render(WINDOW *win) {
-    // if (can_change_color())
-    //     init_color(COLOR_YELLOW, 1000, 651, 0);
-    init_pair(FORMAT_COLOR_FRUIT, COLOR_GREEN, -1);
     for (uint8_t i = 0, j; i < MAP_LINES; i++) {
         for (j = 0; j < MAP_COLS; j++) {
             switch (map->map_grid[i][j].cell_type) {
@@ -24,7 +21,7 @@ void map_render(WINDOW *win) {
                 mvwaddch(win, i, j, ' ');
                 break;
             case OBSTACLE:
-                mvwaddch(win, i, j, '%');
+                mvwaddch(win, i, j, '%' | COLOR_PAIR(FORMAT_COLOR_OBS));
                 break;
             case FRUIT:
                 mvwaddch(win, i, j, '@' | COLOR_PAIR(FORMAT_COLOR_FRUIT));
@@ -33,7 +30,6 @@ void map_render(WINDOW *win) {
             }
         }
     }
-    wrefresh(win);
 }
 
 void map_display() {
@@ -55,34 +51,12 @@ void map_display() {
     }
 }
 
-void map_display_path_building(Stack *path){
+void map_render_path(WINDOW *win, Stack *path) {
     Node *tmp = path->head;
-    for (uint8_t i = 0, j; i < MAP_LINES; i++) {
-        for (j = 0; j < MAP_COLS; j++) {
-            switch (map->map_grid[i][j].cell_type) {
-            case OBSTACLE: 
-                printf("\033[1;31m1\033[0m");
-                break;
-            case FRUIT:
-                printf("@");
-                break;
-            default:
-                for (; tmp; tmp = tmp->next) {
-                    if (tmp->pos.x == i && tmp->pos.y == j) {
-                        printf("\033[1;32m0\033[0m");
-                        break;
-                    }
-                }
-                if (!tmp)
-                    printf("0");
-                
-                tmp = path->head;
-                break;
-            }
-        }
-        printf("\n");
-    }
-    printf("\n\n");
+    for (; tmp; tmp = tmp->next)
+        mvwaddch(win, tmp->pos.x, tmp->pos.y, '+' | COLOR_PAIR(FORMAT_COLOR_PATH));
+    
+    wrefresh(win);
 }
 
 void map_free() {

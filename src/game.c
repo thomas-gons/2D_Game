@@ -11,10 +11,18 @@ void ncs_init() {
     curs_set(false);
     setlocale(LC_ALL, "");
     keypad(stdscr, TRUE);
+
+    refresh();
+}
+
+void ncs_init_colors() {
     // Enable foreground colors and disable background colors
     use_default_colors();
     start_color();
-    refresh();
+    init_pair(FORMAT_COLOR_PATH, COLOR_CYAN, -1);
+    init_pair(FORMAT_COLOR_OBS, COLOR_RED, -1);
+    init_pair(FORMAT_COLOR_FRUIT, COLOR_GREEN, -1);
+    init_pair(FORMAT_COLOR_PLAYER, COLOR_CYAN, -1);
 }
 
 void ncs_check_term_size() {
@@ -91,11 +99,12 @@ void game_init() {
     game.quit = false;
     // Initialize ncurses game resources
     ncs_init();
+    ncs_init_colors();
     ncs_check_term_size();
     ncs_create_windows();
     // Generate random map
     map_init(EASY);
-    map_generate();
+    game.path = map_generate();
     // Create player
     player_init(map->level);
     // First render of game
@@ -121,5 +130,6 @@ void game_render() {
 void game_quit() {
     ncs_quit();
     map_free();
+    stack_free(game.path);
     player_free();
 }
