@@ -3,6 +3,10 @@
 
 Stack *stack_init() {
     Stack *stack = calloc(1, sizeof *stack);
+    if (!stack) {
+        fprintf(stderr, "[ERROR] > calloc, in func stack_init\n");
+        exit(-1);
+    }
     stack->head = NULL;
     stack->tail = NULL;
 
@@ -13,7 +17,8 @@ void stack_push(Stack *stack, Position pos) {
     // Create a new node to push
     Node *new = calloc(1, sizeof *new);
     if (!new) {
-        fprintf(stderr, "ERROR : malloc, in func stack_push\n");
+        fprintf(stderr, "[ERROR] > calloc, in func stack_push\n");
+        exit(-1);
     }
     new->next = NULL;
     new->pos = pos;
@@ -33,8 +38,24 @@ void stack_pop(Stack *stack) {
         stack->head = stack->head->next;
         pop->next = NULL;
         free(pop);
-        printf("popped\n");
     }
+}
+
+Position stack_remove(Stack *stack, uint16_t index) {
+    Position ret = {0, 0};
+    if (!stack_is_empty(stack)) {
+        Node *tmp = NULL;
+        Node *curr = stack->head;
+        for (uint16_t count = 0; count < index; count++) {
+            tmp = curr;
+            curr = curr->next;
+        }
+        tmp->next = curr->next;
+        ret = curr->pos;
+        free(curr);
+        return ret;
+    }
+    return ret;
 }
 
 void stack_free(Stack *stack) {
@@ -53,6 +74,7 @@ void stack_display(Stack *stack) {
     if (tmp == NULL) {
         printf("NULL\n");
     }
+    printf("\n");
 }
 
 bool stack_is_empty(Stack *stack) {
@@ -65,6 +87,5 @@ uint16_t stack_len(Stack *stack) {
     for (tmp = stack->head; tmp != NULL; tmp = tmp->next) {
         length++;
     }
-
     return length;
 }

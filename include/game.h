@@ -1,15 +1,16 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
+
 #include "common.h"
 #include "player.h"
 #include "map.h"
 
 
 /**
- * Game structure to handle game resources.
+ * Game structure, handle game resources.
 */
-typedef struct {
+typedef struct Game {
     bool quit;
     uint16_t win_x;
     uint16_t win_y;
@@ -32,9 +33,14 @@ void ncs_init();
 void ncs_check_term_size();
 
 /**
- * Create all sub windows.
+ * Create all ncurses windows.
 */
 void ncs_create_windows();
+
+/**
+ * Refresh ncurses windows render.
+*/
+void ncs_refresh_windows();
 
 /**
  * Quit ncurses library.

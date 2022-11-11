@@ -2,23 +2,33 @@
 
 
 extern Player *player;
+extern Map *map;
 
-void player_init() {
+void player_init(Level level) {
     player = calloc(1, sizeof *player);
     player->pos = (Position) {0, 0};
     player->move = NONE;
     player->nb_move = 0;
-    // player.stamina is parameter
     player->is_obstacle = false;
+    switch (level) {
+    case EASY:
+        player->stamina = STAMINA_EASY;
+        break;
+    case MEDIUM:
+        player->stamina = STAMINA_MEDIUM;
+        break;
+    case HARD:
+        player->stamina = STAMINA_HARD;
+        break;
+    default: break;
+    }
 }
 
 void player_inputs(bool *quit) {
-    // NOT WORKING PROPERLY : Arrow keys, Escape key
-
     switch (getch()) {
-    // case KEY_EXIT:
-    //     *quit = true;
-    //     break;
+    case KEY_ESC:
+        *quit = true;
+        break;
     case KEY_DOWN:
     case 'S':
     case 's':
@@ -63,12 +73,12 @@ void player_update() {
         break;
     default: break;
     }
+    player->move = NONE;
 }
 
 void player_render(WINDOW *win) {
-    // render player at his pos
-    mvwaddch(win, player->pos.y, player->pos.x, 'P');
-    wrefresh(win);
+    init_pair(FORMAT_COLOR_PLAYER, COLOR_MAGENTA, -1);
+    mvwaddch(win, player->pos.y, player->pos.x, 'P' | COLOR_PAIR(FORMAT_COLOR_PLAYER));
 }
 
 void player_free() {

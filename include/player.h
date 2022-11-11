@@ -1,8 +1,23 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
 
+
 #include "common.h"
 #include "util.h"
+#include "map.h"
+
+
+/**
+ * Key settings.
+*/
+#define KEY_ESC 27
+
+/**
+ * Stamina values at game start.
+*/
+#define STAMINA_EASY 100
+#define STAMINA_MEDIUM 70
+#define STAMINA_HARD 50
 
 
 /**
@@ -17,7 +32,7 @@ typedef enum Move {
 } Move;
 
 /**
- * Player structure.
+ * Player structure, handle player data.
 */
 typedef struct Player {
     Position pos;
@@ -30,11 +45,12 @@ typedef struct Player {
 
 /**
  * Initialize the player.
+ * \param level difficulty of game
 */
-void player_init();
+void player_init(Level level);
 
 /**
- * Handle inputs for playing using ncurses library.
+ * Handle inputs using ncurses library.
  * \param quit game quit indicator
 */
 void player_inputs(bool *quit);
@@ -45,7 +61,7 @@ void player_inputs(bool *quit);
 void player_update();
 
 /**
- * Render player on window.
+ * Render player in terminal with ncurses.
  * \param win ncurses window
 */
 void player_render(WINDOW *win);
@@ -54,6 +70,5 @@ void player_render(WINDOW *win);
  * Free allocated memory for player.
 */
 void player_free();
-
 
 #endif
