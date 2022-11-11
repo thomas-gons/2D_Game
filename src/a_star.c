@@ -53,8 +53,10 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], Position init, Posit
     y = goal.y;
     stack_push(inverted_path, (Position) {x, y});
     while (x != init.x || y != init.y) {
-        x -= moveset[action[x][y]][0];
-        y -= moveset[action[x][y]][1];
+        tmp_x = x - moveset[action[x][y]][0];
+        tmp_y = y - moveset[action[x][y]][1];
+        x = tmp_x;
+        y = tmp_y;
         stack_push(inverted_path, (Position) {x, y});
     }
 
