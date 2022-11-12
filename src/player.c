@@ -31,6 +31,7 @@ void player_init(Level level) {
 }
 
 void player_inputs(bool *quit) {
+    player->on_obstacle = false;
     player->move = NONE;
     switch (getch()) {
     case KEY_ESC:
@@ -64,15 +65,19 @@ void player_update() {
     switch (player->move) {
     case DOWN:
         player_check_collisions(player->pos.l + 1, player->pos.c);
+        printf("stamina : %d    ", player->stamina);
         break;
     case RIGHT:
         player_check_collisions(player->pos.l, player->pos.c + 1);
+        printf("stamina : %d    ", player->stamina);
         break;
     case UP:
         player_check_collisions(player->pos.l - 1, player->pos.c);
+        printf("stamina : %d    ", player->stamina);
         break;
     case LEFT:
         player_check_collisions(player->pos.l, player->pos.c - 1);
+        printf("stamina : %d    ", player->stamina);
         break;
     default: break;
     }
@@ -85,7 +90,6 @@ void player_check_collisions(uint8_t line, uint8_t col) {
         if (IS_OBSTACLE_CELL(line, col)) {
             player->on_obstacle = true;
             player->stamina -= STAMINA_LOSS_OBS;
-            player->nb_move = 0;
         } else {
             // Update position in map
             player->pos.l = line;
@@ -95,7 +99,7 @@ void player_check_collisions(uint8_t line, uint8_t col) {
         }
         // Player loses stamina every MV_LIMIT_COUNT steps
         if ((player->nb_move >= MV_LIMIT_COUNT) && (player->on_obstacle == false)) {
-            player->stamina -= STAMINA_LOSS;
+            player->stamina -= STAMINA_LOSS*(player->nb_move);
             player->nb_move = 0;
         }
     }
