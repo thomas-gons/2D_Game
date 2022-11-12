@@ -4,6 +4,7 @@
 
 #include "common.h"
 #include "player.h"
+#include "stamina.h"
 #include "map.h"
 
 
@@ -17,6 +18,7 @@ typedef struct Game {
     WINDOW *main_win;
     WINDOW *game_win;
     WINDOW *bar_win;
+    WINDOW *stm_bar;
     WINDOW *help_win;
     Stack *path;
     time_t date;

@@ -65,19 +65,19 @@ void player_update() {
     switch (player->move) {
     case DOWN:
         player_check_collisions(player->pos.l + 1, player->pos.c);
-        printf("stamina : %d    ", player->stamina);
+        // printf("stamina : %d    ", player->stamina);
         break;
     case RIGHT:
         player_check_collisions(player->pos.l, player->pos.c + 1);
-        printf("stamina : %d    ", player->stamina);
+        // printf("stamina : %d    ", player->stamina);
         break;
     case UP:
         player_check_collisions(player->pos.l - 1, player->pos.c);
-        printf("stamina : %d    ", player->stamina);
+        // printf("stamina : %d    ", player->stamina);
         break;
     case LEFT:
         player_check_collisions(player->pos.l, player->pos.c - 1);
-        printf("stamina : %d    ", player->stamina);
+        // printf("stamina : %d    ", player->stamina);
         break;
     default: break;
     }
@@ -112,7 +112,6 @@ void player_render(WINDOW *game_win) {
     // }
 
     mvwaddch(game_win, player->pos.l, player->pos.c, 'P' | COLOR_PAIR(FORMAT_COLOR_PLAYER));
-    
     // TODO:
     // Display stamina progress bar in bar_win => pass it in parameter of the function
 }

@@ -6,14 +6,6 @@
 #include "util.h"
 
 
-/**
- * Ncurses windows sizes settings.
-*/
-#define MAP_LINES 40
-#define MAP_COLS 80
-#define BAR_SIZE 16
-#define MENU_SIZE 16
-
 #define CENTER_L (MAP_LINES / 2)
 #define CENTER_C (MAP_COLS / 2)
 

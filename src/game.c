@@ -1,6 +1,5 @@
 #include "game.h"
 
-
 extern Game game;
 extern Player *player;
 extern Map *map;
@@ -24,6 +23,11 @@ void ncs_init_colors() {
     init_pair(FORMAT_COLOR_OBS, COLOR_RED, -1);
     init_pair(FORMAT_COLOR_FRUIT, COLOR_GREEN, -1);
     init_pair(FORMAT_COLOR_PLAYER, COLOR_CYAN, -1);
+
+    init_pair(FORMAT_COLOR_STM_HIGH, -1, COLOR_GREEN);
+    init_pair(FORMAT_COLOR_STM_MED, -1, COLOR_YELLOW);
+    init_pair(FORMAT_COLOR_STM_LOW, -1, COLOR_RED);
+    init_pair(FORMAT_COLOR_EMPTY, -1, -1);
 }
 
 void ncs_check_term_size() {
@@ -59,6 +63,12 @@ void ncs_create_windows() {
                             game.win_h/2 - MAP_LINES/2 - 1,
                             1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2
     );
+    game.stm_bar = subwin ( stdscr,
+                            STM_BAR_SIZE ,
+                            BAR_SIZE - 2 * STM_BAR_PAD_L,
+                            game.win_h/2 - (MAP_LINES/2 -  STM_BAR_PAD_T + 1),
+                            1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2 + STM_BAR_PAD_L
+    );
     game.help_win = subwin( stdscr,
                             MENU_SIZE + 1,
                             BAR_SIZE,
@@ -72,11 +82,13 @@ void ncs_refresh_windows() {
     // Render border for subwindows
     box(game.main_win, ACS_VLINE, ACS_HLINE);
     box(game.bar_win, ACS_VLINE, ACS_HLINE);
+    box(game.stm_bar, ACS_VLINE, ACS_HLINE);
     box(game.help_win, ACS_VLINE, ACS_HLINE);
     // Render all windows
     wrefresh(game.main_win);
     wrefresh(game.game_win);
     wrefresh(game.bar_win);
+    wrefresh(game.stm_bar);
     wrefresh(game.help_win);
 }
 
@@ -119,12 +131,16 @@ void game_inputs() {
 
 void game_update() {
     player_update();
+    stamina_update(game.bar_win);
+    if (player->stamina <= 0)
+        game_quit();
     // Maybe more
 }
 
 void game_render() {
     map_render(game.game_win);
     player_render(game.game_win);
+    stamina_bar_render(game.stm_bar);
     ncs_refresh_windows();
 }
 
