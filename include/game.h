@@ -5,6 +5,7 @@
 #include "common.h"
 #include "player.h"
 #include "map.h"
+#include "menu.h"
 
 
 /**
@@ -15,6 +16,7 @@ typedef struct Game {
     uint16_t win_w;
     uint16_t win_h;
     WINDOW *main_win;
+    WINDOW *menu_win;
     WINDOW *game_win;
     WINDOW *bar_win;
     WINDOW *help_win;

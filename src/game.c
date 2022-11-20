@@ -88,10 +88,13 @@ void ncs_quit() {
 void game_loop() {
     // Main game loop, how it's done for every game
     game_init();
-    while (!game.quit || !player->stamina) {
-        game_inputs();
-        game_update();
-        game_render();
+    int startmenu_choice = game_start_menu();
+    if(startmenu_choice==0){
+        while (!game.quit || !player->stamina) {
+            game_inputs();
+            game_update();
+            game_render();
+        }
     }
     game_quit();
 }
@@ -108,8 +111,6 @@ void game_init() {
     game.path = map_generate();
     // Create player
     player_init(map->level);
-    // First render of game
-    game_render();
 }
 
 void game_inputs() {
@@ -133,4 +134,58 @@ void game_quit() {
     map_free();
     stack_free(game.path);
     player_free();
+}
+
+int game_start_menu() {
+    int ch, i = 0;
+    char list[5][20] = { "Nouvelle partie", "Charger une partie", "Parametres", "Quitter",};
+    char item[40];
+    game.menu_win = subwin( stdscr,
+                            MAP_LINES + 2,
+                            MAP_COLS + BAR_SIZE + 2,
+                            game.win_h/2 - (MAP_LINES + 2)/2,
+                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2
+    );
+    box(game.menu_win, ACS_VLINE, ACS_HLINE);
+    for( i=0; i<4; i++ ) {
+        if( i == 0 ) {
+            wattron( game.menu_win, A_STANDOUT ); // highlights the first item.
+        }
+        else {
+            wattroff( game.menu_win, A_STANDOUT );
+        }
+        sprintf(item, "%s",  list[i]);
+        mvwprintw( game.menu_win, i+1, 2, "%s", item );
+    }
+
+    wrefresh( game.menu_win );
+    i = 0;
+    while(( ch = wgetch(game.menu_win)) != 'q'){ 
+        // right pad with spaces to make the items appear with even width.
+        sprintf(item, "%s",  list[i]); 
+        mvwprintw( game.menu_win, i+1, 2, "%s", item ); 
+        // use a variable to increment or decrement the value based on the input.
+        switch( ch ) {
+            case 'z':
+            i--;
+            if( i<0) {
+                i= 4;
+            }
+            break;
+            case 's':
+            i++;
+            if( i>4) {
+                i= 0;
+            }
+            break;
+        }
+        wattron( game.menu_win, A_STANDOUT );
+        sprintf(item, "%s",  list[i]);
+        mvwprintw( game.menu_win, i+1, 2, "%s", item);
+        wattroff( game.menu_win, A_STANDOUT );
+        wrefresh( game.menu_win );
+    }
+    return i;
+
+
 }
