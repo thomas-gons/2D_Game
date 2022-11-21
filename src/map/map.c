@@ -1,6 +1,7 @@
 #include "map.h"
 
 
+extern Game game;
 extern Map *map;
 
 void map_init(Level level) {
@@ -17,19 +18,19 @@ void map_init(Level level) {
     }
 }
 
-void map_render(WINDOW *game_win) {
+void map_render() {
     for (uint8_t l = 0; l < MAP_LINES; l++) {
         for (uint8_t c = 0; c < MAP_COLS; c++) {
             switch (map->map_grid[l][c].cell_type) {
             case ROAD:
-                mvwaddch(game_win, l, c,
+                mvwaddch(game.game_win, l, c,
                     ((map->map_grid[l][c].visited) ? '.' : ' ') | COLOR_PAIR(FORMAT_COLOR_PLAYER));
                 break;
             case OBSTACLE:
-                mvwaddch(game_win, l, c, '%' | COLOR_PAIR(FORMAT_COLOR_OBS));
+                mvwaddch(game.game_win, l, c, '%' | COLOR_PAIR(FORMAT_COLOR_OBS));
                 break;
             case FRUIT:
-                mvwaddch(game_win, l, c, '@' | COLOR_PAIR(FORMAT_COLOR_FRUIT));
+                mvwaddch(game.game_win, l, c, '@' | COLOR_PAIR(FORMAT_COLOR_FRUIT));
                 break;
             default: break;
             }
@@ -56,12 +57,12 @@ void map_display() {
     }
 }
 
-void map_render_path(WINDOW *game_win, Stack *path) {
+void map_render_path(Stack *path) {
     Node *tmp = path->head;
     for (; tmp; tmp = tmp->next) {
-        mvwaddch(game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(FORMAT_COLOR_PATH));
+        mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(FORMAT_COLOR_PATH));
     }
-    wrefresh(game_win);
+    wrefresh(game.game_win);
 }
 
 void map_free() {

@@ -5,6 +5,8 @@
 #include "common.h"
 
 
+/************************* STRUCTS *************************/
+
 /**
  * Postion in lines and columns.
 */
@@ -54,6 +56,8 @@ typedef struct Queue {
     unsigned nb_points;
 } Queue;
 
+
+/************************* FUNCTIONS *************************/
 
 /**
  * Initialize a stack.

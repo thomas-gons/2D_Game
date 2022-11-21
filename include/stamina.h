@@ -3,25 +3,30 @@
 
 
 #include "common.h"
+#include "structs.h"
 
+
+/************************* DEFINES *************************/
+
+/**
+ * Stamina section limits for the bar.
+*/
 #define STAMINA_HIGH 66.66
 #define STAMINA_MED 33.33
 #define STAMINA_LOW 0
 
 
-/**
- * 
-*/
-void stamina_init(WINDOW *bar_win);
+/************************* FUNCTIONS *************************/
 
 /**
- * 
+ * Update stamina bar value.
 */
-void stamina_update(WINDOW *bar_win);
+void stamina_update_val();
 
 /**
- * 
+ * Render stamina bar.
 */
-void stamina_bar_render(WINDOW *stm_bar);
+void stamina_bar_render();
+
 
 #endif

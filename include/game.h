@@ -3,27 +3,13 @@
 
 
 #include "common.h"
+#include "structs.h"
+#include "map.h"
 #include "player.h"
 #include "stamina.h"
-#include "map.h"
 
 
-/**
- * Game structure, handle game resources.
-*/
-typedef struct Game {
-    bool quit;
-    uint16_t win_w;
-    uint16_t win_h;
-    WINDOW *main_win;
-    WINDOW *game_win;
-    WINDOW *bar_win;
-    WINDOW *stm_bar;
-    WINDOW *help_win;
-    Stack *path;
-    time_t date;
-} Game;
-
+/************************* FUNCTIONS *************************/
 
 /**
  * Initialize ncurses library. 
@@ -56,7 +42,12 @@ void ncs_refresh_windows();
 void ncs_quit();
 
 /**
- * Main game loop.
+ * Main application loop.
+*/
+void main_loop();
+
+/**
+ * Game loop that handle the game logic.
 */
 void game_loop();
 

@@ -3,9 +3,11 @@
 
 
 #include "common.h"
+#include "structs.h"
 #include "util.h"
 #include "map.h"
 
+/************************* DEFINES *************************/
 
 /**
  * Key settings.
@@ -24,32 +26,12 @@
 #define STAMINA_GAIN 10
 
 /**
- * Movements limit before losing stamina
+ * Movements limit before losing stamina.
 */
 #define MV_LIMIT_COUNT 5
 
-/**
- * Player movements.
-*/
-typedef enum Move {
-    NONE = -1,
-    DOWN,
-    LEFT,
-    UP,
-    RIGHT
-} Move;
 
-/**
- * Player structure, handle player data.
-*/
-typedef struct Player {
-    Position pos;
-    Move move;
-    uint8_t nb_move;
-    int8_t stamina;
-    bool on_obstacle;
-} Player;
-
+/************************* FUNCTIONS *************************/
 
 /**
  * Initialize the player.
@@ -77,9 +59,8 @@ void player_check_collisions(uint8_t line, uint8_t col);
 
 /**
  * Render player in terminal with ncurses.
- * \param game_win ncurses game window
 */
-void player_render(WINDOW *game_win);
+void player_render();
 
 /**
  * Free allocated memory for player.

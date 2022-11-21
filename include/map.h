@@ -3,9 +3,15 @@
 
 
 #include "common.h"
+#include "structs.h"
 #include "util.h"
 
 
+/************************* DEFINES *************************/
+
+/**
+ * Distance values settings.
+*/
 #define CENTER_L (MAP_LINES / 2)
 #define CENTER_C (MAP_COLS / 2)
 
@@ -45,7 +51,7 @@
 /**
  * Check if position is within the map range.
 */
-#define IS_OUT_OF_MAP(line, col) (             \
+#define IS_OUT_OF_MAP(line, col) (                  \
     (line >= 0 && line < MAP_LINES) &&              \
     (col >= 0 && col < MAP_COLS)) ? true : false    \
 
@@ -56,43 +62,7 @@
     map->map_grid[line][col].cell_type == OBSTACLE) ? true : false  \
 
 
-/**
- * Game difficulty.
-*/
-typedef enum Level {
-    EASY = 1,
-    MEDIUM,
-    HARD
-} Level ;
-
-/**
- * All types of cells.
-*/
-typedef enum Cell_type {
-    EMPTY = -1,
-    ROAD,
-    FRUIT,
-    NO_FRUIT,
-    OBSTACLE,
-    FLAG
-} Cell_type;
-
-/**
- * Cell structure.
-*/
-typedef struct Cell {
-    Cell_type cell_type;
-    bool visited;
-} Cell;
-
-/**
- * Map structure, matrix of Cell structures.
-*/
-typedef struct Map {
-    Level level;
-    Cell **map_grid;
-} Map;
-
+/************************* FUNCTIONS *************************/
 
 /**
  * Initialize a map based on difficulty.
@@ -102,9 +72,8 @@ void map_init(Level level);
 
 /**
  * Render map in terminal with ncurses.
- * \param game_win ncurses game window
 */
-void map_render(WINDOW *game_win);
+void map_render();
 
 /**
  * Randomly fill the map with obstacles and fruits.
@@ -123,10 +92,9 @@ void map_display();
 
 /**
  * Display map in terminal with stdout, highlight the path and obstacles.
- * \param game_win ncurses game window
  * \param path valid path as a stack of cells
 */
-void map_render_path(WINDOW *game_win, Stack *path);
+void map_render_path(Stack *path);
 
 /**
  * Free allocated memory of map.

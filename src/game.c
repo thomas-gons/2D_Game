@@ -1,8 +1,9 @@
 #include "game.h"
 
+
 extern Game game;
-extern Player *player;
 extern Map *map;
+extern Player *player;
 
 void ncs_init() {
     initscr();
@@ -36,8 +37,9 @@ void ncs_check_term_size() {
     if ((game.win_w < MAP_COLS + BAR_SIZE + 2) || (game.win_h < MAP_LINES + 2)) {
         ncs_quit();
         fprintf(stderr,
-            "[ERROR] > Window is set to %d rows * %d cols.\n\t> Please enlarge it %d rows * %d cols minimum.\n",
-            game.win_h, game.win_w, (MAP_LINES + 2), (MAP_COLS + BAR_SIZE + 2));
+                "[ERROR] > Window is set to %d rows * %d cols.\n\t> Please enlarge it %d rows * %d cols minimum.\n",
+                game.win_h, game.win_w, (MAP_LINES + 2), (MAP_COLS + BAR_SIZE + 2)
+        );
         exit(2);
     }
 }
@@ -70,7 +72,7 @@ void ncs_create_windows() {
                             1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2 + STM_BAR_PAD_L
     );
     game.help_win = subwin( stdscr,
-                            MENU_SIZE + 1,
+                            HELP_SIZE + 1,
                             BAR_SIZE,
                             game.win_h/2 + MAP_LINES/2 - MENU_SIZE,
                             1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2
@@ -97,19 +99,17 @@ void ncs_quit() {
     delwin(stdscr);
 }
 
-void game_loop() {
-    // Main game loop, how it's done for every game
+void main_loop() {
     game_init();
     while (!game.quit) {
-        game_inputs();
-        game_update();
-        game_render();
+        game_loop();
     }
     game_quit();
 }
 
 void game_init() {
     game.quit = false;
+    game.gameover = false;
     // Initialize ncurses game resources
     ncs_init();
     ncs_init_colors();
@@ -118,11 +118,19 @@ void game_init() {
     // Generate random map
     map_init(EASY);
     game.path = map_generate();
-    // Create player
+    // Initialize player entity
     player_init(map->level);
     // First render of game
-    stamina_init(game.bar_win);
     game_render();
+}
+
+void game_loop() {
+    while (!game.gameover) {
+        game_inputs();
+        game_update();
+        game_render();
+    }
+    // Game over screen + menu
 }
 
 void game_inputs() {
@@ -132,17 +140,19 @@ void game_inputs() {
 
 void game_update() {
     player_update();
-    stamina_update(game.bar_win);
-    if (player->stamina <= 0)
-        game_quit();
     // Maybe more
 }
 
 void game_render() {
-    map_render(game.game_win);
-    player_render(game.game_win);
-    stamina_bar_render(game.stm_bar);
+    map_render();
+    player_render();
+    stamina_bar_render();
     ncs_refresh_windows();
+    if (player->stamina <= 0) {
+        game.gameover = true;
+        // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
+        game.quit = true;
+    }
 }
 
 void game_quit() {

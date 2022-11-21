@@ -65,7 +65,7 @@ setup:
 	fi
 
 # Release build
-release: setup $(REL_TARGET)
+release: clean setup $(REL_TARGET)
 
 # Link for Release target.
 $(REL_TARGET): $(REL_OBJS)
@@ -83,7 +83,7 @@ $(DIR_OBJ_REL)/%.o: $(DIR_SRC)/%.cpp
 	@$(CXX) $(CXXFLAGS) $(REL_FLAGS) -c $< -o $@
 
 # Debug build.
-debug: setup $(DBG_TARGET)
+debug: clean setup $(DBG_TARGET)
 
 # Link for Debug mode.
 $(DBG_TARGET): $(DBG_OBJS)

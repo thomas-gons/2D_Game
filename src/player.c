@@ -2,13 +2,14 @@
 #include "map.h"
 
 
-extern Player *player;
+extern Game game;
 extern Map *map;
+extern Player *player;
 
 void player_init(Level level) {
     player = calloc(1, sizeof *player);
     if (!player) {
-        fprintf(stderr, "[ERROR] > calloc, in func player_init\n");
+        fprintf(stderr,"[ERROR] > calloc, in func player_init\n");
         exit(1);
     }
     player->pos = (Position) {.l=0, .c=0};
@@ -65,19 +66,15 @@ void player_update() {
     switch (player->move) {
     case DOWN:
         player_check_collisions(player->pos.l + 1, player->pos.c);
-        // printf("stamina : %d    ", player->stamina);
         break;
     case RIGHT:
         player_check_collisions(player->pos.l, player->pos.c + 1);
-        // printf("stamina : %d    ", player->stamina);
         break;
     case UP:
         player_check_collisions(player->pos.l - 1, player->pos.c);
-        // printf("stamina : %d    ", player->stamina);
         break;
     case LEFT:
         player_check_collisions(player->pos.l, player->pos.c - 1);
-        // printf("stamina : %d    ", player->stamina);
         break;
     default: break;
     }
@@ -91,7 +88,7 @@ void player_check_collisions(uint8_t line, uint8_t col) {
             player->on_obstacle = true;
             player->stamina -= STAMINA_LOSS_OBS;
         } else {
-            // Update position in map
+            // Update player position in map
             player->pos.l = line;
             player->pos.c = col;
             map->map_grid[line][col].visited = true;
@@ -105,17 +102,12 @@ void player_check_collisions(uint8_t line, uint8_t col) {
     }
 }
 
-void player_render(WINDOW *game_win) {
-    // if (player->on_obstacle) {
-    // make two frame =>   1) player move to obstacle, color change to indicate there is an error
-    //                     2) player move back to prev position, bakc to normal color
-    // }
-
-    mvwaddch(game_win, player->pos.l, player->pos.c, 'P' | COLOR_PAIR(FORMAT_COLOR_PLAYER));
-    // TODO:
-    // Display stamina progress bar in bar_win => pass it in parameter of the function
+void player_render() {
+    mvwaddch(game.game_win, player->pos.l, player->pos.c, 'P' | COLOR_PAIR(FORMAT_COLOR_PLAYER));
+    // Maybe more
 }
 
 void player_free() {
+    // Free stack of player positions
     free(player);
 }

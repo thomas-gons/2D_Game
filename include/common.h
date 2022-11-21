@@ -13,6 +13,8 @@
 #include <unistd.h>
 
 
+/************************* DEFINES *************************/
+
 /**
  * Ncurses windows sizes settings.
 */
@@ -23,7 +25,7 @@
 #define STM_BAR_PAD_T 2
 #define STM_BAR_PAD_B 6
 #define STM_BAR_PAD_L 5
-#define MENU_SIZE 16
+#define HELP_SIZE 16
 
 /**
  * Colors for ncurses map output.
