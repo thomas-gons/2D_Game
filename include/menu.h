@@ -5,6 +5,7 @@
 
 
 int game_start_menu();
+int ncs_create_menu_template();
 
 #endif
 

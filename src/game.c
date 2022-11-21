@@ -46,6 +46,7 @@ void ncs_create_windows() {
                             game.win_h/2 - (MAP_LINES + 2)/2,
                             game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2
     );
+    
     // Create all sub windows
     game.game_win = subwin( stdscr,
                             MAP_LINES,
@@ -138,9 +139,12 @@ void game_quit() {
 }
 
 int game_start_menu() {
+    char *list[]= { "Nouvelle partie", "Charger une partie", "Quitter",};
+    ncs_create_menu_template(list,3);
+}
+
+int ncs_create_menu_template(char *list[], int parameter_number) {
     int ch, i = 0;
-    char list[5][20] = { "Nouvelle partie", "Charger une partie", "Parametres", "Quitter",};
-    char item[40];
     game.menu_win = subwin( stdscr,
                             MAP_LINES + 2,
                             MAP_COLS + BAR_SIZE + 2,
@@ -149,46 +153,42 @@ int game_start_menu() {
     );
     keypad(game.menu_win, TRUE);
     box(game.menu_win, ACS_VLINE, ACS_HLINE);
-    for( i=0; i<4; i++ ) {
+    for( i=0; i<parameter_number; i++ ) {
         if( i == 0 ) {
-            wattron( game.menu_win, A_STANDOUT ); // highlights the first item.
+            wattron( game.menu_win, A_STANDOUT ); // highlights the first list[i].
         }
         else {
             wattroff( game.menu_win, A_STANDOUT );
         }
-        sprintf(item, "%s",  list[i]);
-        mvwprintw( game.menu_win, i+1, 2, "%s", item );
+        mvwprintw( game.menu_win, i+1, 2, "%s", list[i] );
     }
 
     wrefresh( game.menu_win );
     i = 0;
     while(( ch = wgetch(game.menu_win)) != 10){ 
-        // right pad with spaces to make the items appear with even width.
-        sprintf(item, "%s",  list[i]); 
-        mvwprintw( game.menu_win, i+1, 2, "%s", item ); 
+        // right pad with spaces to make the list[i]s appear with even width. 
+        mvwprintw( game.menu_win, i+1, 2, "%s", list[i] ); 
         // use a variable to increment or decrement the value based on the input.
         switch( ch ) {
             case KEY_UP:
             i--;
             if( i<0) {
-                i= 4;
+                i= parameter_number-1;
             }
             break;
             case KEY_DOWN:
             i++;
-            if( i>4) {
+            if( i>=parameter_number) {
                 i= 0;
             }
             break;
         }
         wattron( game.menu_win, A_STANDOUT );
-        sprintf(item, "%s",  list[i]);
-        mvwprintw( game.menu_win, i+1, 2, "%s", item);
+        mvwprintw( game.menu_win, i+1, 2, "%s", list[i]);
         wattroff( game.menu_win, A_STANDOUT );
         wrefresh( game.menu_win );
     }
     delwin(game.menu_win);
     return i;
-
-
 }
+
