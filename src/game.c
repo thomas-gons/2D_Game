@@ -90,6 +90,7 @@ void game_loop() {
     game_init();
     int startmenu_choice = game_start_menu();
     if(startmenu_choice==0){
+        game_render();
         while (!game.quit || !player->stamina) {
             game_inputs();
             game_update();
@@ -146,6 +147,7 @@ int game_start_menu() {
                             game.win_h/2 - (MAP_LINES + 2)/2,
                             game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2
     );
+    keypad(game.menu_win, TRUE);
     box(game.menu_win, ACS_VLINE, ACS_HLINE);
     for( i=0; i<4; i++ ) {
         if( i == 0 ) {
@@ -160,19 +162,19 @@ int game_start_menu() {
 
     wrefresh( game.menu_win );
     i = 0;
-    while(( ch = wgetch(game.menu_win)) != 'q'){ 
+    while(( ch = wgetch(game.menu_win)) != 10){ 
         // right pad with spaces to make the items appear with even width.
         sprintf(item, "%s",  list[i]); 
         mvwprintw( game.menu_win, i+1, 2, "%s", item ); 
         // use a variable to increment or decrement the value based on the input.
         switch( ch ) {
-            case 'z':
+            case KEY_UP:
             i--;
             if( i<0) {
                 i= 4;
             }
             break;
-            case 's':
+            case KEY_DOWN:
             i++;
             if( i>4) {
                 i= 0;
@@ -185,6 +187,7 @@ int game_start_menu() {
         wattroff( game.menu_win, A_STANDOUT );
         wrefresh( game.menu_win );
     }
+    delwin(game.menu_win);
     return i;
 
 
