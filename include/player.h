@@ -46,7 +46,7 @@ typedef struct Player {
     Position pos;
     Move move;
     uint8_t nb_move;
-    uint8_t stamina;
+    int8_t stamina;
     bool on_obstacle;
 } Player;
 

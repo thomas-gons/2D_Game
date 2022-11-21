@@ -8,6 +8,12 @@
 #define STAMINA_MED 33.33
 #define STAMINA_LOW 0
 
+
+/**
+ * 
+*/
+void stamina_init(WINDOW *bar_win);
+
 /**
  * 
 */

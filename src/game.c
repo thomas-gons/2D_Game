@@ -100,7 +100,7 @@ void ncs_quit() {
 void game_loop() {
     // Main game loop, how it's done for every game
     game_init();
-    while (!game.quit || !player->stamina) {
+    while (!game.quit) {
         game_inputs();
         game_update();
         game_render();
@@ -121,6 +121,7 @@ void game_init() {
     // Create player
     player_init(map->level);
     // First render of game
+    stamina_init(game.bar_win);
     game_render();
 }
 

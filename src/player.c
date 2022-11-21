@@ -99,7 +99,7 @@ void player_check_collisions(uint8_t line, uint8_t col) {
         }
         // Player loses stamina every MV_LIMIT_COUNT steps
         if ((player->nb_move >= MV_LIMIT_COUNT) && (player->on_obstacle == false)) {
-            player->stamina -= STAMINA_LOSS*(player->nb_move);
+            player->stamina -= STAMINA_LOSS;
             player->nb_move = 0;
         }
     }

@@ -6,22 +6,14 @@
 extern Player *player;
 extern Map *map;
 
+void stamina_init(WINDOW *bar_win){
+    stamina_update(bar_win);
+}
 
 void stamina_update(WINDOW *bar_win) {
-    char stamina[3];
-    // convert stamina amount into string
-    sprintf(stamina, "%d", player->stamina); 
-    if (player->stamina < 10) {
-        stamina[2] = stamina[0];
-        stamina[1] = ' ';
-        stamina[0] = ' ';
-    }
-    else if (player->stamina < 100) {
-        stamina[2] = stamina[1];
-        stamina[1] = stamina[0];
-        stamina[0] = ' ';
-    }
-    mvwaddstr(bar_win, STM_BAR_SIZE + STM_BAR_PAD_T, STM_BAR_PAD_L + 1, stamina);
+    wclear(bar_win);
+    mvwprintw(bar_win, STM_BAR_SIZE + STM_BAR_PAD_T, STM_BAR_PAD_L + 1,
+        (player->stamina == 100) ? "%d" : (player->stamina >= 10) ? " %d" : " %d ", player->stamina);
 }
 
 void stamina_bar_render(WINDOW *stm_bar) {
