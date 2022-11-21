@@ -41,9 +41,8 @@ void player_init(Level level);
 
 /**
  * Handle inputs using ncurses library.
- * \param quit game quit indicator
 */
-void player_inputs(bool *quit);
+void player_inputs();
 
 /**
  * Update player position based on inputs.

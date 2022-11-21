@@ -8,11 +8,10 @@ void stamina_update_val() {
     if (player->stamina <= 0) {
         player->stamina = 0;
     }
-    wclear(game.bar_win);
     mvwprintw(  game.bar_win,
                 STM_BAR_SIZE + STM_BAR_PAD_T,
                 STM_BAR_PAD_L + 1,
-                (player->stamina == 100) ? "%d" : ((player->stamina >= 10) ? " %d" : " %d "), player->stamina);
+                (player->stamina == 100) ? "%d" : ((player->stamina >= 10) ? " %d" : "  %d"), player->stamina);
 }
 
 void stamina_bar_render() {

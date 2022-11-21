@@ -12,8 +12,6 @@ void ncs_init() {
     curs_set(false);
     setlocale(LC_ALL, "");
     keypad(stdscr, TRUE);
-
-    refresh();
 }
 
 void ncs_init_colors() {
@@ -60,7 +58,7 @@ void ncs_create_windows() {
                             game.win_w/2 - (MAP_COLS + BAR_SIZE)/2
     );
     game.bar_win = subwin(  stdscr,
-                            MAP_LINES - MENU_SIZE + 2,
+                            MAP_LINES - HELP_SIZE + 2,
                             BAR_SIZE,
                             game.win_h/2 - MAP_LINES/2 - 1,
                             1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2
@@ -74,7 +72,7 @@ void ncs_create_windows() {
     game.help_win = subwin( stdscr,
                             HELP_SIZE + 1,
                             BAR_SIZE,
-                            game.win_h/2 + MAP_LINES/2 - MENU_SIZE,
+                            game.win_h/2 + MAP_LINES/2 - HELP_SIZE,
                             1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2
     );
 }
@@ -87,11 +85,10 @@ void ncs_refresh_windows() {
     box(game.stm_bar, ACS_VLINE, ACS_HLINE);
     box(game.help_win, ACS_VLINE, ACS_HLINE);
     // Render all windows
-    wrefresh(game.main_win);
     wrefresh(game.game_win);
     wrefresh(game.bar_win);
     wrefresh(game.stm_bar);
-    wrefresh(game.help_win);
+    // wrefresh(game.help_win);
 }
 
 void ncs_quit() {
@@ -122,6 +119,9 @@ void game_init() {
     player_init(map->level);
     // First render of game
     game_render();
+
+    // TEMP /!\ To move in another encapsulating function
+    mvwprintw(game.bar_win, 1, STM_BAR_PAD_L + 1, "STM");
 }
 
 void game_loop() {
@@ -129,12 +129,15 @@ void game_loop() {
         game_inputs();
         game_update();
         game_render();
+        usleep(16000);
     }
     // Game over screen + menu
+    // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
+    usleep(500000);
 }
 
 void game_inputs() {
-    player_inputs(&game.quit);
+    player_inputs();
     // Maybe more
 }
 
@@ -150,6 +153,7 @@ void game_render() {
     ncs_refresh_windows();
     if (player->stamina <= 0) {
         game.gameover = true;
+        
         // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
         game.quit = true;
     }

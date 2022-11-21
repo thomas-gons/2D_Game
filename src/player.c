@@ -31,12 +31,16 @@ void player_init(Level level) {
     }
 }
 
-void player_inputs(bool *quit) {
+void player_inputs() {
     player->on_obstacle = false;
     player->move = NONE;
     switch (getch()) {
     case KEY_ESC:
-        *quit = true;
+
+        // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
+        game.gameover = true;
+        game.quit = true;
+        
         break;
     case KEY_DOWN:
     case 'S':
