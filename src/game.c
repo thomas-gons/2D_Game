@@ -89,19 +89,13 @@ void ncs_quit() {
 void game_loop() {
     // Main game loop, how it's done for every game
     game_init();
-    int startmenu_choice = game_start_menu();
-    if(startmenu_choice==0){
+    game_render();
+    while (!game.quit || !player->stamina) {
+        game_inputs();
+        game_update();
         game_render();
-        while (!game.quit || !player->stamina) {
-            game_inputs();
-            game_update();
-            game_render();
-        }
     }
-    if(startmenu_choice==1) {
-        game_quit();
-    }
-    
+    game_quit();
 }
 
 void game_init() {
@@ -151,7 +145,7 @@ int ncs_create_menu_template(char *list[], int parameter_number) {
     int ch, i = 0;
     game.title_win = subwin( stdscr,
                             10,
-                            80,
+                            130,
                             game.win_h/2 - (MAP_LINES + 2)/2+5,
                             game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2+13
     );
@@ -185,6 +179,7 @@ int ncs_create_menu_template(char *list[], int parameter_number) {
     i = 0;
     while(( ch = wgetch(game.menu_win)) != 10){ 
         // right pad with spaces to make the list[i]s appear with even width. 
+        system("aplay -q assets/sfx/menu.wav &");
         mvwprintw( game.menu_win, i+1, 2, "%s", list[i] ); 
         // use a variable to increment or decrement the value based on the input.
         switch( ch ) {
@@ -208,6 +203,7 @@ int ncs_create_menu_template(char *list[], int parameter_number) {
     }
     delwin(game.title_win);
     delwin(game.menu_win);
+    system("aplay -q assets/sfx/dry-fart.wav &");
     return i;
 }
 
