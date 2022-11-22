@@ -98,7 +98,10 @@ void game_loop() {
             game_render();
         }
     }
-    game_quit();
+    if(startmenu_choice==1) {
+        game_quit();
+    }
+    
 }
 
 void game_init() {
@@ -139,17 +142,32 @@ void game_quit() {
 }
 
 int game_start_menu() {
-    char *list[]= { "Nouvelle partie", "Charger une partie", "Quitter",};
-    ncs_create_menu_template(list,3);
+    char *first_menu_list[]= { "Nouvelle partie", "Charger une partie", "Quitter",};
+    int choice = ncs_create_menu_template(first_menu_list,3);
+    return choice;
 }
 
 int ncs_create_menu_template(char *list[], int parameter_number) {
     int ch, i = 0;
+    game.title_win = subwin( stdscr,
+                            10,
+                            80,
+                            game.win_h/2 - (MAP_LINES + 2)/2+5,
+                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2+13
+    );
+    wattron( game.title_win, A_BOLD );
+    wattron( game.title_win, A_BLINK );
+    mvwprintw( game.title_win,0,0,"  ______  _______  _______  _____    _____    _______  _______  ___ ___  ");
+    mvwprintw( game.title_win,1,0," |      ||   _   ||_     _||     |_ |     |_ |       ||   |   ||   |   | ");
+    mvwprintw( game.title_win,2,0," |   ---||       | _|   |_ |       ||       ||   -   ||   |   ||-     -| ");
+    mvwprintw( game.title_win,3,0," |______||___|___||_______||_______||_______||_______||_______||___|___| "); 
+    mvwprintw( game.title_win,4,0,"                                                                         ");
+    wrefresh( game.title_win );
     game.menu_win = subwin( stdscr,
-                            MAP_LINES + 2,
-                            MAP_COLS + BAR_SIZE + 2,
-                            game.win_h/2 - (MAP_LINES + 2)/2,
-                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2
+                            parameter_number+2,
+                            (MAP_COLS + BAR_SIZE + 2)/2,
+                            game.win_h/2 - (MAP_LINES + 2)/2+15,
+                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2+25
     );
     keypad(game.menu_win, TRUE);
     box(game.menu_win, ACS_VLINE, ACS_HLINE);
@@ -188,6 +206,7 @@ int ncs_create_menu_template(char *list[], int parameter_number) {
         wattroff( game.menu_win, A_STANDOUT );
         wrefresh( game.menu_win );
     }
+    delwin(game.title_win);
     delwin(game.menu_win);
     return i;
 }

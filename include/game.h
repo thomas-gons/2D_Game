@@ -17,6 +17,7 @@ typedef struct Game {
     uint16_t win_h;
     WINDOW *main_win;
     WINDOW *menu_win;
+    WINDOW *title_win;
     WINDOW *game_win;
     WINDOW *bar_win;
     WINDOW *help_win;
