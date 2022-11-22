@@ -121,7 +121,7 @@ void game_init() {
     game_render();
 
     // TEMP /!\ To move in another encapsulating function
-    mvwprintw(game.bar_win, 1, STM_BAR_PAD_L + 1, "STM");
+    // mvwprintw(game.bar_win, 1, STM_BAR_PAD_L + 1, "STM");
 }
 
 void game_loop() {

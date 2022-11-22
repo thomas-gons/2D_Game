@@ -84,8 +84,9 @@ typedef enum Move {
 typedef struct Player {
     Position pos;
     Move move;
-    uint8_t nb_move;
+    //uint8_t nb_move;
     int8_t stamina;
+    uint8_t fruit_stack;
     bool on_obstacle;
 } Player;
 

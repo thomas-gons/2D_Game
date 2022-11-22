@@ -29,9 +29,16 @@
 #define STAMINA_MIN 0
 
 /**
+ * Fruit stack settings
+*/
+#define FRUIT_STACK 0
+#define FRUIT_STACK_MIN 0
+#define FRUIT_STACK_MAX 2
+
+/**
  * Movements limit before losing stamina.
 */
-#define MV_LIMIT_COUNT 5
+//#define MV_LIMIT_COUNT 5
 
 
 /************************* FUNCTIONS *************************/
@@ -58,6 +65,16 @@ void player_update();
  * \param column column of cell to be checked
 */
 void player_check_collisions(uint8_t line, uint8_t col);
+
+/**
+ * player stack fruit
+*/
+void player_stack_fruit(uint8_t line, uint8_t col);
+
+/**
+ * player stack fruit
+*/
+void player_eat_fruit();
 
 /**
  * Render player in terminal with ncurses.
