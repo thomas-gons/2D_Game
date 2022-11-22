@@ -25,6 +25,9 @@
 #define STAMINA_LOSS_OBS 10
 #define STAMINA_GAIN 10
 
+#define STAMINA_MAX 100
+#define STAMINA_MIN 0
+
 /**
  * Movements limit before losing stamina.
 */

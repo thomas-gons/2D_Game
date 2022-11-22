@@ -151,7 +151,7 @@ void game_render() {
     player_render();
     stamina_bar_render();
     ncs_refresh_windows();
-    if (player->stamina <= 0) {
+    if (player->stamina <= STAMINA_MIN) {
         game.gameover = true;
         
         // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...

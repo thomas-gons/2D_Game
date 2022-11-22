@@ -32,6 +32,9 @@ void map_render() {
             case FRUIT:
                 mvwaddch(game.game_win, l, c, '@' | COLOR_PAIR(FORMAT_COLOR_FRUIT));
                 break;
+            case NO_FRUIT:
+                mvwaddch(game.game_win, l, c, '.' | COLOR_PAIR(FORMAT_COLOR_PLAYER));
+                break;
             default: break;
             }
         }

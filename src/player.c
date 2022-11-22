@@ -103,8 +103,18 @@ void player_check_collisions(uint8_t line, uint8_t col) {
             player->stamina -= STAMINA_LOSS;
             player->nb_move = 0;
         }
+        
+        // If player is on a fruit, he gaign stamina
+        if (IS_FRUIT_CELL(line, col)) {
+            player->stamina += STAMINA_GAIN;
+            if (player->stamina > 100) {
+                player->stamina = STAMINA_MAX;
+            }
+            map->map_grid[line][col].cell_type = NO_FRUIT;
+        }
     }
 }
+
 
 void player_render() {
     mvwaddch(game.game_win, player->pos.l, player->pos.c, 'P' | COLOR_PAIR(FORMAT_COLOR_PLAYER));
