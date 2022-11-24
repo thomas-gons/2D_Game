@@ -138,24 +138,29 @@ void game_quit() {
 int game_start_menu() {
     char *first_menu_list[]= { "Nouvelle partie", "Charger une partie", "Quitter",};
     int choice = ncs_create_menu_template(first_menu_list,3);
+    if(choice == 0){
+        system("aplay -q assets/sfx/amougus.wav &");
+    }
+    if(choice == 2){
+        system("aplay -q assets/sfx/dry-fart.wav &");
+    }
     return choice;
 }
 
 int ncs_create_menu_template(char *list[], int parameter_number) {
     int ch, i = 0;
     game.title_win = subwin( stdscr,
-                            10,
-                            130,
-                            game.win_h/2 - (MAP_LINES + 2)/2+5,
+                            7,
+                            75,
+                            game.win_h/2 - (MAP_LINES + 2)/2+6,
                             game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2+13
     );
+    box(game.title_win, ACS_VLINE, ACS_HLINE);
     wattron( game.title_win, A_BOLD );
-    wattron( game.title_win, A_BLINK );
-    mvwprintw( game.title_win,0,0,"  ______  _______  _______  _____    _____    _______  _______  ___ ___  ");
-    mvwprintw( game.title_win,1,0," |      ||   _   ||_     _||     |_ |     |_ |       ||   |   ||   |   | ");
-    mvwprintw( game.title_win,2,0," |   ---||       | _|   |_ |       ||       ||   -   ||   |   ||-     -| ");
-    mvwprintw( game.title_win,3,0," |______||___|___||_______||_______||_______||_______||_______||___|___| "); 
-    mvwprintw( game.title_win,4,0,"                                                                         ");
+    mvwprintw( game.title_win,1,1,"  ______  _______  _______  _____    _____    _______  _______  ___ ___  ");
+    mvwprintw( game.title_win,2,1," |      ||   _   ||_     _||     |_ |     |_ |       ||   |   ||   |   | ");
+    mvwprintw( game.title_win,3,1," |   ---||       | _|   |_ |       ||       ||   -   ||   |   ||-     -| ");
+    mvwprintw( game.title_win,4,1," |______||___|___||_______||_______||_______||_______||_______||___|___| "); 
     wrefresh( game.title_win );
     game.menu_win = subwin( stdscr,
                             parameter_number+2,
@@ -165,6 +170,7 @@ int ncs_create_menu_template(char *list[], int parameter_number) {
     );
     keypad(game.menu_win, TRUE);
     box(game.menu_win, ACS_VLINE, ACS_HLINE);
+    
     for( i=0; i<parameter_number; i++ ) {
         if( i == 0 ) {
             wattron( game.menu_win, A_STANDOUT ); // highlights the first list[i].
@@ -201,9 +207,10 @@ int ncs_create_menu_template(char *list[], int parameter_number) {
         wattroff( game.menu_win, A_STANDOUT );
         wrefresh( game.menu_win );
     }
+    wattroff( game.title_win, A_BOLD );
+    wclear(game.title_win);
     delwin(game.title_win);
     delwin(game.menu_win);
-    system("aplay -q assets/sfx/dry-fart.wav &");
     return i;
 }
 
