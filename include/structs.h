@@ -19,6 +19,7 @@ typedef struct Game {
     WINDOW *game_win;
     WINDOW *bar_win;
     WINDOW *stm_bar;
+    WINDOW *fruit_win;
     WINDOW *help_win;
     Stack *path;
     time_t date;

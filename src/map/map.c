@@ -24,21 +24,22 @@ void map_render() {
             switch (map->map_grid[l][c].cell_type) {
             case ROAD:
                 mvwaddch(game.game_win, l, c,
-                    ((map->map_grid[l][c].visited) ? '.' : ' ') | COLOR_PAIR(FORMAT_COLOR_PLAYER));
+                    ((map->map_grid[l][c].visited) ? '.' : ' ') | COLOR_PAIR(FORMAT_COLOR_CYAN));
                 break;
             case OBSTACLE:
-                mvwaddch(game.game_win, l, c, '%' | COLOR_PAIR(FORMAT_COLOR_OBS));
+                mvwaddch(game.game_win, l, c, '%' | COLOR_PAIR(FORMAT_COLOR_RED));
                 break;
             case FRUIT:
-                mvwaddch(game.game_win, l, c, '@' | COLOR_PAIR(FORMAT_COLOR_FRUIT));
+                mvwaddch(game.game_win, l, c, '@' | COLOR_PAIR(FORMAT_COLOR_GREEN));
                 break;
             case NO_FRUIT:
-                mvwaddch(game.game_win, l, c, '.' | COLOR_PAIR(FORMAT_COLOR_PLAYER));
+                mvwaddch(game.game_win, l, c, ',' | COLOR_PAIR(FORMAT_COLOR_YELLOW));
                 break;
             default: break;
             }
         }
     }
+    mvwaddch(game.game_win, MAP_LINES - 1, MAP_COLS - 1, '#' | COLOR_PAIR(FORMAT_COLOR_MAGENTA));
 }
 
 void map_display() {
@@ -63,7 +64,7 @@ void map_display() {
 void map_render_path(Stack *path) {
     Node *tmp = path->head;
     for (; tmp; tmp = tmp->next) {
-        mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(FORMAT_COLOR_PATH));
+        mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(FORMAT_COLOR_CYAN));
     }
     wrefresh(game.game_win);
 }

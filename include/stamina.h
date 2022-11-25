@@ -11,9 +11,9 @@
 /**
  * Stamina section limits for the bar.
 */
-#define STAMINA_HIGH 66.66
-#define STAMINA_MED 33.33
-#define STAMINA_LOW 0
+#define STAMINA_HIGH    66.66
+#define STAMINA_MED     33.33
+#define STAMINA_LOW     0
 
 
 /************************* FUNCTIONS *************************/
@@ -27,6 +27,16 @@ void stamina_update_val();
  * Render stamina bar.
 */
 void stamina_bar_render();
+
+/**
+ * Render fruits stack.
+*/
+void stamina_fruit_stack_render();
+
+/**
+ * Render stamina ncurses window.
+*/
+void stamina_render();
 
 
 #endif

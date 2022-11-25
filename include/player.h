@@ -7,38 +7,28 @@
 #include "util.h"
 #include "map.h"
 
-/************************* DEFINES *************************/
 
-/**
- * Key settings.
-*/
-#define KEY_ESC 27
+/************************* DEFINES *************************/
 
 /**
  * Stamina settings.
 */
-#define STAMINA_EASY 100
-#define STAMINA_MEDIUM 70
-#define STAMINA_HARD 50
+#define STAMINA_EASY    100
+#define STAMINA_MEDIUM  70
+#define STAMINA_HARD    50
 
-#define STAMINA_LOSS 1
+#define STAMINA_LOSS    1
 #define STAMINA_LOSS_OBS 10
-#define STAMINA_GAIN 10
+#define STAMINA_GAIN    10
 
-#define STAMINA_MAX 100
-#define STAMINA_MIN 0
+#define STAMINA_MAX     100
+#define STAMINA_MIN     0
 
 /**
  * Fruit stack settings
 */
-#define FRUIT_STACK 0
 #define FRUIT_STACK_MIN 0
 #define FRUIT_STACK_MAX 2
-
-/**
- * Movements limit before losing stamina.
-*/
-//#define MV_LIMIT_COUNT 5
 
 
 /************************* FUNCTIONS *************************/

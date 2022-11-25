@@ -16,7 +16,7 @@ void player_init(Level level) {
     map->map_grid[player->pos.l][player->pos.c].visited = true;
     player->move = NONE;
     //player->nb_move = 0;
-    player->fruit_stack = FRUIT_STACK;
+    player->fruit_stack = 0;
     player->on_obstacle = false;
     switch (level) {
     case EASY:
@@ -98,48 +98,29 @@ void player_check_collisions(uint8_t line, uint8_t col) {
             player->on_obstacle = true;
             player->stamina -= STAMINA_LOSS_OBS;
         } else {
+            // If player is on a fruit, he gain stamina
+            if (IS_FRUIT_CELL(line, col)) {
+                player_stack_fruit(line,col);
+            }
             // Update player position in map
             player->pos.l = line;
             player->pos.c = col;
             map->map_grid[line][col].visited = true;
-            //player->nb_move++;
         }
-        // Player loses stamina every MV_LIMIT_COUNT steps
-        if (player->on_obstacle == false) {
-            player->stamina -= STAMINA_LOSS;
-            //player->nb_move = 0;
-        }
-        
-        // If player is on a fruit, he gain stamina
-        if (IS_FRUIT_CELL(line, col)) {
-            player_stack_fruit(line,col);
-        }
+        player->stamina -= STAMINA_LOSS;
     }
 }
 
 void player_stack_fruit(uint8_t line, uint8_t col) {
-    //wclear(game.bar_win);
-    // mvwprintw(game.bar_win, 20, 4, "%d", player->fruit_stack); // game.win_h/2 + MAP_LINES/2 - HELP_SIZE - 1, 4
-    if (player->stamina >= 90) {
+    if (player->stamina >= 80) {
         if (player->fruit_stack < FRUIT_STACK_MAX) {
             player->fruit_stack++;
             map->map_grid[line][col].cell_type = NO_FRUIT;
-            // printf("%d", player->fruit_stack);
-            // for (uint8_t i = 0; i < player->fruit_stack; i++) {
-            //     mvwaddch(game.bar_win, 23, 6 + i*3, '@' | COLOR_PAIR(FORMAT_COLOR_FRUIT));
-            // }
         }
     } else {
         player->stamina += STAMINA_GAIN;
         map->map_grid[line][col].cell_type = NO_FRUIT;
     }
-
-    //wrefresh(game.bar_win);
-    //player->stamina += STAMINA_GAIN;
-    //if (player->stamina > 100) {
-    //    player->stamina = STAMINA_MAX;
-    //}
-    //map->map_grid[line][col].cell_type = NO_FRUIT;
 }
 
 void player_eat_fruit(){
@@ -149,20 +130,16 @@ void player_eat_fruit(){
         if (player->stamina > 100) {
             player->stamina = STAMINA_MAX;
         }
-        // wclear(game.bar_win);
-        // for (uint8_t i = 0; i < player->fruit_stack; i++) {
-        //     mvwaddch(game.bar_win, 23, 6 + i*3, '@' | COLOR_PAIR(FORMAT_COLOR_FRUIT));
-        // }
     }
 }
 
 
 void player_render() {
-    mvwaddch(game.game_win, player->pos.l, player->pos.c, 'P' | COLOR_PAIR(FORMAT_COLOR_PLAYER));
+    mvwaddch(game.game_win, player->pos.l, player->pos.c, 'P' | COLOR_PAIR(FORMAT_COLOR_CYAN));
     // Maybe more
 }
 
 void player_free() {
-    // Free stack of player positions
+    // TODO: Free stack of player positions
     free(player);
 }
