@@ -11,7 +11,6 @@
  * Game structure, handle game resources.
 */
 typedef struct Game {
-    bool quit;
     bool gameover;
     uint16_t win_w;
     uint16_t win_h;
@@ -85,7 +84,6 @@ typedef enum Move {
 typedef struct Player {
     Position pos;
     Move move;
-    //uint8_t nb_move;
     int8_t stamina;
     uint8_t fruit_stack;
     bool on_obstacle;

@@ -23,6 +23,7 @@
 
 #define STAMINA_MAX     100
 #define STAMINA_MIN     0
+#define STAMINA_LIMIT_VAL_TO_STACK_FRUITS 80
 
 /**
  * Fruit stack settings

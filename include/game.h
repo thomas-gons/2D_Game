@@ -63,16 +63,21 @@ void ncs_quit();
  * Main application loop.
 */
 void main_loop();
+/**
+ * Initialize all game resources.
+*/
+void game_init();
+
+/**
+ * Check if game is win.
+ * \returns true on success, false on error
+*/
+bool game_check_win();
 
 /**
  * Game loop that handle the game logic.
 */
 void game_loop();
-
-/**
- * Initialize all game resources.
-*/
-void game_init();
 
 /**
  * Handle game inputs.

@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <inttypes.h>
 #include <time.h>
 #include <math.h>
 #include <ncurses.h>
@@ -18,7 +17,8 @@
 /**
  * Key settings.
 */
-#define KEY_ESC 27
+#define KEY_ESC     27
+#define KEY_SPACE   32
 
 /**
  * Ncurses windows sizes settings.
@@ -36,10 +36,15 @@
  * Colors for ncurses character output.
 */
 #define FORMAT_COLOR_EMPTY      1
-#define FORMAT_COLOR_GREEN      2
-#define FORMAT_COLOR_CYAN       3
-#define FORMAT_COLOR_YELLOW     4
-#define FORMAT_COLOR_RED        5
-#define FORMAT_COLOR_MAGENTA    6
+#define FORMAT_COLOR_WHITE      2
+#define FORMAT_COLOR_GREEN      3
+#define FORMAT_COLOR_CYAN       4
+#define FORMAT_COLOR_YELLOW     5
+#define FORMAT_COLOR_RED        6
+#define FORMAT_COLOR_MAGENTA    7
+
+#define FORMAT_BGCOLOR_GREEN    8
+#define FORMAT_BGCOLOR_YELLOW   9
+#define FORMAT_BGCOLOR_RED      10
 
 #endif

@@ -11,8 +11,8 @@
 /**
  * Stamina section limits for the bar.
 */
-#define STAMINA_HIGH    66.66
-#define STAMINA_MED     33.33
+#define STAMINA_HIGH    65
+#define STAMINA_MED     35
 #define STAMINA_LOW     0
 
 

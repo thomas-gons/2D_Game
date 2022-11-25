@@ -15,7 +15,7 @@ void ncs_init() {
 }
 
 void ncs_init_colors() {
-    // Enable foreground colors and disable background colors
+    // Enable foreground colors and background colors
     use_default_colors();
     start_color();
     init_pair(FORMAT_COLOR_EMPTY, -1, -1);
@@ -24,6 +24,10 @@ void ncs_init_colors() {
     init_pair(FORMAT_COLOR_YELLOW, COLOR_YELLOW, -1);
     init_pair(FORMAT_COLOR_RED, COLOR_RED, -1);
     init_pair(FORMAT_COLOR_MAGENTA, COLOR_MAGENTA, -1);
+    
+    init_pair(FORMAT_BGCOLOR_GREEN, -1, COLOR_GREEN);
+    init_pair(FORMAT_BGCOLOR_YELLOW, -1, COLOR_YELLOW);
+    init_pair(FORMAT_BGCOLOR_RED, -1, COLOR_RED);
 }
 
 void ncs_check_term_size() {
@@ -61,7 +65,7 @@ void ncs_create_windows() {
                             BAR_WIN_C0
     );
     game.stm_bar = subwin(  stdscr,
-                            STM_BAR_SIZE ,
+                            STM_BAR_SIZE,
                             BAR_SIZE - STM_BAR_PAD_L * 2,
                             STM_BAR_L0,
                             STM_BAR_C0
@@ -102,14 +106,13 @@ void ncs_quit() {
 
 void main_loop() {
     game_init();
-    while (!game.quit) {
-        game_loop();
-    }
+    
+    game_loop();
+
     game_quit();
 }
 
 void game_init() {
-    game.quit = false;
     game.gameover = false;
     // Initialize ncurses game resources
     ncs_init();
@@ -125,8 +128,12 @@ void game_init() {
     game_render();
 }
 
+bool game_check_win() {
+    return ((player->pos.l == MAP_LINES - 1) && (player->pos.c == MAP_COLS - 1)) ? true : false;
+}
+
 void game_loop() {
-    while (!game.gameover) {
+    while (!game_check_win() && !game.gameover) {
         game_inputs();
         game_update();
         game_render();
@@ -152,14 +159,10 @@ void game_render() {
     player_render();
 
     stamina_render();
-    // stamina_win_render();
 
     ncs_refresh_windows();
     if (player->stamina <= STAMINA_MIN) {
         game.gameover = true;
-        
-        // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
-        game.quit = true;
     }
 }
 

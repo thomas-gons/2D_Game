@@ -15,7 +15,6 @@ void player_init(Level level) {
     player->pos = (Position) {.l=0, .c=0};
     map->map_grid[player->pos.l][player->pos.c].visited = true;
     player->move = NONE;
-    //player->nb_move = 0;
     player->fruit_stack = 0;
     player->on_obstacle = false;
     switch (level) {
@@ -40,7 +39,6 @@ void player_inputs() {
 
         // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
         game.gameover = true;
-        game.quit = true;
         
         break;
     case KEY_DOWN:
@@ -63,9 +61,9 @@ void player_inputs() {
     case 'q':
         player->move = LEFT;
         break;
-
-    case 'E':
-    case 'e':
+    // case 'E':
+    // case 'e':
+    case KEY_SPACE:
         player_eat_fruit();
         break;
     default: break;
@@ -112,12 +110,14 @@ void player_check_collisions(uint8_t line, uint8_t col) {
 }
 
 void player_stack_fruit(uint8_t line, uint8_t col) {
-    if (player->stamina >= 80) {
+    if (player->stamina >= STAMINA_LIMIT_VAL_TO_STACK_FRUITS) {
         if (player->fruit_stack < FRUIT_STACK_MAX) {
+            system("aplay -q assets/sfx/fruit-pickup.wav &");
             player->fruit_stack++;
             map->map_grid[line][col].cell_type = NO_FRUIT;
         }
     } else {
+        system("aplay -q assets/sfx/eat-apple.wav &");
         player->stamina += STAMINA_GAIN;
         map->map_grid[line][col].cell_type = NO_FRUIT;
     }
@@ -125,9 +125,10 @@ void player_stack_fruit(uint8_t line, uint8_t col) {
 
 void player_eat_fruit(){
     if (player->fruit_stack > FRUIT_STACK_MIN) {
+        system("aplay -q assets/sfx/eat-apple.wav &");
         player->stamina += STAMINA_GAIN;
         player->fruit_stack--;
-        if (player->stamina > 100) {
+        if (player->stamina > STAMINA_MAX) {
             player->stamina = STAMINA_MAX;
         }
     }
@@ -135,8 +136,7 @@ void player_eat_fruit(){
 
 
 void player_render() {
-    mvwaddch(game.game_win, player->pos.l, player->pos.c, 'P' | COLOR_PAIR(FORMAT_COLOR_CYAN));
-    // Maybe more
+    mvwaddch(game.game_win, player->pos.l, player->pos.c, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));
 }
 
 void player_free() {

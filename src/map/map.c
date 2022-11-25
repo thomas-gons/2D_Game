@@ -39,7 +39,7 @@ void map_render() {
             }
         }
     }
-    mvwaddch(game.game_win, MAP_LINES - 1, MAP_COLS - 1, '#' | COLOR_PAIR(FORMAT_COLOR_MAGENTA));
+    mvwaddch(game.game_win, MAP_LINES - 1, MAP_COLS - 1, '#' | COLOR_PAIR(FORMAT_COLOR_CYAN));
 }
 
 void map_display() {

@@ -16,16 +16,18 @@ void stamina_update_val() {
 
 void stamina_bar_render() {
     // Render stamina bar
-    uint8_t stm_level = (player->stamina > STAMINA_HIGH) ? FORMAT_COLOR_GREEN :
-                        (player->stamina > STAMINA_MED) ?  FORMAT_COLOR_YELLOW :
-                                                           FORMAT_COLOR_RED;
+    uint8_t stm_level = (player->stamina > STAMINA_HIGH) ? FORMAT_BGCOLOR_GREEN :
+                        (player->stamina > STAMINA_MED) ?  FORMAT_BGCOLOR_YELLOW :
+                                                           FORMAT_BGCOLOR_RED;
     uint8_t threshold = (uint8_t)((player->stamina * STM_BAR_SIZE) / 100);
     uint8_t i, j;
-    for (i = 0; i < 18 - threshold; i++) {
+    for (i = 0; i < STM_BAR_SIZE - threshold; i++) {
+        // 5 characters of width to fill the stamina bar
         for (j = 0; j < 5; j++)
             mvwaddch(game.stm_bar, i, j, ' ' | COLOR_PAIR(FORMAT_COLOR_EMPTY));
     }
     for (; i < STM_BAR_SIZE; i++) {
+        // 5 characters of width to fill the stamina bar
         for (j = 0; j < 5; j++)
             mvwaddch(game.stm_bar, i, j, ' ' | COLOR_PAIR(stm_level));
     }
@@ -42,7 +44,7 @@ void stamina_fruit_stack_render() {
 
 void stamina_render() {
     mvwprintw(game.bar_win, 1, STM_BAR_PAD_L + 1, "STM");
-    stamina_bar_render();
     stamina_update_val();
+    stamina_bar_render();
     stamina_fruit_stack_render();
 }
