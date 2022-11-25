@@ -3,14 +3,12 @@
 
 
 #include "common.h"
+#include "structs.h"
 #include "util.h"
 #include "map.h"
 
 
-/**
- * Key settings.
-*/
-#define KEY_ESC 27
+/************************* DEFINES *************************/
 
 /**
  * Stamina settings.
@@ -28,28 +26,8 @@
 */
 #define MV_LIMIT_COUNT 5
 
-/**
- * Player movements.
-*/
-typedef enum Move {
-    NONE = -1,
-    DOWN,
-    LEFT,
-    UP,
-    RIGHT
-} Move;
 
-/**
- * Player structure, handle player data.
-*/
-typedef struct Player {
-    Position pos;
-    Move move;
-    uint8_t nb_move;
-    uint8_t stamina;
-    bool on_obstacle;
-} Player;
-
+/************************* FUNCTIONS *************************/
 
 /**
  * Initialize the player.

@@ -1,5 +1,4 @@
 #include "player.h"
-#include "map.h"
 
 
 extern Player *player;

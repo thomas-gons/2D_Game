@@ -9,6 +9,7 @@ Project in C using the ncurses library to make a top-down 2D game (OS Linux only
 # Table of Contents
  
 - [Game rules](#game-rules)
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [Compilation](#compilation)
 - [Execution](#execution)
@@ -23,9 +24,9 @@ Project in C using the ncurses library to make a top-down 2D game (OS Linux only
 
 <br>
 
-## INSTALLATION
+## REQUIREMENTS
 
-Make sure you **have installed** `gcc` and `make`:
+Make sure you **have installed** `gcc` and `make` on Linux:
 * For Ubuntu Linux:
 ```
 sudo apt install build-essential
@@ -43,6 +44,10 @@ sudo apt install libncurses5-dev libncursesw5-dev
 ```sh
 sudo pacman -S ncurses
 ```
+<br>
+
+## INSTALLATION
+
 **Clone** this repository:
 ```sh
 git clone https://github.com/ThomasGons/2D_Game.git

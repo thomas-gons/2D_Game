@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <inttypes.h>
 #include <time.h>
 #include <math.h>
 #include <ncurses.h>
@@ -12,6 +11,22 @@
 #include <wchar.h>
 #include <unistd.h>
 
+
+/************************* DEFINES *************************/
+
+/**
+ * Ncurses windows sizes settings.
+*/
+#define MAP_LINES 40
+#define MAP_COLS 80
+#define BAR_SIZE 16
+#define MENU_SIZE 16
+
+/**
+ * Key settings.
+*/
+#define KEY_ENTR 10
+#define KEY_ESC 27
 
 /**
  * Colors for ncurses output.

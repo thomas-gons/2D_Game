@@ -3,17 +3,15 @@
 
 
 #include "common.h"
+#include "structs.h"
 #include "util.h"
 
 
-/**
- * Ncurses windows sizes settings.
-*/
-#define MAP_LINES 40
-#define MAP_COLS 80
-#define BAR_SIZE 16
-#define MENU_SIZE 16
+/************************* DEFINES *************************/
 
+/**
+ * Distance values settings.
+*/
 #define CENTER_L (MAP_LINES / 2)
 #define CENTER_C (MAP_COLS / 2)
 
@@ -53,7 +51,7 @@
 /**
  * Check if position is within the map range.
 */
-#define IS_OUT_OF_MAP(line, col) (             \
+#define IS_OUT_OF_MAP(line, col) (                  \
     (line >= 0 && line < MAP_LINES) &&              \
     (col >= 0 && col < MAP_COLS)) ? true : false    \
 
@@ -64,43 +62,7 @@
     map->map_grid[line][col].cell_type == OBSTACLE) ? true : false  \
 
 
-/**
- * Game difficulty.
-*/
-typedef enum Level {
-    EASY = 1,
-    MEDIUM,
-    HARD
-} Level ;
-
-/**
- * All types of cells.
-*/
-typedef enum Cell_type {
-    EMPTY = -1,
-    ROAD,
-    FRUIT,
-    NO_FRUIT,
-    OBSTACLE,
-    FLAG
-} Cell_type;
-
-/**
- * Cell structure.
-*/
-typedef struct Cell {
-    Cell_type cell_type;
-    bool visited;
-} Cell;
-
-/**
- * Map structure, matrix of Cell structures.
-*/
-typedef struct Map {
-    Level level;
-    Cell **map_grid;
-} Map;
-
+/************************* FUNCTIONS *************************/
 
 /**
  * Initialize a map based on difficulty.

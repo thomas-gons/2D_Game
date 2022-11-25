@@ -38,7 +38,23 @@ void ncs_check_term_size() {
     }
 }
 
-void ncs_create_windows() {
+void ncs_create_title_window() {
+    game.title_win = subwin(stdscr,
+                            7,
+                            75,
+                            game.win_h/2 - (MAP_LINES + 2)/2 + 6,
+                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 13
+    );
+    box(game.title_win, ACS_VLINE, ACS_HLINE);
+    wattron(game.title_win, A_BOLD);
+    mvwprintw(game.title_win, 1, 1, "  ______  _______  _______  _____    _____    _______  ___ ___  ___ ___  ");
+    mvwprintw(game.title_win, 2, 1, " |      ||   _   ||_     _||     |_ |     |_ |       ||   |   ||   |   | ");
+    mvwprintw(game.title_win, 3, 1, " |   --- |       | _|   |_ |       ||       ||   -   ||   |   ||-     -| ");
+    mvwprintw(game.title_win, 4, 1, " |______||___|___||_______||_______||_______||_______||_______||___|___| ");
+    wrefresh(game.title_win);
+}
+
+void ncs_create_game_windows() {
     // Create main window
     game.main_win = subwin( stdscr,
                             MAP_LINES + 2,
@@ -46,7 +62,6 @@ void ncs_create_windows() {
                             game.win_h/2 - (MAP_LINES + 2)/2,
                             game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2
     );
-    
     // Create all sub windows
     game.game_win = subwin( stdscr,
                             MAP_LINES,
@@ -69,51 +84,104 @@ void ncs_create_windows() {
 }
 
 
-void ncs_refresh_windows() {
-    // Render border for subwindows
+void ncs_refresh_game_windows() {
+    // Render border for game subwindows
     box(game.main_win, ACS_VLINE, ACS_HLINE);
     box(game.bar_win, ACS_VLINE, ACS_HLINE);
     box(game.help_win, ACS_VLINE, ACS_HLINE);
-    // Render all windows
+    // Render game windows
     wrefresh(game.main_win);
     wrefresh(game.game_win);
     wrefresh(game.bar_win);
     wrefresh(game.help_win);
 }
 
-void ncs_quit() {
-    endwin();
-    delwin(stdscr);
+void ncs_destroy_win(WINDOW *win) {
+    wclear(win);
+    delwin(win);
 }
 
-void game_loop() {
-    // Main game loop, how it's done for every game
+void ncs_quit() {
+    ncs_destroy_win(stdscr);
+    endwin();
+}
+
+void run_game() {
     game_init();
-    game_render();
-    while (!game.quit || !player->stamina) {
-        game_inputs();
-        game_update();
-        game_render();
-    }
+    // Menu entries
+    switch (game_start_menu()) {
+    case 0: // New game
+        game_init_new_game();
+        game_loop();
+        // TODO: Game over screen + menu
+        game_free();
+        break;
+    case 1: // Load game save
+        // game_load_saved_game();
+        break;
+    case 2: // Quit game
+        game_quit();
+        break;
+    default: break;
+    }    
     game_quit();
 }
 
 void game_init() {
-    game.quit = false;
-    // Initialize ncurses game resources
+    game.gameover = false;
+    // Initialize ncurses resources
     ncs_init();
     ncs_init_colors();
     ncs_check_term_size();
-    ncs_create_windows();
+    ncs_create_title_window();
+}
+
+uint8_t game_start_menu() {
+    // Start menu, show game title
+    ncs_create_title_window();
+    // Start menu, select an entry
+    char *first_menu_list[] = { "Nouvelle partie", "Charger une partie", "Quitter" };
+    menu_create_entry_template(first_menu_list, 3);
+    uint8_t choice = menu_select_entry(first_menu_list, 3);
+    // Play sound effects
+    if (choice == 0) {
+        system("aplay -q assets/sfx/amougus.wav &");
+    }
+    else if (choice == 2) {
+        system("aplay -q assets/sfx/dry-fart.wav &");
+    }
+    ncs_destroy_win(game.title_win);
+    ncs_destroy_win(game.menu_win);
+    
+    return choice;
+}
+
+void game_init_new_game() {
+    // Create game subwindows
+    ncs_create_game_windows();
     // Generate random map
     map_init(EASY);
     game.path = map_generate();
-    // Create player
+    // Initialize player entity
     player_init(map->level);
+    // First render of game
+    game_render();
+}
+
+void game_loop() {
+    while (!game.gameover) {
+        game_inputs();
+        game_update();
+        game_render();
+        // Limit framerate to ~ 60fps
+        usleep(15000);
+    }
+    // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
+    usleep(300000);
 }
 
 void game_inputs() {
-    player_inputs(&game.quit);
+    player_inputs(&game.gameover);
     // Maybe more
 }
 
@@ -125,92 +193,20 @@ void game_update() {
 void game_render() {
     map_render(game.game_win);
     player_render(game.game_win);
-    ncs_refresh_windows();
+    ncs_refresh_game_windows();
+    if (player->stamina <= 0) {
+        game.gameover = true;
+        
+        // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
+    }
 }
 
-void game_quit() {
-    ncs_quit();
+void game_free() {
     map_free();
     stack_free(game.path);
     player_free();
 }
 
-int game_start_menu() {
-    char *first_menu_list[]= { "Nouvelle partie", "Charger une partie", "Quitter",};
-    int choice = ncs_create_menu_template(first_menu_list,3);
-    if(choice == 0){
-        system("aplay -q assets/sfx/amougus.wav &");
-    }
-    if(choice == 2){
-        system("aplay -q assets/sfx/dry-fart.wav &");
-    }
-    return choice;
+void game_quit() {
+    ncs_quit();
 }
-
-int ncs_create_menu_template(char *list[], int parameter_number) {
-    int ch, i = 0;
-    game.title_win = subwin( stdscr,
-                            7,
-                            75,
-                            game.win_h/2 - (MAP_LINES + 2)/2+6,
-                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2+13
-    );
-    box(game.title_win, ACS_VLINE, ACS_HLINE);
-    wattron( game.title_win, A_BOLD );
-    mvwprintw( game.title_win,1,1,"  ______  _______  _______  _____    _____    _______  _______  ___ ___  ");
-    mvwprintw( game.title_win,2,1," |      ||   _   ||_     _||     |_ |     |_ |       ||   |   ||   |   | ");
-    mvwprintw( game.title_win,3,1," |   ---||       | _|   |_ |       ||       ||   -   ||   |   ||-     -| ");
-    mvwprintw( game.title_win,4,1," |______||___|___||_______||_______||_______||_______||_______||___|___| "); 
-    wrefresh( game.title_win );
-    game.menu_win = subwin( stdscr,
-                            parameter_number+2,
-                            (MAP_COLS + BAR_SIZE + 2)/2,
-                            game.win_h/2 - (MAP_LINES + 2)/2+15,
-                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2+25
-    );
-    keypad(game.menu_win, TRUE);
-    box(game.menu_win, ACS_VLINE, ACS_HLINE);
-    
-    for( i=0; i<parameter_number; i++ ) {
-        if( i == 0 ) {
-            wattron( game.menu_win, A_STANDOUT ); // highlights the first list[i].
-        }
-        else {
-            wattroff( game.menu_win, A_STANDOUT );
-        }
-        mvwprintw( game.menu_win, i+1, 2, "%s", list[i] );
-    }
-
-    wrefresh( game.menu_win );
-    i = 0;
-    while(( ch = wgetch(game.menu_win)) != 10){ 
-        // right pad with spaces to make the list[i]s appear with even width. 
-        system("aplay -q assets/sfx/menu.wav &");
-        mvwprintw( game.menu_win, i+1, 2, "%s", list[i] ); 
-        // use a variable to increment or decrement the value based on the input.
-        switch( ch ) {
-            case KEY_UP:
-            i--;
-            if( i<0) {
-                i= parameter_number-1;
-            }
-            break;
-            case KEY_DOWN:
-            i++;
-            if( i>=parameter_number) {
-                i= 0;
-            }
-            break;
-        }
-        wattron( game.menu_win, A_STANDOUT );
-        mvwprintw( game.menu_win, i+1, 2, "%s", list[i]);
-        wattroff( game.menu_win, A_STANDOUT );
-        wrefresh( game.menu_win );
-    }
-    wattroff( game.title_win, A_BOLD );
-    wclear(game.title_win);
-    delwin(game.title_win);
-    delwin(game.menu_win);
-    return i;
-}
-

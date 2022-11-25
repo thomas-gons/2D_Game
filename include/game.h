@@ -3,28 +3,13 @@
 
 
 #include "common.h"
-#include "player.h"
-#include "map.h"
+#include "structs.h"
 #include "menu.h"
+#include "map.h"
+#include "player.h"
 
 
-/**
- * Game structure, handle game resources.
-*/
-typedef struct Game {
-    bool quit;
-    uint16_t win_w;
-    uint16_t win_h;
-    WINDOW *main_win;
-    WINDOW *menu_win;
-    WINDOW *title_win;
-    WINDOW *game_win;
-    WINDOW *bar_win;
-    WINDOW *help_win;
-    Stack *path;
-    time_t date;
-} Game;
-
+/************************* FUNCTIONS *************************/
 
 /**
  * Initialize ncurses library. 
@@ -42,14 +27,25 @@ void ncs_init_colors();
 void ncs_check_term_size();
 
 /**
- * Create all ncurses windows.
+ * Create a ncurses window to render the game title.
 */
-void ncs_create_windows();
+void ncs_create_title_window();
 
 /**
- * Refresh ncurses windows render.
+ * Create all ncurses game windows.
 */
-void ncs_refresh_windows();
+void ncs_create_game_windows();
+
+/**
+ * Refresh ncurses game windows.
+*/
+void ncs_refresh_game_windows();
+
+/**
+ * Clear and destroy a ncurses window.
+ * \param win ncurses window
+*/
+void ncs_destroy_win(WINDOW *win);
 
 /**
  * Quit ncurses library.
@@ -57,14 +53,30 @@ void ncs_refresh_windows();
 void ncs_quit();
 
 /**
- * Main game loop.
+ * Run the game.
 */
-void game_loop();
+void run_game();
 
 /**
  * Initialize all game resources.
 */
 void game_init();
+
+/**
+ * Title window and start menu window.
+ * \returns Index of start menu entry
+*/
+uint8_t game_start_menu();
+
+/**
+ * Initialize in-game resources.
+*/
+void game_init_new_game();
+
+/**
+ * Game loop.
+*/
+void game_loop();
 
 /**
  * Handle game inputs.
@@ -82,7 +94,12 @@ void game_update();
 void game_render();
 
 /**
- * Quit game and free all resources.
+ * Free all game resources.
+*/
+void game_free();
+
+/**
+ * Quit game.
 */
 void game_quit();
 
