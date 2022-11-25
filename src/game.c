@@ -32,9 +32,9 @@ void ncs_check_term_size() {
     if ((game.win_w < MAP_COLS + BAR_SIZE + 2) || (game.win_h < MAP_LINES + 2)) {
         ncs_quit();
         fprintf(stderr,
-            "[ERROR] > Window is set to %d rows * %d cols.\n\t> Please enlarge it %d rows * %d cols minimum.\n",
+            "[ERROR] > Window is set to %d rows * %d cols.\n\t> Please enlarge it %d rows * %d cols minimum,\n\t> or to fullscreen.\n",
             game.win_h, game.win_w, (MAP_LINES + 2), (MAP_COLS + BAR_SIZE + 2));
-        exit(2);
+        exit(1);
     }
 }
 
@@ -145,10 +145,10 @@ uint8_t game_start_menu() {
     uint8_t choice = menu_select_entry(first_menu_list, 3);
     // Play sound effects
     if (choice == 0) {
-        system("aplay -q assets/sfx/amougus.wav &");
+        system("aplay -q assets/sfx/among-us.wav &");
     }
     else if (choice == 2) {
-        system("aplay -q assets/sfx/dry-fart.wav &");
+        system("aplay -q assets/sfx/fart.wav &");
     }
     ncs_destroy_win(game.title_win);
     ncs_destroy_win(game.menu_win);

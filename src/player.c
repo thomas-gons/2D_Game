@@ -8,7 +8,7 @@ void player_init(Level level) {
     player = calloc(1, sizeof *player);
     if (!player) {
         fprintf(stderr, "[ERROR] > calloc, in func player_init\n");
-        exit(1);
+        exit(2);
     }
     player->pos = (Position) {.l=0, .c=0};
     map->map_grid[player->pos.l][player->pos.c].visited = true;

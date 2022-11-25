@@ -32,11 +32,11 @@ int8_t menu_select_entry(char **entry_list, int nb_entry) {
     int8_t i = 0;
     while ((ch = getch()) != KEY_ENTR) {
         mvwprintw(game.menu_win, i + 1, 2, "%s", entry_list[i] );
-        system("aplay -q assets/sfx/menu.wav &");
         switch (ch) {
         case KEY_UP:
         case 'Z':
         case 'z':
+            system("aplay -q assets/sfx/menu-entry.wav &");
             i--;
             if (i < 0) {
                 i = nb_entry - 1;
@@ -45,6 +45,7 @@ int8_t menu_select_entry(char **entry_list, int nb_entry) {
         case KEY_DOWN:
         case 'S':
         case 's':
+            system("aplay -q assets/sfx/menu-entry.wav &");
             i++;
             if (i >= nb_entry) {
                 i = 0;

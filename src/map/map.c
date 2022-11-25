@@ -7,7 +7,7 @@ void map_init(Level level) {
     map = calloc(1, sizeof *map);
     if (!map) {
         fprintf(stderr, "[ERROR] > calloc, in func map_init\n");
-        exit(1);
+        exit(2);
     }
     *map = (Map) {.level=level, .map_grid=NULL};
     map->map_grid = calloc(MAP_LINES, sizeof *map->map_grid);
