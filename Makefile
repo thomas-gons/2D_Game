@@ -59,7 +59,7 @@ setup:
 		echo "/!\ [ERROR] : No source files found";\
 		exit 1;\
 	fi
-	@if [ ! -z "$(DIR_BIN_REL)" ] || [ ! -z "$(DIR_BIN_DBG)" ] || [ ! -z "$(DIR_PATH_OBJ_REL)" ] || [ ! -z "$(DIR_PATH_OBJ_DBG)" ]; then\
+	@if [ ! -z "$(DIR_BIN_REL)" ] && [ ! -z "$(DIR_BIN_DBG)" ] && [ ! -z "$(DIR_PATH_OBJ_REL)" ] && [ ! -z "$(DIR_PATH_OBJ_DBG)" ]; then\
 		echo ":: Create project directories...";\
 		$(MKDIR_P) $(DIR_BIN_REL) $(DIR_BIN_DBG) $(DIR_PATH_OBJ_REL) $(DIR_PATH_OBJ_DBG);\
 	fi

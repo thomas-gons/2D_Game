@@ -20,28 +20,28 @@
 /**
  * The probabilties add up according to this order.
 */
-#define PROB_FRUIT 0.03
-#define PROB_OBS 0.175
+#define PROB_FRUIT  0.03
+#define PROB_OBS    0.175
 
 /** 
  * Max values for probabilties.
 */
-#define PROB_MAX_FRUIT 0.06
-#define PROB_MAX_OBS 0.25
+#define PROB_MAX_FRUIT  0.06
+#define PROB_MAX_OBS    0.25
 
 /**
  * Lambda factors to adjust probabilties.
  * Extend or restrict the scope of the maximum probability.
 */
-#define LAMBDA_FRUIT 2
-#define LAMBDA_OBS 2.2
+#define LAMBDA_FRUIT    2
+#define LAMBDA_OBS      2.2
 
 /**
  * Cells settings.
 */
 #define START ((Position) {.l=0, .c=0})
 #define END ((Position) {.l=MAP_LINES - 1, .c=MAP_COLS - 1})
-#define MOVESET_LEN 4
+#define MOVESET_LEN     4
 
 /**
  * Path settings.
@@ -72,9 +72,8 @@ void map_init(Level level);
 
 /**
  * Render map in terminal with ncurses.
- * \param game_win ncurses game window
 */
-void map_render(WINDOW *game_win);
+void map_render();
 
 /**
  * Randomly fill the map with obstacles and fruits.
@@ -93,10 +92,9 @@ void map_display();
 
 /**
  * Display map in terminal with stdout, highlight the path and obstacles.
- * \param game_win ncurses game window
  * \param path valid path as a stack of cells
 */
-void map_render_path(WINDOW *game_win, Stack *path);
+void map_render_path(Stack *path);
 
 /**
  * Free allocated memory of map.

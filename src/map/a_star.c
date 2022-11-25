@@ -3,6 +3,7 @@
 
 
 extern Map *map;
+
 int8_t moveset[MOVESET_LEN][2] = {  // {line, col}
     {1, 0},     // Down 
     {0, 1},     // Right

@@ -1,8 +1,9 @@
 #include "player.h"
 
 
-extern Player *player;
+extern Game game;
 extern Map *map;
+extern Player *player;
 
 void player_init(Level level) {
     player = calloc(1, sizeof *player);
@@ -13,7 +14,7 @@ void player_init(Level level) {
     player->pos = (Position) {.l=0, .c=0};
     map->map_grid[player->pos.l][player->pos.c].visited = true;
     player->move = NONE;
-    player->nb_move = 0;
+    player->fruit_stack = 0;
     player->on_obstacle = false;
     switch (level) {
     case EASY:
@@ -29,11 +30,15 @@ void player_init(Level level) {
     }
 }
 
-void player_inputs(bool *quit) {
+void player_inputs() {
+    player->on_obstacle = false;
     player->move = NONE;
     switch (getch()) {
     case KEY_ESC:
-        *quit = true;
+
+        // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
+        game.gameover = true;
+        
         break;
     case KEY_DOWN:
     case 'S':
@@ -54,6 +59,11 @@ void player_inputs(bool *quit) {
     case 'Q':
     case 'q':
         player->move = LEFT;
+        break;
+    // case 'E':
+    // case 'e':
+    case KEY_SPACE:
+        player_eat_fruit();
         break;
     default: break;
     }
@@ -84,34 +94,51 @@ void player_check_collisions(uint8_t line, uint8_t col) {
         if (IS_OBSTACLE_CELL(line, col)) {
             player->on_obstacle = true;
             player->stamina -= STAMINA_LOSS_OBS;
-            player->nb_move = 0;
         } else {
-            // Update position in map
+            // If player is on a fruit, he gain stamina
+            if (IS_FRUIT_CELL(line, col)) {
+                player_stack_fruit(line,col);
+            }
+            // Update player position in map
             player->pos.l = line;
             player->pos.c = col;
             map->map_grid[line][col].visited = true;
-            player->nb_move++;
         }
-        // Player loses stamina every MV_LIMIT_COUNT steps
-        if ((player->nb_move >= MV_LIMIT_COUNT) && (player->on_obstacle == false)) {
-            player->stamina -= STAMINA_LOSS;
-            player->nb_move = 0;
+        player->stamina -= STAMINA_LOSS;
+    }
+}
+
+void player_stack_fruit(uint8_t line, uint8_t col) {
+    if (player->stamina >= STAMINA_LIMIT_VAL_TO_STACK_FRUITS) {
+        if (player->fruit_stack < FRUIT_STACK_MAX) {
+            system("aplay -q assets/sfx/fruit-pickup.wav &");
+            player->fruit_stack++;
+            map->map_grid[line][col].cell_type = NO_FRUIT;
+        }
+    } else {
+        system("aplay -q assets/sfx/eat-apple.wav &");
+        player->stamina += STAMINA_GAIN;
+        map->map_grid[line][col].cell_type = NO_FRUIT;
+    }
+}
+
+void player_eat_fruit(){
+    if (player->fruit_stack > FRUIT_STACK_MIN) {
+        system("aplay -q assets/sfx/eat-apple.wav &");
+        player->stamina += STAMINA_GAIN;
+        player->fruit_stack--;
+        if (player->stamina > STAMINA_MAX) {
+            player->stamina = STAMINA_MAX;
         }
     }
 }
 
-void player_render(WINDOW *game_win) {
-    // if (player->on_obstacle) {
-    // make two frame =>   1) player move to obstacle, color change to indicate there is an error
-    //                     2) player move back to prev position, bakc to normal color
-    // }
 
-    mvwaddch(game_win, player->pos.l, player->pos.c, 'P' | COLOR_PAIR(FORMAT_COLOR_PLAYER));
-    
-    // TODO:
-    // Display stamina progress bar in bar_win => pass it in parameter of the function
+void player_render() {
+    mvwaddch(game.game_win, player->pos.l, player->pos.c, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));
 }
 
 void player_free() {
+    // TODO: Free stack of player positions
     free(player);
 }

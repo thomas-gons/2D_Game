@@ -1,5 +1,5 @@
-#ifndef __TYPES_H__
-#define __TYPES_H__
+#ifndef __STRUCTS_H__
+#define __STRUCTS_H__
 
 
 #include <ncurses.h>
@@ -21,6 +21,7 @@ typedef struct Game {
     WINDOW *game_win;
     WINDOW *bar_win;
     WINDOW *stm_bar;
+    WINDOW *fruit_win;
     WINDOW *help_win;
     Stack *path;
     time_t date;
@@ -36,7 +37,7 @@ typedef enum Level {
     EASY = 1,
     MEDIUM,
     HARD
-} Level ;
+} Level;
 
 /**
  * All types of cells.
@@ -86,10 +87,11 @@ typedef enum Move {
 typedef struct Player {
     Position pos;
     Move move;
-    uint8_t nb_move;
     int8_t stamina;
     bool on_obstacle;
 } Player;
 
+
+#endif
 
 #endif

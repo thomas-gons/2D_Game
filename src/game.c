@@ -2,8 +2,8 @@
 
 
 extern Game game;
-extern Player *player;
 extern Map *map;
+extern Player *player;
 
 void ncs_init() {
     initscr();
@@ -12,18 +12,22 @@ void ncs_init() {
     curs_set(false);
     setlocale(LC_ALL, "");
     keypad(stdscr, TRUE);
-
-    refresh();
 }
 
 void ncs_init_colors() {
-    // Enable foreground colors and disable background colors
+    // Enable foreground colors and background colors
     use_default_colors();
     start_color();
-    init_pair(FORMAT_COLOR_PATH, COLOR_CYAN, -1);
-    init_pair(FORMAT_COLOR_OBS, COLOR_RED, -1);
-    init_pair(FORMAT_COLOR_FRUIT, COLOR_GREEN, -1);
-    init_pair(FORMAT_COLOR_PLAYER, COLOR_CYAN, -1);
+    init_pair(FORMAT_COLOR_EMPTY, -1, -1);
+    init_pair(FORMAT_COLOR_GREEN, COLOR_GREEN, -1);
+    init_pair(FORMAT_COLOR_CYAN, COLOR_CYAN, -1);
+    init_pair(FORMAT_COLOR_YELLOW, COLOR_YELLOW, -1);
+    init_pair(FORMAT_COLOR_RED, COLOR_RED, -1);
+    init_pair(FORMAT_COLOR_MAGENTA, COLOR_MAGENTA, -1);
+    
+    init_pair(FORMAT_BGCOLOR_GREEN, -1, COLOR_GREEN);
+    init_pair(FORMAT_BGCOLOR_YELLOW, -1, COLOR_YELLOW);
+    init_pair(FORMAT_BGCOLOR_RED, -1, COLOR_RED);
 }
 
 void ncs_check_term_size() {
@@ -59,27 +63,39 @@ void ncs_create_game_windows() {
     game.main_win = subwin( stdscr,
                             MAP_LINES + 2,
                             MAP_COLS + BAR_SIZE + 2,
-                            game.win_h/2 - (MAP_LINES + 2)/2,
-                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2
+                            MAIN_WIN_L0,
+                            MAIN_WIN_C0
     );
     // Create all sub windows
     game.game_win = subwin( stdscr,
                             MAP_LINES,
                             MAP_COLS,
-                            game.win_h/2 - MAP_LINES/2,
-                            game.win_w/2 - (MAP_COLS + BAR_SIZE)/2
+                            GAME_WIN_L0,
+                            GAME_WIN_C0
     );
     game.bar_win = subwin(  stdscr,
-                            MAP_LINES - MENU_SIZE + 2,
+                            MAP_LINES - HELP_SIZE + 3,
                             BAR_SIZE,
-                            game.win_h/2 - MAP_LINES/2 - 1,
-                            1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2
+                            BAR_WIN_L0,
+                            BAR_WIN_C0
+    );
+    game.stm_bar = subwin(  stdscr,
+                            STM_BAR_SIZE,
+                            BAR_SIZE - STM_BAR_PAD_L * 2,
+                            STM_BAR_L0,
+                            STM_BAR_C0
+    );
+    game.fruit_win = subwin(stdscr,
+                            2,
+                            BAR_SIZE,
+                            HELP_WIN_L0 - 3,
+                            BAR_WIN_C0
     );
     game.help_win = subwin( stdscr,
-                            MENU_SIZE + 1,
+                            HELP_SIZE,
                             BAR_SIZE,
-                            game.win_h/2 + MAP_LINES/2 - MENU_SIZE,
-                            1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2
+                            HELP_WIN_L0,
+                            HELP_WIN_C0
     );
 }
 
@@ -88,11 +104,14 @@ void ncs_refresh_game_windows() {
     // Render border for game subwindows
     box(game.main_win, ACS_VLINE, ACS_HLINE);
     box(game.bar_win, ACS_VLINE, ACS_HLINE);
+    box(game.stm_bar, ACS_VLINE, ACS_HLINE);
     box(game.help_win, ACS_VLINE, ACS_HLINE);
     // Render game windows
     wrefresh(game.main_win);
     wrefresh(game.game_win);
     wrefresh(game.bar_win);
+    wrefresh(game.stm_bar);
+    wrefresh(game.fruit_win);
     wrefresh(game.help_win);
 }
 
@@ -168,6 +187,10 @@ void game_init_new_game() {
     game_render();
 }
 
+bool game_check_win() {
+    return ((player->pos.l == MAP_LINES - 1) && (player->pos.c == MAP_COLS - 1)) ? true : false;
+}
+
 void game_loop() {
     while (!game.gameover) {
         game_inputs();
@@ -181,7 +204,7 @@ void game_loop() {
 }
 
 void game_inputs() {
-    player_inputs(&game.gameover);
+    player_inputs();
     // Maybe more
 }
 
@@ -191,13 +214,14 @@ void game_update() {
 }
 
 void game_render() {
-    map_render(game.game_win);
-    player_render(game.game_win);
-    ncs_refresh_game_windows();
-    if (player->stamina <= 0) {
+    map_render();
+    player_render();
+
+    stamina_render();
+
+    ncs_refresh_windows();
+    if (player->stamina <= STAMINA_MIN) {
         game.gameover = true;
-        
-        // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
     }
 }
 
@@ -205,6 +229,10 @@ void game_free() {
     map_free();
     stack_free(game.path);
     player_free();
+}
+
+void game_quit() {
+    ncs_quit();
 }
 
 void game_quit() {
