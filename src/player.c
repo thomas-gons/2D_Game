@@ -122,7 +122,7 @@ void player_stack_fruit(uint8_t line, uint8_t col) {
     }
 }
 
-void player_eat_fruit(){
+void player_eat_fruit() {
     if (player->fruit_stack > FRUIT_STACK_MIN) {
         system("aplay -q assets/sfx/eat-apple.wav &");
         player->stamina += STAMINA_GAIN;
@@ -132,7 +132,6 @@ void player_eat_fruit(){
         }
     }
 }
-
 
 void player_render() {
     mvwaddch(game.game_win, player->pos.l, player->pos.c, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));

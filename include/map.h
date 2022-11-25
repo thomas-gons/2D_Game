@@ -61,6 +61,12 @@
 #define IS_OBSTACLE_CELL(line, col) (                               \
     map->map_grid[line][col].cell_type == OBSTACLE) ? true : false  \
 
+/**
+ * Check if position is a fruit cell.
+*/
+#define IS_FRUIT_CELL(line, col) (                               \
+    map->map_grid[line][col].cell_type == FRUIT) ? true : false  \
+
 
 /************************* FUNCTIONS *************************/
 

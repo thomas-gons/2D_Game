@@ -88,10 +88,9 @@ typedef struct Player {
     Position pos;
     Move move;
     int8_t stamina;
+    int8_t fruit_stack;
     bool on_obstacle;
 } Player;
 
-
-#endif
 
 #endif

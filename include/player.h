@@ -58,12 +58,12 @@ void player_update();
 void player_check_collisions(uint8_t line, uint8_t col);
 
 /**
- * player stack fruit
+ * Player stack fruit.
 */
 void player_stack_fruit(uint8_t line, uint8_t col);
 
 /**
- * player stack fruit
+ * Player eat stacked fruit.
 */
 void player_eat_fruit();
 

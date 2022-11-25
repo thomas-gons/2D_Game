@@ -192,7 +192,7 @@ bool game_check_win() {
 }
 
 void game_loop() {
-    while (!game.gameover) {
+    while (!game_check_win() && !game.gameover) {
         game_inputs();
         game_update();
         game_render();
@@ -219,7 +219,7 @@ void game_render() {
 
     stamina_render();
 
-    ncs_refresh_windows();
+    ncs_refresh_game_windows();
     if (player->stamina <= STAMINA_MIN) {
         game.gameover = true;
     }
@@ -229,10 +229,6 @@ void game_free() {
     map_free();
     stack_free(game.path);
     player_free();
-}
-
-void game_quit() {
-    ncs_quit();
 }
 
 void game_quit() {
