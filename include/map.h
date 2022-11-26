@@ -3,17 +3,15 @@
 
 
 #include "common.h"
+#include "structs.h"
 #include "util.h"
 
 
-/**
- * Ncurses windows sizes settings.
-*/
-#define MAP_LINES 40
-#define MAP_COLS 80
-#define BAR_SIZE 16
-#define MENU_SIZE 16
+/************************* DEFINES *************************/
 
+/**
+ * Distance values settings.
+*/
 #define CENTER_L (MAP_LINES / 2)
 #define CENTER_C (MAP_COLS / 2)
 
@@ -22,28 +20,28 @@
 /**
  * The probabilties add up according to this order.
 */
-#define PROB_FRUIT 0.03
-#define PROB_OBS 0.175
+#define PROB_FRUIT  0.03
+#define PROB_OBS    0.175
 
 /** 
  * Max values for probabilties.
 */
-#define PROB_MAX_FRUIT 0.06
-#define PROB_MAX_OBS 0.25
+#define PROB_MAX_FRUIT  0.06
+#define PROB_MAX_OBS    0.25
 
 /**
  * Lambda factors to adjust probabilties.
  * Extend or restrict the scope of the maximum probability.
 */
-#define LAMBDA_FRUIT 2
-#define LAMBDA_OBS 2.2
+#define LAMBDA_FRUIT    2
+#define LAMBDA_OBS      2.2
 
 /**
  * Cells settings.
 */
 #define START ((Position) {.l=0, .c=0})
 #define END ((Position) {.l=MAP_LINES - 1, .c=MAP_COLS - 1})
-#define MOVESET_LEN 4
+#define MOVESET_LEN     4
 
 /**
  * Path settings.
@@ -53,7 +51,7 @@
 /**
  * Check if position is within the map range.
 */
-#define IS_OUT_OF_MAP(line, col) (             \
+#define IS_OUT_OF_MAP(line, col) (                  \
     (line >= 0 && line < MAP_LINES) &&              \
     (col >= 0 && col < MAP_COLS)) ? true : false    \
 
@@ -63,44 +61,14 @@
 #define IS_OBSTACLE_CELL(line, col) (                               \
     map->map_grid[line][col].cell_type == OBSTACLE) ? true : false  \
 
-
 /**
- * Game difficulty.
+ * Check if position is a fruit cell.
 */
-typedef enum Level {
-    EASY = 1,
-    MEDIUM,
-    HARD
-} Level ;
+#define IS_FRUIT_CELL(line, col) (                               \
+    map->map_grid[line][col].cell_type == FRUIT) ? true : false  \
 
-/**
- * All types of cells.
-*/
-typedef enum Cell_type {
-    EMPTY = -1,
-    ROAD,
-    FRUIT,
-    NO_FRUIT,
-    OBSTACLE,
-    FLAG
-} Cell_type;
 
-/**
- * Cell structure.
-*/
-typedef struct Cell {
-    Cell_type cell_type;
-    bool visited;
-} Cell;
-
-/**
- * Map structure, matrix of Cell structures.
-*/
-typedef struct Map {
-    Level level;
-    Cell **map_grid;
-} Map;
-
+/************************* FUNCTIONS *************************/
 
 /**
  * Initialize a map based on difficulty.
@@ -110,9 +78,8 @@ void map_init(Level level);
 
 /**
  * Render map in terminal with ncurses.
- * \param game_win ncurses game window
 */
-void map_render(WINDOW *game_win);
+void map_render();
 
 /**
  * Randomly fill the map with obstacles and fruits.
@@ -131,10 +98,9 @@ void map_display();
 
 /**
  * Display map in terminal with stdout, highlight the path and obstacles.
- * \param game_win ncurses game window
  * \param path valid path as a stack of cells
 */
-void map_render_path(WINDOW *game_win, Stack *path);
+void map_render_path(Stack *path);
 
 /**
  * Free allocated memory of map.

@@ -13,7 +13,7 @@ LD := g++
 LDFLAGS := -I$(DIR_INC)/
 
 # Compiler flags.
-CFLAGS := -Wall -Wextra -Wno-type-limits $(LDFLAGS)
+CFLAGS := -pedantic -Wall -Wextra -Wno-type-limits -Wno-unused-result $(LDFLAGS)
 CXXFLAGS := $(CFLAGS)
 
 # Library flags.
@@ -59,13 +59,13 @@ setup:
 		echo "/!\ [ERROR] : No source files found";\
 		exit 1;\
 	fi
-	@if [ ! -z "$(DIR_BIN_REL)" ] || [ ! -z "$(DIR_BIN_DBG)" ] || [ ! -z "$(DIR_PATH_OBJ_REL)" ] || [ ! -z "$(DIR_PATH_OBJ_DBG)" ]; then\
+	@if [ ! -z "$(DIR_BIN_REL)" ] && [ ! -z "$(DIR_BIN_DBG)" ] && [ ! -z "$(DIR_PATH_OBJ_REL)" ] && [ ! -z "$(DIR_PATH_OBJ_DBG)" ]; then\
 		echo ":: Create project directories...";\
 		$(MKDIR_P) $(DIR_BIN_REL) $(DIR_BIN_DBG) $(DIR_PATH_OBJ_REL) $(DIR_PATH_OBJ_DBG);\
 	fi
 
 # Release build
-release: setup $(REL_TARGET)
+release: clean setup $(REL_TARGET)
 
 # Link for Release target.
 $(REL_TARGET): $(REL_OBJS)
@@ -83,7 +83,7 @@ $(DIR_OBJ_REL)/%.o: $(DIR_SRC)/%.cpp
 	@$(CXX) $(CXXFLAGS) $(REL_FLAGS) -c $< -o $@
 
 # Debug build.
-debug: setup $(DBG_TARGET)
+debug: clean setup $(DBG_TARGET)
 
 # Link for Debug mode.
 $(DBG_TARGET): $(DBG_OBJS)

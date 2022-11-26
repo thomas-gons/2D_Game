@@ -6,6 +6,6 @@ Map *map = NULL;
 Player *player = NULL;
 
 int main() {
-    game_loop();
+    run_game();
     return 0;
 }

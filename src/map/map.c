@@ -1,13 +1,14 @@
 #include "map.h"
 
 
+extern Game game;
 extern Map *map;
 
 void map_init(Level level) {
     map = calloc(1, sizeof *map);
     if (!map) {
         fprintf(stderr, "[ERROR] > calloc, in func map_init\n");
-        exit(1);
+        exit(2);
     }
     *map = (Map) {.level=level, .map_grid=NULL};
     map->map_grid = calloc(MAP_LINES, sizeof *map->map_grid);
@@ -17,24 +18,28 @@ void map_init(Level level) {
     }
 }
 
-void map_render(WINDOW *game_win) {
+void map_render() {
     for (uint8_t l = 0; l < MAP_LINES; l++) {
         for (uint8_t c = 0; c < MAP_COLS; c++) {
             switch (map->map_grid[l][c].cell_type) {
             case ROAD:
-                mvwaddch(game_win, l, c,
-                    ((map->map_grid[l][c].visited) ? '.' : ' ') | COLOR_PAIR(FORMAT_COLOR_PLAYER));
+                mvwaddch(game.game_win, l, c,
+                    ((map->map_grid[l][c].visited) ? '.' : ' ') | COLOR_PAIR(FORMAT_COLOR_CYAN));
                 break;
             case OBSTACLE:
-                mvwaddch(game_win, l, c, '%' | COLOR_PAIR(FORMAT_COLOR_OBS));
+                mvwaddch(game.game_win, l, c, '%' | COLOR_PAIR(FORMAT_COLOR_RED));
                 break;
             case FRUIT:
-                mvwaddch(game_win, l, c, '@' | COLOR_PAIR(FORMAT_COLOR_FRUIT));
+                mvwaddch(game.game_win, l, c, '@' | COLOR_PAIR(FORMAT_COLOR_GREEN));
+                break;
+            case NO_FRUIT:
+                mvwaddch(game.game_win, l, c, ',' | COLOR_PAIR(FORMAT_COLOR_YELLOW));
                 break;
             default: break;
             }
         }
     }
+    mvwaddch(game.game_win, MAP_LINES - 1, MAP_COLS - 1, '#' | COLOR_PAIR(FORMAT_COLOR_CYAN));
 }
 
 void map_display() {
@@ -56,12 +61,12 @@ void map_display() {
     }
 }
 
-void map_render_path(WINDOW *game_win, Stack *path) {
+void map_render_path(Stack *path) {
     Node *tmp = path->head;
     for (; tmp; tmp = tmp->next) {
-        mvwaddch(game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(FORMAT_COLOR_PATH));
+        mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(FORMAT_COLOR_CYAN));
     }
-    wrefresh(game_win);
+    wrefresh(game.game_win);
 }
 
 void map_free() {
