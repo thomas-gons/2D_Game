@@ -1,7 +1,9 @@
-#include "menu.h"
+#include "menus.h"
 
 
 extern Game game;
+extern Map *map;
+extern Player *player;
 
 void menu_create_entry_template(char **entry_list, int nb_entry) {
     // Create the menu window
@@ -60,4 +62,31 @@ int8_t menu_select_entry(char **entry_list, int nb_entry) {
         wrefresh(game.menu_win );
     }
     return i;
+}
+
+void help_render() {
+    uint8_t right = (player->pos.c == MAP_COLS - 1) ? 0: map->map_grid[player->pos.c][player->pos.l].distance[0];
+    uint8_t bottom = (player->pos.l == MAP_LINES - 1) ? 0: map->map_grid[player->pos.c][player->pos.l].distance[1];
+    uint8_t left = (player->pos.c == 0) ? 0: map->map_grid[player->pos.c - 1][player->pos.l].distance[0];
+    uint8_t top = (player->pos.l == 0) ? 0: map->map_grid[player->pos.c][player->pos.l - 1].distance[1];
+
+    mvwaddch(game.help_win, 5, BAR_SIZE / 2, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));
+
+    mvwprintw(game.help_win, 1, BAR_SIZE / 2, "  ");
+    mvwprintw(game.help_win, 1, BAR_SIZE / 2, "%hhd", top);
+    mvwprintw(game.help_win, 3, BAR_SIZE / 2, "🠱");
+
+    mvwprintw(game.help_win, 5, (BAR_SIZE / 2) - 7, "  ");
+    mvwprintw(game.help_win, 5, (BAR_SIZE / 2) - ((left / 10) ? 7: 6), "%hhd", left);
+    mvwprintw(game.help_win, 5, (BAR_SIZE / 2) - 4 , "🠰");
+
+    mvwprintw(game.help_win, 5, (BAR_SIZE / 2) + 5, "  ");
+    mvwprintw(game.help_win, 5, (BAR_SIZE / 2) + 5, "%hhd", right);
+    mvwprintw(game.help_win, 5, (BAR_SIZE / 2) + 3 , "🠲");
+
+    mvwprintw(game.help_win, 9, BAR_SIZE / 2, "  ");
+    mvwprintw(game.help_win, 9, BAR_SIZE / 2, "%hhd", bottom);
+    mvwprintw(game.help_win, 7, BAR_SIZE / 2, "🠳");
+
+    mvwprintw(game.help_win, 11, 5, "DISTANCES");
 }

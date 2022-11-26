@@ -4,7 +4,7 @@
 
 #include "common.h"
 #include "structs.h"
-#include "menu.h"
+#include "menus.h"
 #include "map.h"
 #include "player.h"
 #include "stamina.h"
@@ -22,7 +22,7 @@
 #define BAR_WIN_C0  (1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2)
 
 #define STM_BAR_L0  (game.win_h/2 - (MAP_LINES/2 -  STM_BAR_PAD_T + 1))
-#define STM_BAR_C0  (1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2 + STM_BAR_PAD_L)
+#define STM_BAR_C0  (1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2 + STM_BAR_PAD_L + 1)
 
 #define HELP_WIN_L0 (1 + game.win_h/2 + MAP_LINES/2 - HELP_SIZE)
 #define HELP_WIN_C0 (1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2)

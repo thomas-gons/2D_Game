@@ -14,10 +14,10 @@ LDFLAGS := -I$(DIR_INC)/
 
 # Compiler flags.
 CFLAGS := -pedantic -Wall -Wextra -Wno-type-limits -Wno-unused-result $(LDFLAGS)
-CXXFLAGS := $(CFLAGS)
+CXXFLAGS := $(CFLAGS) 
 
 # Library flags.
-LDLIBS := -lm -lncurses
+LDLIBS := -lm $(shell pkg-config ncursesw --cflags --libs)
 
 # Sanitizer flags
 FSAN_FLAGS := -fsanitize=address

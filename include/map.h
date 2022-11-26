@@ -15,7 +15,8 @@
 #define CENTER_L (MAP_LINES / 2)
 #define CENTER_C (MAP_COLS / 2)
 
-#define MAX_DISTANCE sqrt(pow(MAP_LINES, 2) + pow(MAP_COLS, 2))
+#define MIN_DISTANCE 1
+#define MAX_DISTANCE 20
 
 /**
  * The probabilties add up according to this order.
@@ -113,7 +114,7 @@ void map_free();
  * \param cost movement cost to reach another direct adjacent cell (moveset)
  * \returns a valid path (stack of cells) on success, NULL on error.
 */
-Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], int cost);
+Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS]);
 
 /**
  * Implementation of A Star (A*) pathfinding algorithm.

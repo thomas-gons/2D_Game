@@ -10,7 +10,6 @@ void ncs_init() {
     // Don't echo the pressed key and hide the cursor
     noecho();
     curs_set(false);
-    setlocale(LC_ALL, "");
     keypad(stdscr, TRUE);
 }
 
@@ -62,7 +61,7 @@ void ncs_create_game_windows() {
     // Create main window
     game.main_win = subwin( stdscr,
                             MAP_LINES + 2,
-                            MAP_COLS + BAR_SIZE + 2,
+                            MAP_COLS + BAR_SIZE + 3,
                             MAIN_WIN_L0,
                             MAIN_WIN_C0
     );
@@ -75,13 +74,13 @@ void ncs_create_game_windows() {
     );
     game.bar_win = subwin(  stdscr,
                             MAP_LINES - HELP_SIZE + 3,
-                            BAR_SIZE,
+                            BAR_SIZE + 1,
                             BAR_WIN_L0,
                             BAR_WIN_C0
     );
     game.stm_bar = subwin(  stdscr,
                             STM_BAR_SIZE,
-                            BAR_SIZE - STM_BAR_PAD_L * 2,
+                            STM_BAR_WIDTH,
                             STM_BAR_L0,
                             STM_BAR_C0
     );
@@ -93,7 +92,7 @@ void ncs_create_game_windows() {
     );
     game.help_win = subwin( stdscr,
                             HELP_SIZE,
-                            BAR_SIZE,
+                            BAR_SIZE + 1,
                             HELP_WIN_L0,
                             HELP_WIN_C0
     );
@@ -216,8 +215,8 @@ void game_update() {
 void game_render() {
     map_render();
     player_render();
-
     stamina_render();
+    help_render();
 
     ncs_refresh_game_windows();
     if (player->stamina <= STAMINA_MIN) {

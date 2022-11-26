@@ -13,8 +13,18 @@ void map_init(Level level) {
     *map = (Map) {.level=level, .map_grid=NULL};
     map->map_grid = calloc(MAP_LINES, sizeof *map->map_grid);
     // Fill the map with empty and unvisited cells
-    for (uint8_t i = 0; i < MAP_LINES; i++) {
+    for (uint8_t i = 0, j; i < MAP_LINES; i++) {
         map->map_grid[i] = calloc(MAP_COLS, sizeof *map->map_grid[i]);
+        for (j = 0; j < MAP_COLS; j++) {
+            if (j != MAP_COLS - 1) {
+                // right direction
+                map->map_grid[i][j].distance[0] = (rand() % (MAX_DISTANCE - MIN_DISTANCE - 1)) + MIN_DISTANCE;
+            }
+            if (i != MAP_LINES - 1) {
+                // bottom direction
+                map->map_grid[i][j].distance[1] = (rand() % (MAX_DISTANCE - MIN_DISTANCE - 1)) + MIN_DISTANCE;
+            }
+        }
     }
 }
 
@@ -45,17 +55,7 @@ void map_render() {
 void map_display() {
     for (uint8_t l = 0; l < MAP_LINES; l++) {
         for (uint8_t c = 0; c < MAP_COLS; c++) {
-            switch (map->map_grid[l][c].cell_type) {
-            case ROAD:
-                printf("0 ");
-                break;
-            case FRUIT:
-                printf("2 ");
-                break;
-            default:
-                printf("1 ");
-                break;
-            }
+            printf("(🠖%hhu, 🠗%hhu) ", map->map_grid[l][c].distance[0], map->map_grid[l][c].distance[1]);
         }
         printf("\n");
     }

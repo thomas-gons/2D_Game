@@ -56,6 +56,7 @@ typedef enum Cell_type {
 */
 typedef struct Cell {
     Cell_type cell_type;
+    uint8_t distance[2];
     bool visited;
 } Cell;
 

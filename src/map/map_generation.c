@@ -21,7 +21,7 @@ void map_random_fill() {
             prob_obs = PROB_OBS * map->level;
             // distance between center and current position
             distance = sqrt(pow(CENTER_L - l, 2) + pow(CENTER_C - c, 2));
-            dn = distance / MAX_DISTANCE;
+            dn = distance / (sqrt(pow(MAP_LINES, 2) + pow(MAP_COLS, 2)));
             // prob between 0 and 1
             prob = (float) rand() / RAND_MAX;
             tmp_prob_fruit = prob_fruit * (dn * LAMBDA_FRUIT);

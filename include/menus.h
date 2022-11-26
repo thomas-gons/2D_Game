@@ -1,9 +1,10 @@
-#ifndef __MENU_H__
-#define __MENU_H__
+#ifndef __MENUS_H__
+#define __MENUS_H__
 
 
 #include "common.h"
 #include "structs.h"
+
 
 
 /************************* FUNCTIONS *************************/
@@ -23,5 +24,10 @@ void menu_create_entry_template(char **entry_list, int nb_entry);
 */
 int8_t menu_select_entry(char **entry_list, int nb_entry);
 
+
+/**
+ * 
+*/
+void help_render();
 
 #endif

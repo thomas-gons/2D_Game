@@ -26,12 +26,13 @@
 */
 #define MAP_LINES       40
 #define MAP_COLS        80
-#define BAR_SIZE        16
-#define STM_BAR_SIZE    (MAP_LINES - (HELP_SIZE + STM_BAR_PAD_T + STM_BAR_PAD_B) + 2)
+#define BAR_SIZE        18
+#define STM_BAR_SIZE  (MAP_LINES - (HELP_SIZE + STM_BAR_PAD_T + STM_BAR_PAD_B) + 2)
+#define STM_BAR_WIDTH   6
 #define STM_BAR_PAD_T   2
 #define STM_BAR_PAD_B   6
-#define STM_BAR_PAD_L   5
-#define HELP_SIZE       14
+#define STM_BAR_PAD_L   ((BAR_SIZE - STM_BAR_WIDTH) / 2)
+#define HELP_SIZE       13
 
 /**
  * Colors for ncurses character output.

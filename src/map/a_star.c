@@ -5,13 +5,14 @@
 extern Map *map;
 
 int8_t moveset[MOVESET_LEN][2] = {  // {line, col}
-    {1, 0},     // Down 
     {0, 1},     // Right
-    {-1, 0},    // Up
-    {0, -1}     // Left         
+    {1, 0},     // Down
+    {0, -1},    // Left
+    {-1, 0}     // Top         
 }; 
 
-Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], int cost) {
+Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS]) {
+    unsigned cost;
     // closed array will be filled with all tested position
     unsigned closed[MAP_LINES][MAP_COLS] = {0};
     closed[START.l][START.c] = 1;
@@ -41,6 +42,24 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], int cost) {
                 tmp_c = next_cell.pos.c + moveset[i][1];
                 if (IS_OUT_OF_MAP(tmp_l, tmp_c)) {
                     if (!closed[tmp_l][tmp_c] && !IS_OBSTACLE_CELL(tmp_l, tmp_c)) {
+                        switch (i) {
+                            case 0:
+                                // right
+                                cost = map->map_grid[next_cell.pos.l][next_cell.pos.c].distance[0];
+                                break;
+                            case 1:
+                                // bottom
+                                cost = map->map_grid[next_cell.pos.l][next_cell.pos.c].distance[1];
+                                break;
+                            case 2:
+                                // left
+                                cost = map->map_grid[next_cell.pos.l][next_cell.pos.c - 1].distance[0];
+                                break;
+                            default:
+                                // top
+                                cost = map->map_grid[next_cell.pos.l - 1][next_cell.pos.c].distance[1];
+                                break;
+                        }
                         tmp_g = next_cell.g + cost;
                         tmp_f = tmp_g + heuristic[tmp_l][tmp_c];
                         queue_enqueue(opened, (Point) {(Position) {.l=tmp_l, .c=tmp_c}, tmp_f, tmp_g});
@@ -68,8 +87,6 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], int cost) {
 }
 
 Stack *a_star() {
-    // cost -> the movement cost to reach an adjacent cell
-    unsigned cost = 1;
     unsigned heuristic[MAP_LINES][MAP_COLS] = {0};
 
     for (uint8_t l = 0; l < MAP_LINES; l++) {
@@ -82,5 +99,5 @@ Stack *a_star() {
             }
         }
     }
-    return search_path(heuristic, cost);
+    return search_path(heuristic);
 }
