@@ -17,11 +17,11 @@ void map_init(Level level) {
         map->map_grid[i] = calloc(MAP_COLS, sizeof *map->map_grid[i]);
         for (j = 0; j < MAP_COLS; j++) {
             if (j != MAP_COLS - 1) {
-                // right direction
+                // Right direction
                 map->map_grid[i][j].distance[0] = (rand() % (MAX_DISTANCE - MIN_DISTANCE - 1)) + MIN_DISTANCE;
             }
             if (i != MAP_LINES - 1) {
-                // bottom direction
+                // Bottom direction
                 map->map_grid[i][j].distance[1] = (rand() % (MAX_DISTANCE - MIN_DISTANCE - 1)) + MIN_DISTANCE;
             }
         }
@@ -53,7 +53,7 @@ void map_render() {
     mvwaddch(game.game_win, MAP_LINES - 1, MAP_COLS - 1, '#' | COLOR_PAIR(FORMAT_COLOR_CYAN));
     wattroff(game.game_win, A_BOLD);
 }
-// (🠖%hhu, 🠗%hhu)
+
 void map_display() {
     Node *tmp;
     for (uint8_t l = 0; l < MAP_LINES; l++) {

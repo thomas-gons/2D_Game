@@ -28,7 +28,6 @@ void stamina_update_val();
 */
 void stamina_bar_render();
 
-
 /**
  * Render stamina ncurses window.
 */

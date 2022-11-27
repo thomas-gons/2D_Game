@@ -15,10 +15,11 @@
 #define RENDER_DIST_OBSTACLE(line, col, value, horz) {                                                   \
     if ((value) == 'X') {                                                                                \
         wattron(game.dist_win, A_BOLD);                                                                  \
-        mvwaddch(game.dist_win, (line), (col) + (horz), (char) (value) | COLOR_PAIR(FORMAT_COLOR_RED));  \
+        mvwaddch(game.dist_win, (line), (col) + (horz), (char)(value) | COLOR_PAIR(FORMAT_COLOR_RED));   \
         wattroff(game.dist_win, A_BOLD);                                                                 \
-    } else                                                                                               \
+    } else {                                                                                             \
         mvwprintw(game.dist_win, (line), (col), "%hhd", (value));                                        \
+    }                                                                                                    \
 }
 
 
@@ -39,10 +40,10 @@ void menu_create_entry_template(char **entry_list, int nb_entry);
 */
 int8_t menu_select_entry(char **entry_list, int nb_entry);
 
-
 /**
- * 
+ * Render distances for all four directions around player current position.
 */
-void help_render();
+void distances_render();
+
 
 #endif

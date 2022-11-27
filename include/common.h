@@ -49,5 +49,7 @@
 #define FORMAT_BGCOLOR_YELLOW   9
 #define FORMAT_BGCOLOR_RED      10
 
+#define FORMAT_COLOR_WHITE_BG_RED   11
+
 
 #endif

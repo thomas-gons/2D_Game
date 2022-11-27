@@ -17,6 +17,7 @@ void player_init(Level level) {
     player->distance = 0;
     player->fruit_stack = 0;
     player->on_obstacle = false;
+    player->history = stack_init();
     switch (level) {
     case EASY:
         player->stamina = STAMINA_EASY;
@@ -86,7 +87,7 @@ void player_update() {
         break;
     case UP:
         if (!player_check_collisions(player->pos.l - 1, player->pos.c))
-            player->distance += (player->pos.l - 1 <= 0) ? 0 : map->map_grid[player->pos.l - 2][player->pos.c].distance[1];
+            player->distance += (player->pos.l < 0) ? 0 : map->map_grid[player->pos.l][player->pos.c].distance[1];
         break;
     default: break;
     }
@@ -98,9 +99,10 @@ bool player_check_collisions(uint8_t line, uint8_t col) {
         // If player tries to cross an obstacle, loses way more stamina
         if (IS_OBSTACLE_CELL(line, col)) {
             player->on_obstacle = true;
-            player->stamina -= STAMINA_LOSS_OBS;
+            player->stamina -= STAMINA_COST_OBS;
+            player_obstacle_alert(line, col);
         } else {
-            // If player is on a fruit, he gain stamina
+            // If player is on a fruit, he gains stamina
             if (IS_FRUIT_CELL(line, col)) {
                 player_stack_fruit(line,col);
             }
@@ -108,14 +110,28 @@ bool player_check_collisions(uint8_t line, uint8_t col) {
             player->pos.l = line;
             player->pos.c = col;
             map->map_grid[line][col].visited = true;
+            stack_push(player->history, (Position) {.l=line, .c=col});
         }
-        player->stamina -= STAMINA_LOSS;
+        // Stamina cost for moving one cell
+        player->stamina -= STAMINA_COST;
+        return (player->on_obstacle == true) ? true : false;
     }
-    return (player->on_obstacle == true) ? true: false;
+    return true;
+}
+
+void player_obstacle_alert(uint8_t line, uint8_t col) {
+    // TODO: change sfx => Aie ouille
+    system("aplay -q assets/sfx/fart.wav &");
+
+    mvwaddch(game.game_win, line, col, 'X' | COLOR_PAIR(FORMAT_COLOR_WHITE_BG_RED));
+    wrefresh(game.game_win);
+
+    // TODO: add an alert to block input => give an input to delete alert
+    usleep(200000);
 }
 
 void player_stack_fruit(uint8_t line, uint8_t col) {
-    if (player->stamina >= STAMINA_LIMIT_VAL_TO_STACK_FRUITS) {
+    if (player->stamina >= STAMINA_LIMIT_TO_STACK_FRUITS) {
         if (player->fruit_stack < FRUIT_STACK_MAX) {
             system("aplay -q assets/sfx/fruit-pickup.wav &");
             player->fruit_stack++;
@@ -144,18 +160,22 @@ void player_stats_render() {
     mvwprintw(game.stats_win, 0, 3, "FRUITS");
     mvwprintw(game.stats_win, 0, 12, ".  .");
     for (uint8_t i = 0; i < player->fruit_stack; i++) {
+        wattron(game.stats_win, A_BOLD);
         mvwaddch(game.stats_win, 0, 12 + i * 3, '@' | COLOR_PAIR(FORMAT_COLOR_GREEN));
+        wattroff(game.stats_win, A_BOLD);
     }
     // render distance stat
     mvwprintw(game.stats_win, 2, 3, "DISTANCE  %u", player->distance);
 }
 
 void player_render() {
+    wattron(game.stats_win, A_BOLD);
     mvwaddch(game.game_win, player->pos.l, player->pos.c, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));
+    wattroff(game.stats_win, A_BOLD);
     player_stats_render();
 }
 
 void player_free() {
-    // TODO: Free stack of player positions
+    stack_free(player->history);
     free(player);
 }

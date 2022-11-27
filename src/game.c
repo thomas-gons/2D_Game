@@ -28,6 +28,8 @@ void ncs_init_colors() {
     init_pair(FORMAT_BGCOLOR_GREEN, -1, COLOR_GREEN);
     init_pair(FORMAT_BGCOLOR_YELLOW, -1, COLOR_YELLOW);
     init_pair(FORMAT_BGCOLOR_RED, -1, COLOR_RED);
+
+    init_pair(FORMAT_COLOR_WHITE_BG_RED, COLOR_WHITE, COLOR_RED);
 }
 
 void ncs_check_term_size() {
@@ -86,9 +88,9 @@ void ncs_create_game_windows() {
                             STM_BAR_C0
     );
     game.stats_win = subwin(stdscr,
-                            3,
-                            BAR_SIZE,
-                            HELP_WIN_L0 - 3,
+                            4,
+                            BAR_SIZE + 1,
+                            HELP_WIN_L0 - 4,
                             BAR_WIN_C0
     );
     game.dist_win = subwin( stdscr,
@@ -107,7 +109,7 @@ void ncs_refresh_game_windows() {
     box(game.stm_bar, ACS_VLINE, ACS_HLINE);
     box(game.dist_win, ACS_VLINE, ACS_HLINE);
     // Render game windows
-    wrefresh(game.main_win);
+    // wrefresh(game.main_win);
     wrefresh(game.game_win);
     wrefresh(game.bar_win);
     wrefresh(game.stm_bar);
@@ -188,7 +190,11 @@ void game_init_new_game() {
 }
 
 bool game_check_win() {
-    return ((player->pos.l == MAP_LINES - 1) && (player->pos.c == MAP_COLS - 1)) ? true : false;
+    if ((player->pos.l == MAP_LINES - 1) && (player->pos.c == MAP_COLS - 1)) {
+        system("aplay -q assets/sfx/youu.wav &");
+        return true;
+    }
+    return false;
 }
 
 void game_loop() {
@@ -197,7 +203,7 @@ void game_loop() {
         game_update();
         game_render();
         // Limit framerate to ~ 60fps
-        usleep(15000);
+        usleep(16000);
     }
     // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
     usleep(300000);
@@ -217,7 +223,7 @@ void game_render() {
     map_render();
     player_render();
     stamina_render();
-    help_render();
+    distances_render();
 
     ncs_refresh_game_windows();
     if (player->stamina <= STAMINA_MIN) {

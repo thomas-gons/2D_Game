@@ -17,13 +17,13 @@
 #define STAMINA_MEDIUM  70
 #define STAMINA_HARD    50
 
-#define STAMINA_LOSS    1
-#define STAMINA_LOSS_OBS 10
-#define STAMINA_GAIN    10
+#define STAMINA_COST        1
+#define STAMINA_COST_OBS    10
+#define STAMINA_GAIN        10
 
-#define STAMINA_MAX     100
-#define STAMINA_MIN     0
-#define STAMINA_LIMIT_VAL_TO_STACK_FRUITS 80
+#define STAMINA_MAX         100
+#define STAMINA_MIN         0
+#define STAMINA_LIMIT_TO_STACK_FRUITS 80
 
 /**
  * Fruit stack settings
@@ -56,6 +56,13 @@ void player_update();
  * \param column column of cell to be checked
 */
 bool player_check_collisions(uint8_t line, uint8_t col);
+
+/**
+ * Alert player of collision with an obstacle.
+ * \param line cell line of obstacle
+ * \param column cell column of obstacle
+*/
+void player_obstacle_alert(uint8_t line, uint8_t col);
 
 /**
  * Player stack fruit.
