@@ -8,5 +8,5 @@ Player *player = NULL;
 int main() {
     setlocale(LC_ALL, "");
     run_game();
-    return 0;
+    return 0; 
 }

@@ -10,7 +10,7 @@ void stamina_update_val() {
     }
     mvwprintw(  game.bar_win,
                 STM_BAR_SIZE + STM_BAR_PAD_T,
-                STM_BAR_PAD_L + 2,
+                STM_BAR_PAD_L + 3,
                 (player->stamina == 100) ? "%d" : ((player->stamina >= 10) ? " %d" : "  %d"), player->stamina);
 }
 
@@ -31,15 +31,9 @@ void stamina_bar_render() {
     }
 }
 
-void stamina_fruit_stack_render() {
-    // Render fruit stack
-    mvwprintw(game.fruit_win, 0, 3, "FRUITS  %hhd/2", player->fruit_stack);
-    mvwaddch(game.fruit_win, 0, 15, '@' | COLOR_PAIR(FORMAT_COLOR_GREEN));
-}
 
 void stamina_render() {
-    mvwprintw(game.bar_win, 1, STM_BAR_PAD_L + 2, "STM");
+    mvwprintw(game.bar_win, 1, STM_BAR_PAD_L + 3, "STM");
     stamina_update_val();
     stamina_bar_render();
-    stamina_fruit_stack_render();
 }

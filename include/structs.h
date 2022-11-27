@@ -21,8 +21,8 @@ typedef struct Game {
     WINDOW *game_win;
     WINDOW *bar_win;
     WINDOW *stm_bar;
-    WINDOW *fruit_win;
-    WINDOW *help_win;
+    WINDOW *stats_win;
+    WINDOW *dist_win;
     Stack *path;
     time_t date;
 } Game;
@@ -76,10 +76,10 @@ typedef struct Map {
 */
 typedef enum Move {
     NONE = -1,
+    RIGHT,
     DOWN,
     LEFT,
-    UP,
-    RIGHT
+    UP
 } Move;
 
 /**
@@ -88,6 +88,7 @@ typedef enum Move {
 typedef struct Player {
     Position pos;
     Move move;
+    uint16_t distance;
     int8_t stamina;
     int8_t fruit_stack;
     bool on_obstacle;

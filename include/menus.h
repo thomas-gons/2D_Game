@@ -4,7 +4,22 @@
 
 #include "common.h"
 #include "structs.h"
+#include "map.h"
 
+
+/************************* DEFINES *************************/
+
+/**
+ * Render whether the distance or the obstacle.
+*/
+#define RENDER_DIST_OBSTACLE(line, col, value, horz) {                                                   \
+    if ((value) == 'X') {                                                                                \
+        wattron(game.dist_win, A_BOLD);                                                                  \
+        mvwaddch(game.dist_win, (line), (col) + (horz), (char) (value) | COLOR_PAIR(FORMAT_COLOR_RED));  \
+        wattroff(game.dist_win, A_BOLD);                                                                 \
+    } else                                                                                               \
+        mvwprintw(game.dist_win, (line), (col), "%hhd", (value));                                        \
+}
 
 
 /************************* FUNCTIONS *************************/

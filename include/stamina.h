@@ -28,10 +28,6 @@ void stamina_update_val();
 */
 void stamina_bar_render();
 
-/**
- * Render fruits stack.
-*/
-void stamina_fruit_stack_render();
 
 /**
  * Render stamina ncurses window.

@@ -16,7 +16,7 @@
 #define CENTER_C (MAP_COLS / 2)
 
 #define MIN_DISTANCE 1
-#define MAX_DISTANCE 20
+#define MAX_DISTANCE 10
 
 /**
  * The probabilties add up according to this order.
@@ -53,8 +53,8 @@
  * Check if position is within the map range.
 */
 #define IS_OUT_OF_MAP(line, col) (                  \
-    (line >= 0 && line < MAP_LINES) &&              \
-    (col >= 0 && col < MAP_COLS)) ? true : false    \
+    ((line) >= 0 && (line) < MAP_LINES) &&              \
+    ((col) >= 0 && (col) < MAP_COLS)) ? true : false    \
 
 /**
  * Check if position is an obstacle cell.

@@ -1,6 +1,5 @@
 #include "menus.h"
 
-
 extern Game game;
 extern Map *map;
 extern Player *player;
@@ -65,28 +64,30 @@ int8_t menu_select_entry(char **entry_list, int nb_entry) {
 }
 
 void help_render() {
-    uint8_t right = (player->pos.c == MAP_COLS - 1) ? 0: map->map_grid[player->pos.c][player->pos.l].distance[0];
-    uint8_t bottom = (player->pos.l == MAP_LINES - 1) ? 0: map->map_grid[player->pos.c][player->pos.l].distance[1];
-    uint8_t left = (player->pos.c == 0) ? 0: map->map_grid[player->pos.c - 1][player->pos.l].distance[0];
-    uint8_t top = (player->pos.l == 0) ? 0: map->map_grid[player->pos.c][player->pos.l - 1].distance[1];
+    uint8_t right = (player->pos.c == MAP_COLS - 1) ? 0 : 
+        (IS_OBSTACLE_CELL(player->pos.l, player->pos.c + 1)) ? 'X' : map->map_grid[player->pos.l][player->pos.c].distance[0];
+    uint8_t bottom = (player->pos.l == MAP_LINES - 1) ? 0 : 
+        (IS_OBSTACLE_CELL(player->pos.l + 1, player->pos.c)) ? 'X' : map->map_grid[player->pos.l][player->pos.c].distance[1];
+    uint8_t left = (player->pos.c == 0) ? 0 : 
+        (IS_OBSTACLE_CELL(player->pos.l, player->pos.c - 1)) ? 'X' : map->map_grid[player->pos.l][player->pos.c - 1].distance[0];
+    uint8_t top = (player->pos.l == 0) ? 0 : 
+        (IS_OBSTACLE_CELL(player->pos.l - 1, player->pos.c)) ? 'X' : map->map_grid[player->pos.l - 1][player->pos.c].distance[1];
 
-    mvwaddch(game.help_win, 5, BAR_SIZE / 2, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));
+    mvwaddch(game.dist_win, 6, BAR_SIZE / 2, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));
 
-    mvwprintw(game.help_win, 1, BAR_SIZE / 2, "  ");
-    mvwprintw(game.help_win, 1, BAR_SIZE / 2, "%hhd", top);
-    mvwprintw(game.help_win, 3, BAR_SIZE / 2, "🠱");
+    mvwprintw(game.dist_win, 2, BAR_SIZE / 2, "  ");
+    RENDER_DIST_OBSTACLE(2, BAR_SIZE / 2, top, false);
+    mvwprintw(game.dist_win, 4, BAR_SIZE / 2, "🠱");
 
-    mvwprintw(game.help_win, 5, (BAR_SIZE / 2) - 7, "  ");
-    mvwprintw(game.help_win, 5, (BAR_SIZE / 2) - ((left / 10) ? 7: 6), "%hhd", left);
-    mvwprintw(game.help_win, 5, (BAR_SIZE / 2) - 4 , "🠰");
+    mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) - 7, "  ");
+    RENDER_DIST_OBSTACLE(6, (BAR_SIZE / 2) - ((left / 10) ? 7: 6), left, true);
+    mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) - 4 , "🠰");
 
-    mvwprintw(game.help_win, 5, (BAR_SIZE / 2) + 5, "  ");
-    mvwprintw(game.help_win, 5, (BAR_SIZE / 2) + 5, "%hhd", right);
-    mvwprintw(game.help_win, 5, (BAR_SIZE / 2) + 3 , "🠲");
+    mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) + 5, "  ");
+    RENDER_DIST_OBSTACLE(6, (BAR_SIZE / 2) + 5, right, true);
+    mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) + 3 , "🠲");
 
-    mvwprintw(game.help_win, 9, BAR_SIZE / 2, "  ");
-    mvwprintw(game.help_win, 9, BAR_SIZE / 2, "%hhd", bottom);
-    mvwprintw(game.help_win, 7, BAR_SIZE / 2, "🠳");
-
-    mvwprintw(game.help_win, 11, 5, "DISTANCES");
+    mvwprintw(game.dist_win, 10, BAR_SIZE / 2, "  ");
+    RENDER_DIST_OBSTACLE( 10, BAR_SIZE / 2, bottom, false);
+    mvwprintw(game.dist_win, 8, BAR_SIZE / 2, "🠳");
 }

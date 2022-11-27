@@ -51,11 +51,11 @@ void player_inputs();
 void player_update();
 
 /**
- * Check if player is colliding with map borders or obstacles.
+ * Check if player is colliding with map borders or obstacles. Returns true whether not colliding or false otherwise.
  * \param line line of cell to be checked
  * \param column column of cell to be checked
 */
-void player_check_collisions(uint8_t line, uint8_t col);
+bool player_check_collisions(uint8_t line, uint8_t col);
 
 /**
  * Player stack fruit.
@@ -66,6 +66,11 @@ void player_stack_fruit(uint8_t line, uint8_t col);
  * Player eat stacked fruit.
 */
 void player_eat_fruit();
+
+/**
+ * Render fruit stack and distance travelled by the player in terminal with ncurses
+*/
+void player_stats_render();
 
 /**
  * Render player in terminal with ncurses.

@@ -28,7 +28,7 @@
 #define MAP_COLS        80
 #define BAR_SIZE        18
 #define STM_BAR_SIZE  (MAP_LINES - (HELP_SIZE + STM_BAR_PAD_T + STM_BAR_PAD_B) + 2)
-#define STM_BAR_WIDTH   6
+#define STM_BAR_WIDTH   7
 #define STM_BAR_PAD_T   2
 #define STM_BAR_PAD_B   6
 #define STM_BAR_PAD_L   ((BAR_SIZE - STM_BAR_WIDTH) / 2)
@@ -48,5 +48,6 @@
 #define FORMAT_BGCOLOR_GREEN    8
 #define FORMAT_BGCOLOR_YELLOW   9
 #define FORMAT_BGCOLOR_RED      10
+
 
 #endif

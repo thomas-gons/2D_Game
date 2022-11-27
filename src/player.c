@@ -14,6 +14,7 @@ void player_init(Level level) {
     player->pos = (Position) {.l=0, .c=0};
     map->map_grid[player->pos.l][player->pos.c].visited = true;
     player->move = NONE;
+    player->distance = 0;
     player->fruit_stack = 0;
     player->on_obstacle = false;
     switch (level) {
@@ -71,23 +72,27 @@ void player_inputs() {
 
 void player_update() {
     switch (player->move) {
-    case DOWN:
-        player_check_collisions(player->pos.l + 1, player->pos.c);
-        break;
     case RIGHT:
-        player_check_collisions(player->pos.l, player->pos.c + 1);
+        if (!player_check_collisions(player->pos.l, player->pos.c + 1))
+            player->distance += (player->pos.c - 1 >= MAP_COLS - 1) ? 0 : map->map_grid[player->pos.l][player->pos.c - 1].distance[0];
         break;
-    case UP:
-        player_check_collisions(player->pos.l - 1, player->pos.c);
+    case DOWN:
+        if (!player_check_collisions(player->pos.l + 1, player->pos.c)) 
+            player->distance += (player->pos.l - 1 >= MAP_LINES - 1) ? 0 : map->map_grid[player->pos.l - 1][player->pos.c].distance[1];
         break;
     case LEFT:
-        player_check_collisions(player->pos.l, player->pos.c - 1);
+        if (!player_check_collisions(player->pos.l, player->pos.c - 1))
+            player->distance += (player->pos.c < 0) ? 0 : map->map_grid[player->pos.l][player->pos.c].distance[0];
+        break;
+    case UP:
+        if (!player_check_collisions(player->pos.l - 1, player->pos.c))
+            player->distance += (player->pos.l - 1 <= 0) ? 0 : map->map_grid[player->pos.l - 2][player->pos.c].distance[1];
         break;
     default: break;
     }
 }
 
-void player_check_collisions(uint8_t line, uint8_t col) {
+bool player_check_collisions(uint8_t line, uint8_t col) {
     // Check for out of bound values
     if (IS_OUT_OF_MAP(line, col)) {         
         // If player tries to cross an obstacle, loses way more stamina
@@ -106,6 +111,7 @@ void player_check_collisions(uint8_t line, uint8_t col) {
         }
         player->stamina -= STAMINA_LOSS;
     }
+    return (player->on_obstacle == true) ? true: false;
 }
 
 void player_stack_fruit(uint8_t line, uint8_t col) {
@@ -133,8 +139,20 @@ void player_eat_fruit() {
     }
 }
 
+void player_stats_render() {
+    // Render fruit stack
+    mvwprintw(game.stats_win, 0, 3, "FRUITS");
+    mvwprintw(game.stats_win, 0, 12, ".  .");
+    for (uint8_t i = 0; i < player->fruit_stack; i++) {
+        mvwaddch(game.stats_win, 0, 12 + i * 3, '@' | COLOR_PAIR(FORMAT_COLOR_GREEN));
+    }
+    // render distance stat
+    mvwprintw(game.stats_win, 2, 3, "DISTANCE  %u", player->distance);
+}
+
 void player_render() {
     mvwaddch(game.game_win, player->pos.l, player->pos.c, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));
+    player_stats_render();
 }
 
 void player_free() {

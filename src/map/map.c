@@ -29,6 +29,7 @@ void map_init(Level level) {
 }
 
 void map_render() {
+    wattron(game.game_win, A_BOLD);
     for (uint8_t l = 0; l < MAP_LINES; l++) {
         for (uint8_t c = 0; c < MAP_COLS; c++) {
             switch (map->map_grid[l][c].cell_type) {
@@ -37,7 +38,7 @@ void map_render() {
                     ((map->map_grid[l][c].visited) ? '.' : ' ') | COLOR_PAIR(FORMAT_COLOR_CYAN));
                 break;
             case OBSTACLE:
-                mvwaddch(game.game_win, l, c, '%' | COLOR_PAIR(FORMAT_COLOR_RED));
+                mvwaddch(game.game_win, l, c, 'X' | COLOR_PAIR(FORMAT_COLOR_RED));
                 break;
             case FRUIT:
                 mvwaddch(game.game_win, l, c, '@' | COLOR_PAIR(FORMAT_COLOR_GREEN));
@@ -50,12 +51,25 @@ void map_render() {
         }
     }
     mvwaddch(game.game_win, MAP_LINES - 1, MAP_COLS - 1, '#' | COLOR_PAIR(FORMAT_COLOR_CYAN));
+    wattroff(game.game_win, A_BOLD);
 }
-
+// (🠖%hhu, 🠗%hhu)
 void map_display() {
+    Node *tmp;
     for (uint8_t l = 0; l < MAP_LINES; l++) {
         for (uint8_t c = 0; c < MAP_COLS; c++) {
-            printf("(🠖%hhu, 🠗%hhu) ", map->map_grid[l][c].distance[0], map->map_grid[l][c].distance[1]);
+            if (map->map_grid[l][c].cell_type == OBSTACLE)
+                printf("\033[31;1m(XX, XX)\033[0m ");
+            else {
+                for (tmp = game.path->head; tmp; tmp = tmp->next) {
+                    if (tmp->pos.l == l && tmp->pos.c == c) {
+                        printf("\033[32;1m(🠖%hhu, 🠗%hhu)\033[0m ", map->map_grid[l][c].distance[0], map->map_grid[l][c].distance[1]);
+                        break;
+                    }
+                }
+                if (!tmp)
+                    printf("(🠖%hhu, 🠗%hhu) ", map->map_grid[l][c].distance[0], map->map_grid[l][c].distance[1]);
+            }
         }
         printf("\n");
     }

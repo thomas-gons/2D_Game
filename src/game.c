@@ -10,7 +10,8 @@ void ncs_init() {
     // Don't echo the pressed key and hide the cursor
     noecho();
     curs_set(false);
-    keypad(stdscr, TRUE);
+    keypad(stdscr, true);
+    scrollok(stdscr, false);
 }
 
 void ncs_init_colors() {
@@ -84,13 +85,13 @@ void ncs_create_game_windows() {
                             STM_BAR_L0,
                             STM_BAR_C0
     );
-    game.fruit_win = subwin(stdscr,
-                            2,
+    game.stats_win = subwin(stdscr,
+                            3,
                             BAR_SIZE,
                             HELP_WIN_L0 - 3,
                             BAR_WIN_C0
     );
-    game.help_win = subwin( stdscr,
+    game.dist_win = subwin( stdscr,
                             HELP_SIZE,
                             BAR_SIZE + 1,
                             HELP_WIN_L0,
@@ -104,14 +105,14 @@ void ncs_refresh_game_windows() {
     box(game.main_win, ACS_VLINE, ACS_HLINE);
     box(game.bar_win, ACS_VLINE, ACS_HLINE);
     box(game.stm_bar, ACS_VLINE, ACS_HLINE);
-    box(game.help_win, ACS_VLINE, ACS_HLINE);
+    box(game.dist_win, ACS_VLINE, ACS_HLINE);
     // Render game windows
     wrefresh(game.main_win);
     wrefresh(game.game_win);
     wrefresh(game.bar_win);
     wrefresh(game.stm_bar);
-    wrefresh(game.fruit_win);
-    wrefresh(game.help_win);
+    wrefresh(game.stats_win);
+    wrefresh(game.dist_win);
 }
 
 void ncs_destroy_win(WINDOW *win) {
