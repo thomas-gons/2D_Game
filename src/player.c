@@ -96,7 +96,7 @@ void player_update() {
 bool player_check_collisions(uint8_t line, uint8_t col) {
     // Check for out of bound values
     if (IS_OUT_OF_MAP(line, col)) {         
-        // If player tries to cross an obstacle, loses way more stamina
+        // If player tries to cross an obstacle, loses more stamina
         if (IS_OBSTACLE_CELL(line, col)) {
             player->on_obstacle = true;
             player->stamina -= STAMINA_COST_OBS;
@@ -123,6 +123,7 @@ void player_obstacle_alert(uint8_t line, uint8_t col) {
     // TODO: change sfx => Aie ouille
     system("aplay -q assets/sfx/fart.wav &");
 
+    // TODO: make a loop, print alert msg and block input
     mvwaddch(game.game_win, line, col, 'X' | COLOR_PAIR(FORMAT_COLOR_WHITE_BG_RED));
     wrefresh(game.game_win);
 
@@ -164,7 +165,7 @@ void player_stats_render() {
         mvwaddch(game.stats_win, 0, 12 + i * 3, '@' | COLOR_PAIR(FORMAT_COLOR_GREEN));
         wattroff(game.stats_win, A_BOLD);
     }
-    // render distance stat
+    // Render distance stat
     mvwprintw(game.stats_win, 2, 3, "DISTANCE  %u", player->distance);
 }
 

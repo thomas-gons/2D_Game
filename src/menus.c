@@ -64,6 +64,7 @@ int8_t menu_select_entry(char **entry_list, int nb_entry) {
 }
 
 void distances_render() {
+    // Set character to obstacle char if player is near an obstacle
     uint8_t right = (player->pos.c == MAP_COLS - 1) ? 0 : 
         (IS_OBSTACLE_CELL(player->pos.l, player->pos.c + 1)) ? 'X' : map->map_grid[player->pos.l][player->pos.c].distance[0];
     uint8_t bottom = (player->pos.l == MAP_LINES - 1) ? 0 : 
@@ -72,22 +73,22 @@ void distances_render() {
         (IS_OBSTACLE_CELL(player->pos.l, player->pos.c - 1)) ? 'X' : map->map_grid[player->pos.l][player->pos.c - 1].distance[0];
     uint8_t top = (player->pos.l == 0) ? 0 : 
         (IS_OBSTACLE_CELL(player->pos.l - 1, player->pos.c)) ? 'X' : map->map_grid[player->pos.l - 1][player->pos.c].distance[1];
-
+    // Render player character at center
     wattron(game.stats_win, A_BOLD);
     mvwaddch(game.dist_win, 6, BAR_SIZE / 2, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));
     wattroff(game.stats_win, A_BOLD);
-
+    // Render directional arrows and their distance value
     mvwprintw(game.dist_win, 2, BAR_SIZE / 2, "  ");
     RENDER_DIST_OBSTACLE(2, BAR_SIZE / 2, top, false);
     mvwprintw(game.dist_win, 4, BAR_SIZE / 2, "🠱");
 
     mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) - 7, "  ");
-    RENDER_DIST_OBSTACLE(6, (BAR_SIZE / 2) - ((left / 10) ? 7: 6), left, true);
+    RENDER_DIST_OBSTACLE(6, (BAR_SIZE / 2) - ((left / 10) ? 7 : 6), left, true);
     mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) - 4 , "🠰");
 
     mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) + 5, "  ");
-    RENDER_DIST_OBSTACLE(6, (BAR_SIZE / 2) + 5, right, true);
-    mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) + 3 , "🠲");
+    RENDER_DIST_OBSTACLE(6, (BAR_SIZE / 2) + 6, right, false);
+    mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) + 3, "🠲");
 
     mvwprintw(game.dist_win, 10, BAR_SIZE / 2, "  ");
     RENDER_DIST_OBSTACLE( 10, BAR_SIZE / 2, bottom, false);

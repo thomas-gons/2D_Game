@@ -68,7 +68,7 @@ void stack_free(Stack *stack) {
 void stack_display(Stack *stack) {
     Node *tmp = stack->head;
     while (tmp != NULL) {
-        printf("(%d, %d)->", tmp->pos.c, tmp->pos.l);
+        printf("(l:%d, c:%d)->", tmp->pos.l, tmp->pos.c);
         tmp = tmp->next;
     }
     if (tmp == NULL) {

@@ -29,12 +29,12 @@ void map_random_fill() {
 
             // Tile type is based on the probability distribution model (radial here)
             prob_fruit = (tmp_prob_fruit > PROB_MAX_FRUIT) ?
-                PROB_MAX_FRUIT: tmp_prob_fruit;
+                PROB_MAX_FRUIT : tmp_prob_fruit;
             prob_obs = (tmp_prob_obs > PROB_MAX_OBS) ?
-                PROB_MAX_OBS: tmp_prob_obs;
+                PROB_MAX_OBS : tmp_prob_obs;
             
-            map->map_grid[l][c].cell_type = (prob <= prob_fruit) ? FRUIT:
-                (prob <= prob_obs) ? OBSTACLE: ROAD;
+            map->map_grid[l][c].cell_type = (prob <= prob_fruit) ? FRUIT :
+                (prob <= prob_obs) ? OBSTACLE : ROAD;
         }
     }
 }
