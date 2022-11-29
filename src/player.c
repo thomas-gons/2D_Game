@@ -18,6 +18,7 @@ void player_init(Level level) {
     player->fruit_stack = 0;
     player->skip_map_render = false;
     player->history = stack_init();
+    stack_push(player->history, player->pos);
     switch (level) {
     case EASY:
         player->stamina = STAMINA_EASY;
@@ -208,6 +209,7 @@ void player_alert_render(char *alert_msg) {
     mvwprintw(game.alert_win, 1, 1, alert_msg);
     box(game.alert_win, ACS_VLINE, ACS_HLINE);
     wrefresh(game.alert_win);
+    usleep(150000);
 }
 
 void player_render() {

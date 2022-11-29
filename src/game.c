@@ -100,7 +100,7 @@ void ncs_create_game_windows() {
                             HELP_WIN_C0
     );
     game.alert_win = subwin(stdscr,
-                            3,
+                            4,
                             MAP_COLS + BAR_SIZE + 3,
                             game.win_h/2 + MAP_LINES/2,
                             MAIN_WIN_C0
