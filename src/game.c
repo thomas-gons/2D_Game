@@ -88,9 +88,9 @@ void ncs_create_game_windows() {
                             STM_BAR_C0
     );
     game.stats_win = subwin(stdscr,
-                            4,
+                            6,
                             BAR_SIZE + 1,
-                            HELP_WIN_L0 - 4,
+                            HELP_WIN_L0 - 5,
                             BAR_WIN_C0
     );
     game.dist_win = subwin( stdscr,
@@ -99,8 +99,13 @@ void ncs_create_game_windows() {
                             HELP_WIN_L0,
                             HELP_WIN_C0
     );
+    game.alert_win = subwin(stdscr,
+                            3,
+                            MAP_COLS + BAR_SIZE + 3,
+                            game.win_h/2 + MAP_LINES/2,
+                            MAIN_WIN_C0
+    );
 }
-
 
 void ncs_refresh_game_windows() {
     // Render border for game subwindows
@@ -108,17 +113,18 @@ void ncs_refresh_game_windows() {
     box(game.bar_win, ACS_VLINE, ACS_HLINE);
     box(game.stm_bar, ACS_VLINE, ACS_HLINE);
     box(game.dist_win, ACS_VLINE, ACS_HLINE);
+    box(game.alert_win, ACS_VLINE, ACS_HLINE);
     // Render game windows
-    // wrefresh(game.main_win);
     wrefresh(game.game_win);
     wrefresh(game.bar_win);
     wrefresh(game.stm_bar);
     wrefresh(game.stats_win);
     wrefresh(game.dist_win);
+    wrefresh(game.alert_win);
 }
 
 void ncs_destroy_win(WINDOW *win) {
-    wclear(win);
+    werase(win);
     delwin(win);
 }
 
@@ -137,8 +143,11 @@ void run_game() {
         // TODO: Game over screen + menu
         game_free();
         break;
-    case 1: // Load game save
+    case 1: // Load a game save
         // game_load_saved_game();
+        // game_loop();
+        // TODO: Game over screen + menu
+        // game_free();
         break;
     case 2: // Quit game
         game_quit();
@@ -206,21 +215,21 @@ void game_loop() {
         usleep(16000);
     }
     // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
-    usleep(300000);
+    usleep(200000);
 }
 
 void game_inputs() {
     player_inputs();
-    // Maybe more
 }
 
 void game_update() {
     player_update();
-    // Maybe more
 }
 
 void game_render() {
-    map_render();
+    if (player->skip_map_render == false) {
+        map_render();
+    }
     player_render();
     stamina_render();
     distances_render();

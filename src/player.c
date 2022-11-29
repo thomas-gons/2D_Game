@@ -16,7 +16,7 @@ void player_init(Level level) {
     player->move = NONE;
     player->distance = 0;
     player->fruit_stack = 0;
-    player->on_obstacle = false;
+    player->skip_map_render = false;
     player->history = stack_init();
     switch (level) {
     case EASY:
@@ -33,7 +33,7 @@ void player_init(Level level) {
 }
 
 void player_inputs() {
-    player->on_obstacle = false;
+    player->skip_map_render = false;
     player->move = NONE;
     switch (getch()) {
     case KEY_ESC:
@@ -69,6 +69,7 @@ void player_inputs() {
         break;
     default: break;
     }
+    werase(game.alert_win);
 }
 
 void player_update() {
@@ -98,7 +99,7 @@ bool player_check_collisions(uint8_t line, uint8_t col) {
     if (IS_OUT_OF_MAP(line, col)) {         
         // If player tries to cross an obstacle, loses more stamina
         if (IS_OBSTACLE_CELL(line, col)) {
-            player->on_obstacle = true;
+            player->skip_map_render = true;
             player->stamina -= STAMINA_COST_OBS;
             player_obstacle_alert(line, col);
         } else {
@@ -107,6 +108,7 @@ bool player_check_collisions(uint8_t line, uint8_t col) {
                 player_stack_fruit(line,col);
             }
             // Update player position in map
+            player_visited_cell_alert(line, col);
             player->pos.l = line;
             player->pos.c = col;
             map->map_grid[line][col].visited = true;
@@ -114,7 +116,7 @@ bool player_check_collisions(uint8_t line, uint8_t col) {
         }
         // Stamina cost for moving one cell
         player->stamina -= STAMINA_COST;
-        return (player->on_obstacle == true) ? true : false;
+        return (player->skip_map_render == true) ? true : false;
     }
     return true;
 }
@@ -122,13 +124,39 @@ bool player_check_collisions(uint8_t line, uint8_t col) {
 void player_obstacle_alert(uint8_t line, uint8_t col) {
     // TODO: change sfx => Aie ouille
     system("aplay -q assets/sfx/fart.wav &");
-
-    // TODO: make a loop, print alert msg and block input
+    // Render the obstacle to be disctincted
     mvwaddch(game.game_win, line, col, 'X' | COLOR_PAIR(FORMAT_COLOR_WHITE_BG_RED));
     wrefresh(game.game_win);
+    
+    player_alert_render("You have hit an obstacle ! You lost 10 STM !");
+}
 
-    // TODO: add an alert to block input => give an input to delete alert
-    usleep(200000);
+void player_visited_cell_alert(uint8_t line, uint8_t col) {
+    if (map->map_grid[line][col].visited == true) {
+        player_alert_render("You have already visited this cell !");
+        int16_t index = stack_get_index(player->history, (Position) {.l=line, .c=col});
+        // If the cell that will be visit has already been visited, render all cells in history between the two same cells 
+        if (index > 0) {
+            // TODO: make this player variable generic => skip map_render to let color changes appear on screen
+            player->skip_map_render = true;
+            Node *tmp = player->history->head;
+            for (int16_t i = 0; i < index; i++) {
+                switch (map->map_grid[tmp->pos.l][tmp->pos.c].cell_type) {
+                case ROAD:
+                    mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '.' | COLOR_PAIR(FORMAT_COLOR_MAGENTA));
+                    break;
+                case FRUIT:
+                    mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '@' | COLOR_PAIR(FORMAT_COLOR_MAGENTA));
+                    break;
+                case NO_FRUIT:
+                    mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, ',' | COLOR_PAIR(FORMAT_COLOR_MAGENTA));
+                    break;
+                default: break; 
+                }
+                tmp = tmp->next;
+            }
+        }
+    }
 }
 
 void player_stack_fruit(uint8_t line, uint8_t col) {
@@ -137,11 +165,15 @@ void player_stack_fruit(uint8_t line, uint8_t col) {
             system("aplay -q assets/sfx/fruit-pickup.wav &");
             player->fruit_stack++;
             map->map_grid[line][col].cell_type = NO_FRUIT;
+            
+            player_alert_render("You have put a fruit in your pocket ! ");
         }
     } else {
         system("aplay -q assets/sfx/eat-apple.wav &");
         player->stamina += STAMINA_GAIN;
         map->map_grid[line][col].cell_type = NO_FRUIT;
+        
+        player_alert_render("You have eaten a fruit ! You gained 10 STM !");
     }
 }
 
@@ -153,6 +185,7 @@ void player_eat_fruit() {
         if (player->stamina > STAMINA_MAX) {
             player->stamina = STAMINA_MAX;
         }
+        player_alert_render("You have eaten a fruit from your pocket ! You gained 10 STM !");
     }
 }
 
@@ -167,6 +200,14 @@ void player_stats_render() {
     }
     // Render distance stat
     mvwprintw(game.stats_win, 2, 3, "DISTANCE  %u", player->distance);
+    // Render rewind stat
+    mvwprintw(game.stats_win, 4, 3, "REWIND ");
+}
+
+void player_alert_render(char *alert_msg) {
+    mvwprintw(game.alert_win, 1, 1, alert_msg);
+    box(game.alert_win, ACS_VLINE, ACS_HLINE);
+    wrefresh(game.alert_win);
 }
 
 void player_render() {

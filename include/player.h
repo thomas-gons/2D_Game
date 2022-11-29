@@ -5,6 +5,7 @@
 #include "common.h"
 #include "structs.h"
 #include "util.h"
+#include "game.h"
 #include "map.h"
 
 
@@ -59,10 +60,17 @@ bool player_check_collisions(uint8_t line, uint8_t col);
 
 /**
  * Alert player of collision with an obstacle.
- * \param line cell line of obstacle
- * \param column cell column of obstacle
+ * \param line line of obstacle
+ * \param column column of obstacle
 */
 void player_obstacle_alert(uint8_t line, uint8_t col);
+
+/**
+ * Alert player of cell already visited.
+ * \param line line of cell
+ * \param column column of cell
+*/
+void player_visited_cell_alert(uint8_t line, uint8_t col);
 
 /**
  * Player stack fruit.
@@ -78,6 +86,12 @@ void player_eat_fruit();
  * Render fruit stack and distance travelled by the player in terminal with ncurses
 */
 void player_stats_render();
+
+/**
+ * Render an alert message.
+ * \param alert_msg alert message to be rendered
+*/
+void player_alert_render(char *alert_msg);
 
 /**
  * Render player in terminal with ncurses.

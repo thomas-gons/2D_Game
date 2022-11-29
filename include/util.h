@@ -87,6 +87,14 @@ void stack_pop(Stack *stack);
 Position stack_remove(Stack *stack, uint16_t index);
 
 /**
+ * Get index of stack element of specific data.
+ * \param stack stack
+ * \param pos data to search the index
+ * \returns index of node on success, -1 on error
+*/
+int16_t stack_get_index(Stack *stack, Position pos);
+
+/**
  * Free allocated memory of stack.
  * \param stack stack
 */

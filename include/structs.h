@@ -23,6 +23,7 @@ typedef struct Game {
     WINDOW *stm_bar;
     WINDOW *stats_win;
     WINDOW *dist_win;
+    WINDOW *alert_win;
     Stack *path;
     time_t date;
 } Game;
@@ -91,7 +92,7 @@ typedef struct Player {
     int8_t stamina;
     int8_t fruit_stack;
     uint16_t distance;
-    bool on_obstacle;
+    bool skip_map_render;
     Stack *history;
 } Player;
 

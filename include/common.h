@@ -27,7 +27,7 @@
 #define MAP_LINES       40
 #define MAP_COLS        80
 #define BAR_SIZE        18
-#define STM_BAR_SIZE  (MAP_LINES - (HELP_SIZE + STM_BAR_PAD_T + STM_BAR_PAD_B) + 2)
+#define STM_BAR_SIZE    (MAP_LINES - (HELP_SIZE + STM_BAR_PAD_T + STM_BAR_PAD_B) + 1)
 #define STM_BAR_WIDTH   7
 #define STM_BAR_PAD_T   2
 #define STM_BAR_PAD_B   6

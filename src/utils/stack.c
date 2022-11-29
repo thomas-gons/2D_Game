@@ -58,6 +58,19 @@ Position stack_remove(Stack *stack, uint16_t index) {
     return ret;
 }
 
+int16_t stack_get_index(Stack *stack, Position pos) {
+    int16_t index = 0;
+    Node *tmp = stack->head;
+    while (tmp != NULL) {
+        if (tmp->pos.l == pos.l && tmp->pos.c == pos.c) {
+            return index;
+        }
+        index++;
+        tmp = tmp->next;
+    }
+    return -1;
+}
+
 void stack_free(Stack *stack) {
     while (!stack_is_empty(stack)) {
         stack_pop(stack);
