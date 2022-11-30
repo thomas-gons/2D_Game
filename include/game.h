@@ -12,20 +12,23 @@
 
 /************************* DEFINES *************************/
 
-#define MAIN_WIN_L0 (game.win_h/2 - (MAP_LINES + 2)/2)
+#define MAIN_WIN_L0 0
 #define MAIN_WIN_C0 (game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2)
 
-#define GAME_WIN_L0 (game.win_h/2 - MAP_LINES/2)
+#define GAME_WIN_L0 1
 #define GAME_WIN_C0 (game.win_w/2 - (MAP_COLS + BAR_SIZE)/2)
 
-#define BAR_WIN_L0  (game.win_h/2 - MAP_LINES/2 - 1)
+#define BAR_WIN_L0  0
 #define BAR_WIN_C0  (1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2)
 
-#define STM_BAR_L0  (game.win_h/2 - (MAP_LINES/2 -  STM_BAR_PAD_T + 1))
+#define STM_BAR_L0  STM_BAR_PAD_T
 #define STM_BAR_C0  (1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2 + STM_BAR_PAD_L + 1)
 
-#define HELP_WIN_L0 (1 + game.win_h/2 + MAP_LINES/2 - HELP_SIZE)
+#define HELP_WIN_L0 (MAP_LINES - HELP_SIZE + 2)
 #define HELP_WIN_C0 (1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2)
+
+#define ALERT_WIN_L0 MAP_LINES + 1
+#define ALERT_WIN_C0 MAIN_WIN_C0
 
 
 /************************* FUNCTIONS *************************/

@@ -16,10 +16,23 @@ typedef struct {
 } Position;
 
 /**
+ * Player action.
+*/
+typedef enum Action {
+    NO_ACTION = -1,
+    HIT_OBSTACLE,
+    EAT_FRUIT,
+    STACK_FRUIT,
+    EAT_STACKED_FRUIT,
+    REWIND
+} Action;
+
+/**
  * Node of stack.
 */
 typedef struct Node {
     Position pos;
+    Action action;
     struct Node *next;
 } Node;
 
@@ -68,9 +81,10 @@ Stack *stack_init();
 /**
  * Push a node to head of stack.
  * \param stack stack
- * \param pos data to push in stack
+ * \param pos position to push in stack
+ * \param act action to push in stack
 */
-void stack_push(Stack *stack, Position pos);
+void stack_push(Stack *stack, Position pos, Action act);
 
 /**
  * Pop a node from head of stack.

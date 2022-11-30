@@ -12,13 +12,14 @@ void player_init(Level level) {
         exit(2);
     }
     player->pos = (Position) {.l=0, .c=0};
+    player->action = NO_ACTION;
     map->map_grid[player->pos.l][player->pos.c].visited = true;
     player->move = NONE;
     player->distance = 0;
     player->fruit_stack = 0;
     player->skip_map_render = false;
     player->history = stack_init();
-    stack_push(player->history, player->pos);
+    stack_push(player->history, player->pos, player->action);
     switch (level) {
     case EASY:
         player->stamina = STAMINA_EASY;
@@ -35,6 +36,7 @@ void player_init(Level level) {
 
 void player_inputs() {
     player->skip_map_render = false;
+    player->action = NO_ACTION;
     player->move = NONE;
     switch (getch()) {
     case KEY_ESC:
@@ -63,8 +65,6 @@ void player_inputs() {
     case 'q':
         player->move = LEFT;
         break;
-    // case 'E':
-    // case 'e':
     case KEY_SPACE:
         player_eat_fruit();
         break;
@@ -102,6 +102,7 @@ bool player_check_collisions(uint8_t line, uint8_t col) {
         if (IS_OBSTACLE_CELL(line, col)) {
             player->skip_map_render = true;
             player->stamina -= STAMINA_COST_OBS;
+            player->action = HIT_OBSTACLE;
             player_obstacle_alert(line, col);
         } else {
             // If player is on a fruit, he gains stamina
@@ -113,10 +114,11 @@ bool player_check_collisions(uint8_t line, uint8_t col) {
             player->pos.l = line;
             player->pos.c = col;
             map->map_grid[line][col].visited = true;
-            stack_push(player->history, (Position) {.l=line, .c=col});
         }
         // Stamina cost for moving one cell
         player->stamina -= STAMINA_COST;
+        // Update player history
+        stack_push(player->history, (Position) {.l=line, .c=col}, player->action);
         return (player->skip_map_render == true) ? true : false;
     }
     return true;
@@ -166,6 +168,7 @@ void player_stack_fruit(uint8_t line, uint8_t col) {
             system("aplay -q assets/sfx/fruit-pickup.wav &");
             player->fruit_stack++;
             map->map_grid[line][col].cell_type = NO_FRUIT;
+            player->action = STACK_FRUIT;
             
             player_alert_render("You have put a fruit in your pocket ! ");
         }
@@ -173,6 +176,7 @@ void player_stack_fruit(uint8_t line, uint8_t col) {
         system("aplay -q assets/sfx/eat-apple.wav &");
         player->stamina += STAMINA_GAIN;
         map->map_grid[line][col].cell_type = NO_FRUIT;
+        player->action = EAT_FRUIT;
         
         player_alert_render("You have eaten a fruit ! You gained 10 STM !");
     }
@@ -183,9 +187,11 @@ void player_eat_fruit() {
         system("aplay -q assets/sfx/eat-apple.wav &");
         player->stamina += STAMINA_GAIN;
         player->fruit_stack--;
+        player->action = EAT_STACKED_FRUIT;
         if (player->stamina > STAMINA_MAX) {
             player->stamina = STAMINA_MAX;
         }
+        stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
         player_alert_render("You have eaten a fruit from your pocket ! You gained 10 STM !");
     }
 }
@@ -202,20 +208,22 @@ void player_stats_render() {
     // Render distance stat
     mvwprintw(game.stats_win, 2, 3, "DISTANCE  %u", player->distance);
     // Render rewind stat
-    mvwprintw(game.stats_win, 4, 3, "REWIND ");
+    mvwprintw(game.stats_win, 4, 3, "REWIND   .");
 }
 
 void player_alert_render(char *alert_msg) {
     mvwprintw(game.alert_win, 1, 1, alert_msg);
     box(game.alert_win, ACS_VLINE, ACS_HLINE);
     wrefresh(game.alert_win);
-    usleep(150000);
 }
 
 void player_render() {
-    wattron(game.stats_win, A_BOLD);
-    mvwaddch(game.game_win, player->pos.l, player->pos.c, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));
-    wattroff(game.stats_win, A_BOLD);
+    // wattron(game.stats_win, A_BOLD);
+    // mvwaddch(game.game_win, player->pos.l, player->pos.c, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));
+    // wattroff(game.stats_win, A_BOLD);
+    wattron(game.game_win, COLOR_PAIR(FORMAT_COLOR_CYAN));
+    mvwprintw(game.game_win, player->pos.l, player->pos.c, "\U0001F397");   //mdedal 1F396; ribbon 1F397; star 2726; chessking 265A;
+    wattroff(game.game_win, COLOR_PAIR(FORMAT_COLOR_CYAN));
     player_stats_render();
 }
 

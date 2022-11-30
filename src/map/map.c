@@ -50,8 +50,9 @@ void map_render() {
             }
         }
     }
-    mvwaddch(game.game_win, MAP_LINES - 1, MAP_COLS - 1, '#' | COLOR_PAIR(FORMAT_COLOR_CYAN));
     wattroff(game.game_win, A_BOLD);
+    // mvwaddch(game.game_win, MAP_LINES - 1, MAP_COLS - 1, '#' | COLOR_PAIR(FORMAT_COLOR_CYAN));
+    mvwprintw(game.game_win, MAP_LINES - 1, MAP_COLS - 1, "\u2691");  //flag 2691;
 }
 
 void map_display() {

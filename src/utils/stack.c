@@ -13,7 +13,7 @@ Stack *stack_init() {
     return stack;
 }
 
-void stack_push(Stack *stack, Position pos) {
+void stack_push(Stack *stack, Position pos, Action act) {
     // Create a new node to push
     Node *new = calloc(1, sizeof *new);
     if (!new) {
@@ -22,6 +22,7 @@ void stack_push(Stack *stack, Position pos) {
     }
     new->next = NULL;
     new->pos = pos;
+    new->action = act;
     // Push it to stack
     if (stack_is_empty(stack)) {
         stack->head = new;
@@ -81,7 +82,7 @@ void stack_free(Stack *stack) {
 void stack_display(Stack *stack) {
     Node *tmp = stack->head;
     while (tmp != NULL) {
-        printf("(l:%d, c:%d)->", tmp->pos.l, tmp->pos.c);
+        printf("(l:%d, c:%d, act:%d)->", tmp->pos.l, tmp->pos.c, tmp->action);
         tmp = tmp->next;
     }
     if (tmp == NULL) {

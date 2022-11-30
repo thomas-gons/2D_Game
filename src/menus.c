@@ -74,9 +74,13 @@ void distances_render() {
     uint8_t top = (player->pos.l == 0) ? 0 : 
         (IS_OBSTACLE_CELL(player->pos.l - 1, player->pos.c)) ? 'X' : map->map_grid[player->pos.l - 1][player->pos.c].distance[1];
     // Render player character at center
-    wattron(game.stats_win, A_BOLD);
-    mvwaddch(game.dist_win, 6, BAR_SIZE / 2, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));
-    wattroff(game.stats_win, A_BOLD);
+    // wattron(game.stats_win, A_BOLD);
+    // mvwaddch(game.dist_win, 6, BAR_SIZE / 2, '&' | COLOR_PAIR(FORMAT_COLOR_CYAN));
+    // wattroff(game.stats_win, A_BOLD);
+    wattron(game.dist_win, COLOR_PAIR(FORMAT_COLOR_CYAN));
+    mvwprintw(game.dist_win, 6, BAR_SIZE / 2, "\u265A");
+    wattroff(game.dist_win, COLOR_PAIR(FORMAT_COLOR_CYAN));
+
     // Render directional arrows and their distance value
     mvwprintw(game.dist_win, 2, BAR_SIZE / 2, "  ");
     RENDER_DIST_OBSTACLE(2, BAR_SIZE / 2, top, false);

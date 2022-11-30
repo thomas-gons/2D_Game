@@ -7,11 +7,10 @@ extern Player *player;
 
 void ncs_init() {
     initscr();
-    // Don't echo the pressed key and hide the cursor
+    cbreak();
     noecho();
     curs_set(false);
     keypad(stdscr, true);
-    scrollok(stdscr, false);
 }
 
 void ncs_init_colors() {
@@ -102,8 +101,8 @@ void ncs_create_game_windows() {
     game.alert_win = subwin(stdscr,
                             4,
                             MAP_COLS + BAR_SIZE + 3,
-                            game.win_h/2 + MAP_LINES/2,
-                            MAIN_WIN_C0
+                            ALERT_WIN_L0,
+                            ALERT_WIN_C0
     );
 }
 
@@ -211,11 +210,8 @@ void game_loop() {
         game_inputs();
         game_update();
         game_render();
-        // Limit framerate to ~ 60fps
-        usleep(16000);
     }
     // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
-    usleep(200000);
 }
 
 void game_inputs() {

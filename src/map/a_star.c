@@ -74,13 +74,13 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS]) {
     Stack *inverted_path = stack_init();
     l = END.l;
     c = END.c;
-    stack_push(inverted_path, (Position) {.l=l, .c=c});
+    stack_push(inverted_path, (Position) {.l=l, .c=c}, NO_ACTION);
     while (l != START.l || c != START.c) {
         tmp_l = l - moveset[action[l][c]][0];
         tmp_c = c - moveset[action[l][c]][1];
         l = tmp_l;
         c = tmp_c;
-        stack_push(inverted_path, (Position) {.l=l, .c=c});
+        stack_push(inverted_path, (Position) {.l=l, .c=c}, NO_ACTION);
     }
     // revert the path
     return inverted_path;

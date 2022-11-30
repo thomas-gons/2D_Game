@@ -88,6 +88,7 @@ typedef enum Move {
 */
 typedef struct Player {
     Position pos;
+    Action action;
     Move move;
     int8_t stamina;
     int8_t fruit_stack;
