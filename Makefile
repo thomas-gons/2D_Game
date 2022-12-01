@@ -17,7 +17,7 @@ CFLAGS := -pedantic -Wall -Wextra -Wno-type-limits -Wno-unused-result $(LDFLAGS)
 CXXFLAGS := $(CFLAGS) 
 
 # Library flags.
-LDLIBS := -lm $(shell pkg-config ncursesw --cflags --libs)
+LDLIBS := -lm -lncursesw
 
 # Sanitizer flags
 FSAN_FLAGS := -fsanitize=address

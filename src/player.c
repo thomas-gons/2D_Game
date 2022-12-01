@@ -37,10 +37,7 @@ void player_inputs() {
     player->move = NONE;
     switch (getch()) {
     case KEY_ESC:
-
-        // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
-        game.gameover = true;
-        
+        game_esc_menu();
         break;
     case KEY_DOWN:
     case 'S':
@@ -121,7 +118,7 @@ bool player_check_collisions(uint8_t line, uint8_t col) {
 
 void player_obstacle_alert(uint8_t line, uint8_t col) {
     // TODO: change sfx => Aie ouille
-    system("aplay -q assets/sfx/fart.wav &");
+    system("aplay -q assets/sfx/caillou.wav &");
 
     mvwaddch(game.game_win, line, col, 'X' | COLOR_PAIR(FORMAT_COLOR_WHITE_BG_RED));
     wrefresh(game.game_win);

@@ -9,6 +9,7 @@ void ncs_init() {
     initscr();
     // Don't echo the pressed key and hide the cursor
     noecho();
+    notimeout(stdscr, false);
     curs_set(false);
     keypad(stdscr, true);
     scrollok(stdscr, false);
@@ -132,7 +133,8 @@ void run_game() {
     // Menu entries
     switch (game_start_menu()) {
     case 0: // New game
-        game_init_new_game();
+        Level difficulty = game_difficulty_menu();
+        game_init_new_game(difficulty);
         game_loop();
         // TODO: Game over screen + menu
         game_free();
@@ -177,11 +179,65 @@ uint8_t game_start_menu() {
     return choice;
 }
 
-void game_init_new_game() {
+Level game_difficulty_menu() {
+    // Start menu, select an entry
+    char *difficulty_list[] = { "Facile", "Moyen", "Difficile",};
+    menu_create_entry_template(difficulty_list, 3);
+    uint8_t choice = menu_select_entry(difficulty_list, 3);
+    Level difficulty;
+    switch(choice) {
+        case 0:
+            difficulty = EASY;
+            break;
+        case 1:
+            difficulty = MEDIUM;
+            break;
+        case 2:
+            difficulty = HARD;
+            break;
+        default:
+            break;
+    }
+    ncs_destroy_win(game.menu_win);
+    
+    return difficulty;
+}
+
+// Menu escape in game
+void game_esc_menu() {
+    char *esc_list[] = { "Retour au jeu", "Sauvegarder", "Quitter" };
+    werase(game.game_win);
+    werase(game.bar_win);
+    werase(game.dist_win);
+    
+    refresh();
+    menu_create_entry_template(esc_list, 3);
+    uint8_t choice = menu_select_entry(esc_list, 3);
+
+
+    switch(choice) {
+        case 0:
+            break;
+        case 1:
+            //Save function
+            break;
+        case 2:
+            game.gameover = true;
+            break;
+        default:
+            break;
+    }
+}
+
+void game_restart() {
+
+}
+
+void game_init_new_game(Level difficulty) {
     // Create game subwindows
     ncs_create_game_windows();
     // Generate random map
-    map_init(EASY);
+    map_init(difficulty);
     game.path = map_generate();
     // Initialize player entity
     player_init(map->level);
@@ -206,7 +262,6 @@ void game_loop() {
         usleep(16000);
     }
     // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
-    usleep(300000);
 }
 
 void game_inputs() {

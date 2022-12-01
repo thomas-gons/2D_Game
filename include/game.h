@@ -82,15 +82,17 @@ void run_game();
 void game_init();
 
 /**
- * Title window and start menu window.
+ * Title window and menus window.
  * \returns Index of start menu entry
 */
 uint8_t game_start_menu();
+void game_esc_menu();
+Level game_difficulty_menu(); 
 
 /**
  * Initialize in-game resources.
 */
-void game_init_new_game();
+void game_init_new_game(Level difficulty);
 
 /**
  * Game loop.
