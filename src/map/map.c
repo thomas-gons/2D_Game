@@ -35,13 +35,15 @@ void map_render() {
             switch (map->map_grid[l][c].cell_type) {
             case ROAD:
                 mvwaddch(game.game_win, l, c,
-                    ((map->map_grid[l][c].visited) ? '.' : ' ') | COLOR_PAIR(FORMAT_COLOR_CYAN));
+                    ((map->map_grid[l][c].visited) ? PATH_VISITED_CHAR : ' ') | COLOR_PAIR(FORMAT_COLOR_CYAN));
                 break;
             case OBSTACLE:
-                mvwaddch(game.game_win, l, c, 'X' | COLOR_PAIR(FORMAT_COLOR_RED));
+                wattron(game.game_win, COLOR_PAIR(FORMAT_COLOR_RED));
+                mvwprintw(game.game_win, l, c, OBSTACLE_CHAR);
+                wattroff(game.game_win, COLOR_PAIR(FORMAT_COLOR_RED));
                 break;
             case FRUIT:
-                mvwaddch(game.game_win, l, c, '@' | COLOR_PAIR(FORMAT_COLOR_GREEN));
+                mvwaddch(game.game_win, l, c, FRUIT_CHAR | COLOR_PAIR(FORMAT_COLOR_GREEN));
                 break;
             case NO_FRUIT:
                 mvwaddch(game.game_win, l, c, ',' | COLOR_PAIR(FORMAT_COLOR_YELLOW));
@@ -50,9 +52,9 @@ void map_render() {
             }
         }
     }
-    wattroff(game.game_win, A_BOLD);
     // mvwaddch(game.game_win, MAP_LINES - 1, MAP_COLS - 1, '#' | COLOR_PAIR(FORMAT_COLOR_CYAN));
-    mvwprintw(game.game_win, MAP_LINES - 1, MAP_COLS - 1, "\u2691");  //flag 2691;
+    mvwprintw(game.game_win, MAP_LINES - 1, MAP_COLS - 1, FLAG_CHAR);
+    wattroff(game.game_win, A_BOLD);
 }
 
 void map_display() {

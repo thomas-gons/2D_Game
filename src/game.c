@@ -47,14 +47,14 @@ void ncs_create_title_window() {
     game.title_win = subwin(stdscr,
                             7,
                             75,
-                            game.win_h/2 - (MAP_LINES + 2)/2 + 6,
-                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 13
+                            TITLE_WIN_L0,
+                            TITLE_WIN_C0
     );
     box(game.title_win, ACS_VLINE, ACS_HLINE);
     wattron(game.title_win, A_BOLD);
     mvwprintw(game.title_win, 1, 1, "  ______  _______  _______  _____    _____    _______  ___ ___  ___ ___  ");
-    mvwprintw(game.title_win, 2, 1, " |      ||   _   ||_     _||     |_ |     |_ |       ||   |   ||   |   | ");
-    mvwprintw(game.title_win, 3, 1, " |   --- |       | _|   |_ |       ||       ||   -   ||   |   ||-     -| ");
+    mvwprintw(game.title_win, 2, 1, " |      ||   _   ||_     _||     |  |     |  |       ||   |   ||   |   | ");
+    mvwprintw(game.title_win, 3, 1, " |   --- |       | _|   |_ |     |_ |     |_ |   -   ||   |   ||-     -| ");
     mvwprintw(game.title_win, 4, 1, " |______||___|___||_______||_______||_______||_______||_______||___|___| ");
     wrefresh(game.title_win);
 }
@@ -157,7 +157,6 @@ void run_game() {
 }
 
 void game_init() {
-    game.gameover = false;
     // Initialize ncurses resources
     ncs_init();
     ncs_init_colors();
@@ -186,6 +185,7 @@ uint8_t game_start_menu() {
 }
 
 void game_init_new_game() {
+    game.gameover = false;
     // Create game subwindows
     ncs_create_game_windows();
     // Generate random map
@@ -223,7 +223,7 @@ void game_update() {
 }
 
 void game_render() {
-    if (player->skip_map_render == false) {
+    if (player->anim_action == false) {
         map_render();
     }
     player_render();

@@ -76,11 +76,15 @@ typedef struct Map {
  * Player movements.
 */
 typedef enum Move {
-    NONE = -1,
+    NO_MOVE = -1,
     RIGHT,
     DOWN,
     LEFT,
-    UP
+    UP,
+    UP_LEFT,
+    UP_RIGHT,
+    DOWN_LEFT,
+    DOWN_RIGHT
 } Move;
 
 /**
@@ -93,7 +97,7 @@ typedef struct Player {
     int8_t stamina;
     int8_t fruit_stack;
     uint16_t distance;
-    bool skip_map_render;
+    bool anim_action;
     Stack *history;
 } Player;
 

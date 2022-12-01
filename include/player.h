@@ -54,21 +54,21 @@ void player_update();
 /**
  * Check if player is colliding with map borders or obstacles. Returns true whether not colliding or false otherwise.
  * \param line line of cell to be checked
- * \param column column of cell to be checked
+ * \param col column of cell to be checked
 */
 bool player_check_collisions(uint8_t line, uint8_t col);
 
 /**
  * Alert player of collision with an obstacle.
  * \param line line of obstacle
- * \param column column of obstacle
+ * \param col column of obstacle
 */
 void player_obstacle_alert(uint8_t line, uint8_t col);
 
 /**
  * Alert player of cell already visited.
  * \param line line of cell
- * \param column column of cell
+ * \param col column of cell
 */
 void player_visited_cell_alert(uint8_t line, uint8_t col);
 

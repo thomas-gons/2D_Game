@@ -51,5 +51,13 @@
 
 #define FORMAT_COLOR_WHITE_BG_RED   11
 
+/**
+ * Special UTF-8 characters for ncurses output
+*/
+#define PATH_VISITED_CHAR ('.')
+#define FRUIT_CHAR      ('@')
+#define PLAYER_CHAR     ("\U0001F397")  //mdedal 1F396; ribbon 1F397; star 2726; chessking 265A;
+#define OBSTACLE_CHAR   ("\u26FC")      //chains 26D3; mountains 26F0; skull 2620; hotspring 2668; triforce 26FC;
+#define FLAG_CHAR       ("\U0001F6A9")  //flag 2691;
 
 #endif

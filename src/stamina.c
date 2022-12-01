@@ -11,12 +11,19 @@ void stamina_update_val() {
     if (player->stamina >= 100) {
         player->stamina = 100;
     }
+    uint8_t stm_level = (player->stamina > STAMINA_HIGH) ? FORMAT_COLOR_GREEN :
+                        (player->stamina > STAMINA_MED) ?  FORMAT_COLOR_YELLOW :
+                                                           FORMAT_COLOR_RED;
+    wattron(game.bar_win, COLOR_PAIR(stm_level));
+    wattron(game.bar_win, A_BOLD);
     mvwprintw(  game.bar_win,
                 STM_BAR_SIZE + STM_BAR_PAD_T,
                 STM_BAR_PAD_L + 3,
                 (player->stamina == 100) ? "%d" : ((player->stamina >= 10) ? " %d" : "  %d"),
                 player->stamina
     );
+    wattroff(game.bar_win, A_BOLD);
+    wattroff(game.bar_win, COLOR_PAIR(stm_level));
 }
 
 void stamina_bar_render() {
