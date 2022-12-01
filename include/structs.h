@@ -46,8 +46,8 @@ typedef enum Level {
 typedef enum Cell_type {
     EMPTY = -1,
     ROAD,
-    FRUIT,
-    NO_FRUIT,
+    BONUS,
+    NO_BONUS,
     OBSTACLE,
     FLAG
 } Cell_type;
@@ -80,11 +80,7 @@ typedef enum Move {
     RIGHT,
     DOWN,
     LEFT,
-    UP,
-    UP_LEFT,
-    UP_RIGHT,
-    DOWN_LEFT,
-    DOWN_RIGHT
+    UP
 } Move;
 
 /**
@@ -95,7 +91,7 @@ typedef struct Player {
     Action action;
     Move move;
     int8_t stamina;
-    int8_t fruit_stack;
+    int8_t bonus_stack;
     uint16_t distance;
     bool anim_action;
     Stack *history;

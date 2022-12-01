@@ -76,7 +76,7 @@ void distances_render() {
     // Render player character at center
     wattron(game.stats_win, A_BOLD);
     wattron(game.dist_win, COLOR_PAIR(FORMAT_COLOR_CYAN));
-    mvwprintw(game.dist_win, 6, BAR_SIZE / 2, PLAYER_CHAR);
+    mvwaddstr(game.dist_win, 6, BAR_SIZE / 2, PLAYER_CHAR);
     wattroff(game.dist_win, COLOR_PAIR(FORMAT_COLOR_CYAN));
     wattroff(game.stats_win, A_BOLD);
 

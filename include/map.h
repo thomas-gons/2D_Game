@@ -21,20 +21,20 @@
 /**
  * The probabilties add up according to this order.
 */
-#define PROB_FRUIT  0.03
+#define PROB_BONUS  0.03
 #define PROB_OBS    0.175
 
 /** 
  * Max values for probabilties.
 */
-#define PROB_MAX_FRUIT  0.06
+#define PROB_MAX_BONUS  0.06
 #define PROB_MAX_OBS    0.25
 
 /**
  * Lambda factors to adjust probabilties.
  * Extend or restrict the scope of the maximum probability.
 */
-#define LAMBDA_FRUIT    2
+#define LAMBDA_BONUS    2
 #define LAMBDA_OBS      2.2
 
 /**
@@ -52,7 +52,7 @@
 /**
  * Check if position is within the map range.
 */
-#define IS_OUT_OF_MAP(line, col) (                  \
+#define IS_NOT_OUT_OF_MAP(line, col) (                  \
     ((line) >= 0 && (line) < MAP_LINES) &&              \
     ((col) >= 0 && (col) < MAP_COLS)) ? true : false    \
 
@@ -65,8 +65,8 @@
 /**
  * Check if position is a fruit cell.
 */
-#define IS_FRUIT_CELL(line, col) (                               \
-    map->map_grid[line][col].cell_type == FRUIT) ? true : false  \
+#define IS_BONUS_CELL(line, col) (                               \
+    map->map_grid[line][col].cell_type == BONUS) ? true : false  \
 
 
 /************************* FUNCTIONS *************************/
@@ -83,7 +83,7 @@ void map_init(Level level);
 void map_render();
 
 /**
- * Randomly fill the map with obstacles and fruits.
+ * Randomly fill the map with obstacles and BONUS.
 */
 void map_random_fill();
 

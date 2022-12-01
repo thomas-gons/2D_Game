@@ -42,18 +42,19 @@ void map_render() {
                 mvwprintw(game.game_win, l, c, OBSTACLE_CHAR);
                 wattroff(game.game_win, COLOR_PAIR(FORMAT_COLOR_RED));
                 break;
-            case FRUIT:
-                mvwaddch(game.game_win, l, c, FRUIT_CHAR | COLOR_PAIR(FORMAT_COLOR_GREEN));
+            case BONUS:
+                wattron(game.game_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
+                mvwaddstr(game.game_win, l, c, BONUS_CHAR);
+                wattroff(game.game_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
                 break;
-            case NO_FRUIT:
+            case NO_BONUS:
                 mvwaddch(game.game_win, l, c, ',' | COLOR_PAIR(FORMAT_COLOR_YELLOW));
                 break;
             default: break;
             }
         }
     }
-    // mvwaddch(game.game_win, MAP_LINES - 1, MAP_COLS - 1, '#' | COLOR_PAIR(FORMAT_COLOR_CYAN));
-    mvwprintw(game.game_win, MAP_LINES - 1, MAP_COLS - 1, FLAG_CHAR);
+    mvwaddstr(game.game_win, MAP_LINES - 1, MAP_COLS - 1, FLAG_CHAR);
     wattroff(game.game_win, A_BOLD);
 }
 

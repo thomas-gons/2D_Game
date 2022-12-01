@@ -40,7 +40,7 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS]) {
             for (uint8_t i = 0; i < MOVESET_LEN; i++) {
                 tmp_l = next_cell.pos.l + moveset[i][0];
                 tmp_c = next_cell.pos.c + moveset[i][1];
-                if (IS_OUT_OF_MAP(tmp_l, tmp_c)) {
+                if (IS_NOT_OUT_OF_MAP(tmp_l, tmp_c)) {
                     if (!closed[tmp_l][tmp_c] && !IS_OBSTACLE_CELL(tmp_l, tmp_c)) {
                         switch (i) {
                             case 0:

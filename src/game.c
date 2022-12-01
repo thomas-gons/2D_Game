@@ -229,7 +229,6 @@ void game_render() {
     player_render();
     stamina_render();
     distances_render();
-
     ncs_refresh_game_windows();
     if (player->stamina <= STAMINA_MIN) {
         game.gameover = true;

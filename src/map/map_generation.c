@@ -8,7 +8,7 @@ void map_random_fill() {
     float distance, dn;
     float prob;
     // Tiles' probability distribution according to the difficulty
-    float prob_fruit, tmp_prob_fruit;
+    float prob_bonus, tmp_prob_bonus;
     float prob_obs, tmp_prob_obs;
 
     for (uint8_t l = 0; l < MAP_LINES; l++) {
@@ -17,23 +17,23 @@ void map_random_fill() {
                 map->map_grid[l][c].cell_type = ROAD;
                 continue;
             }
-            prob_fruit = PROB_FRUIT / map->level;
+            prob_bonus = PROB_BONUS / map->level;
             prob_obs = PROB_OBS * map->level;
             // distance between center and current position
             distance = sqrt(pow(CENTER_L - l, 2) + pow(CENTER_C - c, 2));
             dn = distance / (sqrt(pow(MAP_LINES, 2) + pow(MAP_COLS, 2)));
             // prob between 0 and 1
             prob = (float) rand() / RAND_MAX;
-            tmp_prob_fruit = prob_fruit * (dn * LAMBDA_FRUIT);
+            tmp_prob_bonus = prob_bonus * (dn * LAMBDA_BONUS);
             tmp_prob_obs = prob_obs / (dn * LAMBDA_OBS);
 
             // Tile type is based on the probability distribution model (radial here)
-            prob_fruit = (tmp_prob_fruit > PROB_MAX_FRUIT) ?
-                PROB_MAX_FRUIT : tmp_prob_fruit;
+            prob_bonus = (tmp_prob_bonus > PROB_MAX_BONUS) ?
+                PROB_MAX_BONUS : tmp_prob_bonus;
             prob_obs = (tmp_prob_obs > PROB_MAX_OBS) ?
                 PROB_MAX_OBS : tmp_prob_obs;
             
-            map->map_grid[l][c].cell_type = (prob <= prob_fruit) ? FRUIT :
+            map->map_grid[l][c].cell_type = (prob <= prob_bonus) ? BONUS :
                 (prob <= prob_obs) ? OBSTACLE : ROAD;
         }
     }

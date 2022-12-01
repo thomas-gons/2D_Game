@@ -21,9 +21,9 @@ typedef struct {
 typedef enum Action {
     NO_ACTION = -1,
     HIT_OBSTACLE,
-    EAT_FRUIT,
-    STACK_FRUIT,
-    EAT_STACKED_FRUIT,
+    USE_BONUS,
+    STACK_BONUS,
+    USE_STACKED_BONUS,
     REWIND
 } Action;
 
