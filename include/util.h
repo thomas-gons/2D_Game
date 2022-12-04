@@ -49,6 +49,7 @@ typedef struct Stack {
 */
 typedef struct Point {
     Position pos;
+    int8_t stm;
     unsigned f;
     unsigned g;
 } Point;

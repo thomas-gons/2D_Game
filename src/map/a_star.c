@@ -3,6 +3,7 @@
 
 
 extern Map *map;
+extern Player *player;
 extern Game game;
 
 int8_t moveset[MOVESET_LEN][2] = {  // {line, col}
@@ -12,7 +13,7 @@ int8_t moveset[MOVESET_LEN][2] = {  // {line, col}
     {-1, 0}     // Top         
 }; 
 
-Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS]) {
+Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], bool with_stm) {
     unsigned cost;
     // closed array will be filled with all tested position
     unsigned closed[MAP_LINES][MAP_COLS] = {0};
@@ -23,10 +24,11 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS]) {
     int8_t tmp_l, tmp_c;
     // g -> the movement cost to move from the starting point to a given square on the grid,
     //  following the path generated to get there
-    int g = 0, f = g + heuristic[l][c], tmp_g, tmp_f;
+    uint16_t g = 0, f = g + heuristic[l][c], tmp_g, tmp_f;
+    int8_t tmp_stm;
 
     PQueue *opened = pqueue_init();
-    pqueue_enqueue(opened, (Point) {(Position) {.l=l, .c=c}, f, g});
+    pqueue_enqueue(opened, (Point) {(Position) {.l=l, .c=c}, player->stamina, f, g});
     bool found = false;
     while (!found) {
         if (!opened->nb_points) {
@@ -40,7 +42,7 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS]) {
                 tmp_l = next_cell.pos.l + moveset[i][0];
                 tmp_c = next_cell.pos.c + moveset[i][1];
                 if (IS_NOT_OUT_OF_MAP(tmp_l, tmp_c)) {
-                    if (!closed[tmp_l][tmp_c] && heuristic[tmp_l][tmp_c] != 999) {
+                    if (!closed[tmp_l][tmp_c] && heuristic[tmp_l][tmp_c] != 999 && CONSIDER_STM(with_stm, next_cell.stm)) {
                         switch (i) {
                             case 0:
                                 // right
@@ -61,7 +63,10 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS]) {
                         }
                         tmp_g = next_cell.g + cost;
                         tmp_f = tmp_g + heuristic[tmp_l][tmp_c];
-                        pqueue_enqueue(opened, (Point) {(Position) {.l=tmp_l, .c=tmp_c}, tmp_f, tmp_g});
+                        tmp_stm = next_cell.stm - 1;
+                        if (map->map_grid[next_cell.pos.l][next_cell.pos.c].cell_type == BONUS)
+                            tmp_stm += 10;
+                        pqueue_enqueue(opened, (Point) {(Position) {.l=tmp_l, .c=tmp_c}, tmp_stm, tmp_f, tmp_g});
                         closed[tmp_l][tmp_c] = 1;
                         action[tmp_l][tmp_c] = i;
                     }
@@ -74,13 +79,13 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS]) {
     l = END.l;
     c = END.c;
     stack_push(inverted_path, (Position) {.l=l, .c=c}, NO_ACTION);
-    unsigned distance = 0;
+    unsigned path_len = 0;
     while (l != START.l || c != START.c) {
         switch (action[l][c]) {
-            case 0: distance += map->map_grid[l][c - 1].distance[0]; break;
-            case 1: distance += map->map_grid[l - 1][c].distance[1]; break;
-            case 2: distance += map->map_grid[l][c].distance[0]; break;
-            case 3: distance += map->map_grid[l][c].distance[1]; break;
+            case 0: path_len += map->map_grid[l][c - 1].distance[0]; break;
+            case 1: path_len += map->map_grid[l - 1][c].distance[1]; break;
+            case 2: path_len += map->map_grid[l][c].distance[0]; break;
+            case 3: path_len += map->map_grid[l][c].distance[1]; break;
         }
         tmp_l = l - moveset[action[l][c]][0];
         tmp_c = c - moveset[action[l][c]][1];
@@ -88,13 +93,19 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS]) {
         c = tmp_c;
         stack_push(inverted_path, (Position) {.l=l, .c=c}, NO_ACTION);
     }
-    mvwprintw(game.dist_win, 13, 3, "BEST DISTANCE");
-    mvwprintw(game.dist_win, 14, 8, "%u", distance);
+    if (with_stm) {
+        game.path_stm_len = path_len;
+        mvwprintw(game.dist_win, 13, 3, "BEST DISTANCE");
+        mvwprintw(game.dist_win, 14, 8, "%u", game.path_stm_len);
+    }
+    else
+        game.path_dist_len = path_len;
+    
     // revert the path
     return inverted_path;
 }
 
-Stack *a_star() {
+Stack *a_star(bool with_stm) {
     unsigned heuristic[MAP_LINES][MAP_COLS] = {0};
 
     for (uint8_t l = 0; l < MAP_LINES; l++) {
@@ -107,5 +118,5 @@ Stack *a_star() {
             }
         }
     }
-    return search_path(heuristic);
+    return search_path(heuristic, with_stm);
 }

@@ -57,7 +57,7 @@
 #define PATH_VISITED_CHAR ('.')
 #define BONUS_CHAR      ("\u2726")       // star 2726
 #define PLAYER_CHAR     ("\U0001F397")       // mdedal 1F396; ribbon 1F397; chessking 265A;
-#define OBSTACLE_CHAR   ("\u26D3")       // chains 26D3; mountains 26F0; skull 2620; hotspring 2668; triforce 26FC;
+#define OBSTACLE_CHAR   ("X")       // chains 26D3; mountains 26F0; skull 2620; hotspring 2668; triforce 26FC;
 #define FLAG_CHAR       ("\u2691")       // flag 2691;
 
 #endif

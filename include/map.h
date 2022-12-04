@@ -27,14 +27,14 @@
 /** 
  * Max values for probabilties.
 */
-#define PROB_MAX_BONUS  0.07
+#define PROB_MAX_BONUS  0.05
 #define PROB_MAX_OBS    0.25
 
 /**
  * Lambda factors to adjust probabilties.
  * Extend or restrict the scope of the maximum probability.
 */
-#define LAMBDA_BONUS    2
+#define LAMBDA_BONUS    1.5
 #define LAMBDA_OBS      2.2
 
 /**
@@ -44,11 +44,11 @@
 #define END ((Position) {.l=MAP_LINES - 1, .c=MAP_COLS - 1})
 #define MOVESET_LEN     4
 
-/**
- * Path settings.
-*/
-#define PATH_LEN (MAX_DISTANCE * 2)
 
+/**
+ * 
+*/
+#define CONSIDER_STM(with_stm, stm) ((with_stm) ? (stm > 0): (true))
 /**
  * Check if position is within the map range.
 */
@@ -62,8 +62,9 @@
 #define IS_OBSTACLE_CELL(line, col) (                               \
     map->map_grid[line][col].cell_type == OBSTACLE) ? true : false  \
 
+
 /**
- * Check if position is a fruit cell.
+ * Check if position is a bonus cell.
 */
 #define IS_BONUS_CELL(line, col) (                               \
     map->map_grid[line][col].cell_type == BONUS) ? true : false  \
@@ -93,6 +94,11 @@ void map_random_fill();
 Stack *map_generate();
 
 /**
+ * Display map with distances and the shortest path 
+*/
+void map_display_path(Stack *stack);
+
+/**
  * Display map in terminal with stdout.
 */
 void map_display();
@@ -101,7 +107,7 @@ void map_display();
  * Display map in terminal with stdout, highlight the path and obstacles.
  * \param path valid path as a stack of cells
 */
-void map_render_path(Stack *path);
+void map_render_path(Stack *path, uint8_t color);
 
 /**
  * Free allocated memory of map.
@@ -111,16 +117,17 @@ void map_free();
 /**
  * Search a valid path in the map.
  * \param heuristic matrix that stores distance between each cell and end cell
- * \param cost movement cost to reach another direct adjacent cell (moveset)
+ * \param with_stm consider stamina in shortest path or not
  * \returns a valid path (stack of cells) on success, NULL on error.
 */
-Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS]);
+Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], bool with_stm);
 
 /**
  * Implementation of A Star (A*) pathfinding algorithm.
+ * \param with_stm consider stamina in shortest path or not
  * \returns a valid path (stack of cells) on success, NULL on error.
 */
-Stack *a_star();
+Stack *a_star(bool with_stm);
 
 
 #endif

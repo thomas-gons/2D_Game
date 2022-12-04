@@ -190,9 +190,10 @@ void game_init_new_game() {
     ncs_create_game_windows();
     // Generate random map
     map_init(EASY);
-    game.path = map_generate();
     // Initialize player entity
     player_init(map->level);
+    game.path_stm = map_generate();
+    game.path_dist = a_star(false);
     // First render of game
     game_render();
 }
@@ -237,7 +238,7 @@ void game_render() {
 
 void game_free() {
     map_free();
-    stack_free(game.path);
+    stack_free(game.path_stm);
     player_free();
 }
 

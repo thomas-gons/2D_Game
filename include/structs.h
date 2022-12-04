@@ -24,8 +24,10 @@ typedef struct Game {
     WINDOW *stats_win;
     WINDOW *dist_win;
     WINDOW *alert_win;
-    Stack *path;
-    time_t date;
+    Stack *path_dist;
+    uint16_t path_dist_len;
+    Stack *path_stm;
+    uint16_t path_stm_len; 
 } Game;
 
 

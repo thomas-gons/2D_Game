@@ -206,8 +206,8 @@ void player_use_bonus() {
 
 void player_stats_render() {
     // Render bonus stack
-    mvwprintw(game.stats_win, 2, 3, "BONUS");
-    mvwprintw(game.stats_win, 2, 12, ".  .");
+    mvwprintw(game.stats_win, 0, 3, "BONUS");
+    mvwprintw(game.stats_win, 0, 12, ".  .");
     for (uint8_t i = 0; i < player->bonus_stack; i++) {
         wattron(game.stats_win, A_BOLD);
         wattron(game.stats_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
@@ -216,7 +216,7 @@ void player_stats_render() {
         wattroff(game.stats_win, A_BOLD);
     }
     // Render rewind stat
-    mvwprintw(game.stats_win, 0, 3, "REWIND   .");
+    mvwprintw(game.stats_win, 2, 3, "REWIND   .");
     // Render distance stat
     mvwprintw(game.stats_win, 4, 3, "DISTANCE  %u", player->distance);
     wattroff(game.stats_win, A_BOLD);

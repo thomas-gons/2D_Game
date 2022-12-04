@@ -25,6 +25,7 @@ void map_random_fill() {
             prob_bonus = PROB_BONUS * (dn * LAMBDA_BONUS);
             prob_obs = PROB_OBS / (dn * LAMBDA_OBS);
             // Tile type is based on the probability distribution model (radial here)
+            // bonus probabilty does not depend on the map's level
             if (prob_bonus > PROB_MAX_BONUS)
                 prob_bonus = PROB_MAX_BONUS;
             
@@ -44,7 +45,7 @@ Stack *map_generate() {
     Stack *path = NULL;
     do {
         map_random_fill();
-        path = a_star();
+        path = a_star(true);
         // think about path lenght
     } while (!path);
     return path;
