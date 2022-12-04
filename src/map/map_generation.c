@@ -8,30 +8,28 @@ void map_random_fill() {
     float distance, dn;
     float prob;
     // Tiles' probability distribution according to the difficulty
-    float prob_bonus, tmp_prob_bonus;
-    float prob_obs, tmp_prob_obs;
-
-    for (uint8_t l = 0; l < MAP_LINES; l++) {
-        for (uint8_t c = 0; c < MAP_COLS; c++) {
+    float prob_bonus, prob_obs;
+    for (uint8_t l = 0, c; l < MAP_LINES; l++) {
+        for (c = 0; c < MAP_COLS; c++) {
             if ((!l && !c) || ((l == MAP_LINES - 1) && (c == MAP_COLS - 1))) {
                 map->map_grid[l][c].cell_type = ROAD;
                 continue;
             }
-            prob_bonus = PROB_BONUS / map->level;
-            prob_obs = PROB_OBS * map->level;
-            // distance between center and current position
-            distance = sqrt(pow(CENTER_L - l, 2) + pow(CENTER_C - c, 2));
-            dn = distance / (sqrt(pow(MAP_LINES, 2) + pow(MAP_COLS, 2)));
             // prob between 0 and 1
             prob = (float) rand() / RAND_MAX;
-            tmp_prob_bonus = prob_bonus * (dn * LAMBDA_BONUS);
-            tmp_prob_obs = prob_obs / (dn * LAMBDA_OBS);
 
+            // distance between center and current position
+            distance = sqrt(pow(CENTER_L - l, 2) + pow(CENTER_C - c, 2));
+            // normalize the distance to be able to exploit it
+            dn = distance / (sqrt(pow(MAP_LINES, 2) + pow(MAP_COLS, 2)));
+            prob_bonus = PROB_BONUS * (dn * LAMBDA_BONUS);
+            prob_obs = PROB_OBS / (dn * LAMBDA_OBS);
             // Tile type is based on the probability distribution model (radial here)
-            prob_bonus = (tmp_prob_bonus > PROB_MAX_BONUS) ?
-                PROB_MAX_BONUS : tmp_prob_bonus;
-            prob_obs = (tmp_prob_obs > PROB_MAX_OBS) ?
-                PROB_MAX_OBS : tmp_prob_obs;
+            if (prob_bonus > PROB_MAX_BONUS)
+                prob_bonus = PROB_MAX_BONUS;
+            
+            if (prob_obs > (PROB_MAX_OBS * map->level / 2))
+                prob_obs = PROB_MAX_OBS * map->level / 2;
             
             map->map_grid[l][c].cell_type = (prob <= prob_bonus) ? BONUS :
                 (prob <= prob_obs) ? OBSTACLE : ROAD;

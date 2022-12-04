@@ -152,7 +152,7 @@ void player_visited_cell_alert(uint8_t line, uint8_t col) {
         // If the cell that will be visit has already been visited, render all cells in history between the two same cells 
         if (index > 0) {
             player->anim_action = true;
-            Node *tmp = player->history->head;
+            SNode *tmp = player->history->head;
             for (int16_t i = 0; i < index; i++) {
                 switch (map->map_grid[tmp->pos.l][tmp->pos.c].cell_type) {
                 case ROAD:

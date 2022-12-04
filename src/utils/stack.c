@@ -15,7 +15,7 @@ Stack *stack_init() {
 
 void stack_push(Stack *stack, Position pos, Action act) {
     // Create a new node to push
-    Node *new = calloc(1, sizeof *new);
+    SNode *new = calloc(1, sizeof *new);
     if (!new) {
         fprintf(stderr, "[ERROR] > calloc, in func stack_push\n");
         exit(2);
@@ -35,7 +35,7 @@ void stack_push(Stack *stack, Position pos, Action act) {
 
 void stack_pop(Stack *stack) {
     if (!stack_is_empty(stack)) {
-        Node *pop = stack->head;
+        SNode *pop = stack->head;
         stack->head = stack->head->next;
         pop->next = NULL;
         free(pop);
@@ -45,8 +45,8 @@ void stack_pop(Stack *stack) {
 Position stack_remove(Stack *stack, uint16_t index) {
     Position ret = {0, 0};
     if (!stack_is_empty(stack)) {
-        Node *tmp = NULL;
-        Node *curr = stack->head;
+        SNode *tmp = NULL;
+        SNode *curr = stack->head;
         for (uint16_t count = 0; count < index; count++) {
             tmp = curr;
             curr = curr->next;
@@ -61,7 +61,7 @@ Position stack_remove(Stack *stack, uint16_t index) {
 
 int16_t stack_get_index(Stack *stack, Position pos) {
     int16_t index = 0;
-    Node *tmp = stack->head;
+    SNode *tmp = stack->head;
     while (tmp != NULL) {
         if (tmp->pos.l == pos.l && tmp->pos.c == pos.c) {
             return index;
@@ -80,7 +80,7 @@ void stack_free(Stack *stack) {
 }
 
 void stack_display(Stack *stack) {
-    Node *tmp = stack->head;
+    SNode *tmp = stack->head;
     while (tmp != NULL) {
         printf("(l:%d, c:%d, act:%d)->", tmp->pos.l, tmp->pos.c, tmp->action);
         tmp = tmp->next;
@@ -97,7 +97,7 @@ bool stack_is_empty(Stack *stack) {
 
 uint16_t stack_len(Stack *stack) {
     uint16_t length = 0;
-    Node *tmp = NULL;
+    SNode *tmp = NULL;
     for (tmp = stack->head; tmp != NULL; tmp = tmp->next) {
         length++;
     }

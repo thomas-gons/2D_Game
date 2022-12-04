@@ -59,7 +59,8 @@ void map_render() {
 }
 
 void map_display() {
-    Node *tmp;
+    printf("\nMAP_DISPLAY\n");
+    SNode *tmp;
     for (uint8_t l = 0; l < MAP_LINES; l++) {
         for (uint8_t c = 0; c < MAP_COLS; c++) {
             if (map->map_grid[l][c].cell_type == OBSTACLE)
@@ -80,9 +81,12 @@ void map_display() {
 }
 
 void map_render_path(Stack *path) {
-    Node *tmp = path->head;
+    SNode *tmp = path->head;
     for (; tmp; tmp = tmp->next) {
-        mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(FORMAT_COLOR_CYAN));
+        if (map->map_grid[tmp->pos.l][tmp->pos.c].cell_type == BONUS)
+            mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(FORMAT_COLOR_GREEN));
+        else
+            mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(FORMAT_COLOR_CYAN));
     }
     wrefresh(game.game_win);
 }
@@ -92,4 +96,5 @@ void map_free() {
         free(map->map_grid[l]);
     }
     free(map->map_grid);
+    free(map);
 }
