@@ -93,14 +93,14 @@ void ncs_create_game_windows() {
                             BAR_WIN_C0
     );
     game.dist_win = subwin( stdscr,
-                            HELP_SIZE,
+                            HELP_SIZE + 3,
                             BAR_SIZE + 1,
                             HELP_WIN_L0,
                             HELP_WIN_C0
     );
     game.alert_win = subwin(stdscr,
                             4,
-                            MAP_COLS + BAR_SIZE + 3,
+                            MAP_COLS + 3,
                             ALERT_WIN_L0,
                             ALERT_WIN_C0
     );

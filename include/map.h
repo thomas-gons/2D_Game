@@ -22,12 +22,12 @@
  * The probabilties add up according to this order.
 */
 #define PROB_BONUS  0.03
-#define PROB_OBS    0.175
+#define PROB_OBS    0.18
 
 /** 
  * Max values for probabilties.
 */
-#define PROB_MAX_BONUS  0.06
+#define PROB_MAX_BONUS  0.07
 #define PROB_MAX_OBS    0.25
 
 /**
