@@ -13,6 +13,8 @@
 */
 typedef struct Game {
     bool gameover;
+    bool reload_game;
+    bool reload_samegame;
     uint16_t win_w;
     uint16_t win_h;
     WINDOW *title_win;

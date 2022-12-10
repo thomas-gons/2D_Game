@@ -4,6 +4,7 @@
 extern Game game;
 extern Map *map;
 extern Player *player;
+extern Level difficulty;
 
 void ncs_init() {
     initscr();
@@ -133,16 +134,22 @@ void run_game() {
     // Menu entries
     switch (game_start_menu()) {
     case 0: // New game
-        Level difficulty = game_difficulty_menu();
+        game_difficulty_menu();
         game_init_new_game(difficulty);
-        game_loop();
+        game.reload_samegame = true;
+        while( game.reload_samegame == true){
+            game_loop();
+            game_lose_menu();
+        }
         // TODO: Game over screen + menu
         game_free();
+        
         break;
     case 1: // Load game save
         // game_load_saved_game();
         break;
     case 2: // Quit game
+        game.reload_game = false;
         game_quit();
         break;
     default: break;
@@ -167,10 +174,7 @@ uint8_t game_start_menu() {
     menu_create_entry_template(first_menu_list, 3);
     uint8_t choice = menu_select_entry(first_menu_list, 3);
     // Play sound effects
-    if (choice == 0) {
-        system("aplay -q assets/sfx/among-us.wav &");
-    }
-    else if (choice == 2) {
+    if (choice == 2) {
         system("aplay -q assets/sfx/fart.wav &");
     }
     ncs_destroy_win(game.title_win);
@@ -179,12 +183,11 @@ uint8_t game_start_menu() {
     return choice;
 }
 
-Level game_difficulty_menu() {
+void game_difficulty_menu() {
     // Start menu, select an entry
     char *difficulty_list[] = { "Facile", "Moyen", "Difficile",};
     menu_create_entry_template(difficulty_list, 3);
     uint8_t choice = menu_select_entry(difficulty_list, 3);
-    Level difficulty;
     switch(choice) {
         case 0:
             difficulty = EASY;
@@ -199,39 +202,74 @@ Level game_difficulty_menu() {
             break;
     }
     ncs_destroy_win(game.menu_win);
-    
-    return difficulty;
+    system("aplay -q assets/sfx/among-us.wav &");
 }
+
+
+
+void game_lose_menu() {
+    // Start menu, select an entry
+    werase(game.game_win);
+    werase(game.bar_win);
+    werase(game.dist_win);
+    char *lose_list[] = { "Recommencer", "Retourner au menu","quitter",};
+    menu_create_entry_template(lose_list, 3);
+    uint8_t choice = menu_select_entry(lose_list, 3);
+    // Play sound effects
+    switch (choice)
+    {
+    case 0:
+        game.gameover = false;
+        player_init(map->level);
+        game_render();
+        break;
+    case 1:
+        game.reload_samegame = false;
+        break;
+    case 2:
+        game.reload_samegame = false;
+        game.reload_game = false;
+        break;
+    default:
+        break;
+    }
+    ncs_destroy_win(game.menu_win);
+}
+
+
 
 // Menu escape in game
 void game_esc_menu() {
-    char *esc_list[] = { "Retour au jeu", "Sauvegarder", "Quitter" };
+    char *esc_list[] = { "Retour au jeu", "Sauvegarder", "Abandonner","Quitter" };
     werase(game.game_win);
     werase(game.bar_win);
     werase(game.dist_win);
     
     refresh();
-    menu_create_entry_template(esc_list, 3);
-    uint8_t choice = menu_select_entry(esc_list, 3);
+    menu_create_entry_template(esc_list, 4);
+    uint8_t choice = menu_select_entry(esc_list, 4);
 
 
     switch(choice) {
         case 0:
             break;
-        case 1:
-            //Save function
+        case 1: //Save function
+                
             break;
         case 2:
-            game.gameover = true;
+                //Abandon
+                game.gameover = true;
             break;
+        case 3: //quit (function game_quit or game_free core dump)
+            game.reload_game = false;
+            game_free();
+            game_quit();
+
         default:
             break;
     }
 }
 
-void game_restart() {
-
-}
 
 void game_init_new_game(Level difficulty) {
     // Create game subwindows
