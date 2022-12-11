@@ -8,6 +8,7 @@
 #include "map.h"
 #include "player.h"
 #include "stamina.h"
+#include "save.h"
 
 
 /************************* DEFINES *************************/

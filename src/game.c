@@ -4,6 +4,7 @@
 extern Game game;
 extern Map *map;
 extern Player *player;
+extern SaveManager save;
 
 void ncs_init() {
     initscr();
@@ -129,11 +130,15 @@ void ncs_quit() {
 
 void run_game() {
     game_init();
+    time_t begin = time(NULL);
     // Menu entries
     switch (game_start_menu()) {
     case 0: // New game
         game_init_new_game();
         game_loop();
+        time_t end = time(NULL);
+        save.playing_time = end - begin;
+        save_game();
         // TODO: Game over screen + menu
         game_free();
         break;

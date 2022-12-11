@@ -96,4 +96,16 @@ typedef struct Player {
 } Player;
 
 
+/************************* SAVES *************************/
+
+/**
+ * Save structure
+ */
+typedef struct SaveManager {
+    time_t playing_time;
+    char *date_time;
+    char **save_files;
+} SaveManager;
+
+
 #endif

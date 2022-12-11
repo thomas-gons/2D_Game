@@ -88,4 +88,5 @@ void map_free() {
         free(map->map_grid[l]);
     }
     free(map->map_grid);
+    free(map);
 }
