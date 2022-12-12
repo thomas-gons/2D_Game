@@ -84,6 +84,11 @@ void player_stack_bonus(uint8_t line, uint8_t col);
 void player_use_bonus();
 
 /**
+ * Player use rewind.
+*/
+void player_rewind();
+
+/**
  * Render bonus stack and distance travelled by the player in terminal with ncurses
 */
 void player_stats_render();

@@ -19,6 +19,7 @@ void player_init(Level level) {
     player->move = NO_MOVE;
     player->distance = 0;
     player->bonus_stack = 0;
+    player->rewind_cnt = 6;
     player->anim_action = false;
     player->history = stack_init();
     stack_push(player->history, player->pos, player->action);
@@ -73,6 +74,9 @@ void player_inputs() {
     case KEY_SPACE:
         player_use_bonus();
         break;
+    case 'R':
+    case 'r':
+        player_rewind();
     default: break;
     }
 }
@@ -120,6 +124,7 @@ bool player_is_colliding(uint8_t line, uint8_t col) {
             player->stamina -= STAMINA_COST_OBS;
             player->action = HIT_OBSTACLE;
             player_obstacle_alert(line, col);
+            stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
         } else {
             // If player is on a bonus cell, he gains stamina or stack a bonus
             if (IS_BONUS_CELL(line, col))  {
@@ -188,10 +193,11 @@ void player_stack_bonus(uint8_t line, uint8_t col) {
         map->map_grid[line][col].cell_type = NO_BONUS;
         player->action = USE_BONUS;
     }
+
 }
 
 void player_use_bonus() {
-    if (player->bonus_stack > BONUS_STACK_MIN) {
+    if (player->bonus_stack > BONUS_STACK_MIN && player->stamina < 100) {
         system("aplay -q assets/sfx/eat-apple.wav &");
         player_alert_render("You have used a bonus from your pocket ! You gained 10 STM !");
         player->stamina += STAMINA_GAIN;
@@ -204,6 +210,63 @@ void player_use_bonus() {
     }
 }
 
+void player_rewind() {
+    if (player->history->head->next != NULL && player->rewind_cnt != 0) {
+        SNode *tmp;
+        tmp = player->history->head;
+        int cnt = 0 ;
+        while(tmp->action == REWIND) {
+            tmp = tmp->next;
+            cnt++;
+        }
+        while (cnt != 0 && tmp->next != NULL) {
+            cnt--;
+            tmp = tmp->next;
+        }
+        if ( tmp->next != NULL) {
+        switch (tmp->action)
+        {
+            case USE_STACKED_BONUS :
+                player->stamina -= STAMINA_GAIN;
+                player->bonus_stack++;
+                break;
+            case USE_BONUS :
+                player->stamina++;
+                player->stamina -= STAMINA_GAIN;
+                map->map_grid[tmp->pos.l][tmp->pos.c].cell_type = BONUS;
+                map->map_grid[player->pos.l][player->pos.c].visited = false;
+                player->pos.l = tmp->next->pos.l;
+                player->pos.c = tmp->next->pos.c;
+                break;
+            case HIT_OBSTACLE :
+                player->stamina++;
+                player->stamina += STAMINA_COST_OBS;
+                break;
+            case STACK_BONUS :
+                player->stamina++;
+                player->bonus_stack--;
+                map->map_grid[player->history->head->pos.l][player->history->head->pos.c].cell_type = BONUS;
+
+                map->map_grid[player->pos.l][player->pos.c].visited = false;
+                player->pos.l = tmp->next->pos.l;
+                player->pos.c = tmp->next->pos.c;
+                break;
+            case NO_ACTION :
+                player->stamina++;
+                map->map_grid[player->pos.l][player->pos.c].visited = false;
+                player->pos.l = tmp->next->pos.l;
+                player->pos.c = tmp->next->pos.c;
+                break;
+            default:
+                break;
+            }
+            player->rewind_cnt--;
+            player->action = REWIND;
+            stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
+        }
+    }
+}
+
 void player_stats_render() {
     // Render bonus stack
     mvwprintw(game.stats_win, 0, 3, "BONUS");
@@ -211,12 +274,12 @@ void player_stats_render() {
     for (uint8_t i = 0; i < player->bonus_stack; i++) {
         wattron(game.stats_win, A_BOLD);
         wattron(game.stats_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
-        mvwaddstr(game.stats_win, 2, 12 + i * 3, BONUS_CHAR);
+        mvwaddstr(game.stats_win, 0, 12 + i * 3, BONUS_CHAR);
         wattroff(game.stats_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
         wattroff(game.stats_win, A_BOLD);
     }
     // Render rewind stat
-    mvwprintw(game.stats_win, 2, 3, "REWIND   .");
+    mvwprintw(game.stats_win, 2, 3, "REWIND   %u", player->rewind_cnt);
     // Render distance stat
     mvwprintw(game.stats_win, 4, 3, "DISTANCE  %u", player->distance);
     wattroff(game.stats_win, A_BOLD);
