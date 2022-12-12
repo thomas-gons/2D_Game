@@ -1,6 +1,6 @@
 #include "map.h"
 
-
+extern Player *player;
 extern Game game;
 extern Map *map;
 
@@ -88,4 +88,16 @@ void map_free() {
         free(map->map_grid[l]);
     }
     free(map->map_grid);
+}
+
+
+void map_visual_reset() {
+    Node *tmp = player->history->head;
+    while(tmp != NULL){
+        if(map->map_grid[tmp->pos.l][tmp->pos.c].cell_type == NO_FRUIT) {
+            map->map_grid[tmp->pos.l][tmp->pos.c].cell_type = FRUIT;
+        }
+        map->map_grid[tmp->pos.l][tmp->pos.c].visited = false;
+        tmp=tmp->next;
+    }
 }

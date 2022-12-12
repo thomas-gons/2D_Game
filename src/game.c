@@ -220,8 +220,8 @@ void game_lose_menu() {
     {
     case 0:
         game.gameover = false;
+        map_visual_reset();
         player_init(map->level);
-        game_render();
         break;
     case 1:
         game.reload_samegame = false;
@@ -234,6 +234,7 @@ void game_lose_menu() {
         break;
     }
     ncs_destroy_win(game.menu_win);
+    game_render();
 }
 
 

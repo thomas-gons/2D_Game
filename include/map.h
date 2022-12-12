@@ -109,6 +109,11 @@ void map_render_path(Stack *path);
 void map_free();
 
 /**
+ * Reset visited path for restarted games
+*/
+void map_visual_reset();
+
+/**
  * Search a valid path in the map.
  * \param heuristic matrix that stores distance between each cell and end cell
  * \param cost movement cost to reach another direct adjacent cell (moveset)
