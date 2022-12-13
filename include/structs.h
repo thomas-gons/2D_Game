@@ -94,7 +94,7 @@ typedef struct Player {
     Move move;
     int8_t stamina;
     int8_t bonus_stack;
-    int8_t rewind_cnt;
+    uint8_t rewind_cnt;
     uint16_t distance;
     bool anim_action;
     Stack *history;

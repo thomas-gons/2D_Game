@@ -45,7 +45,7 @@ void player_inputs() {
     player->action = NO_ACTION;
     player->move = NO_MOVE;
     cbreak();
-    halfdelay(12);
+    halfdelay(10);
     switch (getch()) {
     case KEY_ESC:
         // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
@@ -87,7 +87,6 @@ void player_update() {
     if (player->move == NO_MOVE || player_is_colliding(player->pos.l + move[0], player->pos.c + move[1])) {
         return;
     }
-        
     // If there is no collision, player can move forward
     switch (player->move) {
     case RIGHT:
@@ -214,16 +213,19 @@ void player_rewind() {
     if (player->history->head->next != NULL && player->rewind_cnt != 0) {
         SNode *tmp;
         tmp = player->history->head;
-        int cnt = 0 ;
+        int cnt = 0;
         int rwd = 0;
+        // Skip rewind node in player history
         while(tmp->action == REWIND) {
             tmp = tmp->next;
             cnt++;
         }
+        // Go to the right node in the stack to apply a rewind on it
         while (cnt != 0 && tmp->next != NULL) {
             cnt--;
             tmp = tmp->next;
         }
+        // Apply rewind
         if ( tmp->next != NULL ) {
         switch (tmp->action) {
             case USE_STACKED_BONUS :
@@ -268,11 +270,16 @@ void player_rewind() {
                 break;
             }
             if (rwd == 0) {
-                player->rewind_cnt--;
+                if (player->rewind_cnt >= 0) {
+                    player->rewind_cnt--;
+                }
                 player->action = REWIND;
                 stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
+                player_alert_render("You have rewind an action !");
             }
         }
+    } else {
+        player_alert_render("You don't have any rewind left !");
     }
 }
 
@@ -295,8 +302,6 @@ void player_substract_dist(SNode *curr, SNode *prev) {
         player->distance -= map->map_grid[curr->pos.l][curr->pos.c].distance[1];
     }
 }
-
-
 
 void player_stats_render() {
     werase(game.stats_win);
