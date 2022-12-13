@@ -235,6 +235,7 @@ void player_rewind() {
                 player->stamina -= STAMINA_GAIN;
                 map->map_grid[tmp->pos.l][tmp->pos.c].cell_type = BONUS;
                 map->map_grid[player->pos.l][player->pos.c].visited = false;
+                player_substract_dist(tmp, tmp->next);
                 player->pos.l = tmp->next->pos.l;
                 player->pos.c = tmp->next->pos.c;
                 break;
@@ -246,14 +247,15 @@ void player_rewind() {
                 player->stamina++;
                 player->bonus_stack--;
                 map->map_grid[player->history->head->pos.l][player->history->head->pos.c].cell_type = BONUS;
-
                 map->map_grid[player->pos.l][player->pos.c].visited = false;
+                player_substract_dist(tmp, tmp->next);
                 player->pos.l = tmp->next->pos.l;
                 player->pos.c = tmp->next->pos.c;
                 break;
             case NO_ACTION :
                 player->stamina++;
                 map->map_grid[player->pos.l][player->pos.c].visited = false;
+                player_substract_dist(tmp, tmp->next);
                 player->pos.l = tmp->next->pos.l;
                 player->pos.c = tmp->next->pos.c;
                 break;
@@ -273,6 +275,28 @@ void player_rewind() {
         }
     }
 }
+
+
+void player_substract_dist(SNode *curr, SNode *prev) {
+    // Rewind Right move by going back Left
+    if (curr->pos.l == prev->pos.l && curr->pos.c > prev->pos.c) {
+    player->distance -= map->map_grid[prev->pos.l][prev->pos.c].distance[0];
+    }
+    // Rewind Down move by boing back Up
+    if (prev->pos.l < curr->pos.l && prev->pos.c == curr->pos.c) {
+    player->distance -= map->map_grid[prev->pos.l][prev->pos.c].distance[1];
+    }
+    // Rewind Left move by going back Right
+    if (curr->pos.l == prev->pos.l && curr->pos.c < prev->pos.c) {
+        player->distance -= map->map_grid[curr->pos.l][curr->pos.c].distance[0];
+    }
+    // Rewind Up move by going back Down
+    if (prev->pos.l > curr->pos.l && prev->pos.c == curr->pos.c) {
+        player->distance -= map->map_grid[curr->pos.l][curr->pos.c].distance[1];
+    }
+}
+
+
 
 void player_stats_render() {
     werase(game.stats_win);

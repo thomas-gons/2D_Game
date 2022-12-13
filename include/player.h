@@ -89,6 +89,13 @@ void player_use_bonus();
 void player_rewind();
 
 /**
+ * Substract distance of player when rewind.
+ * \param curr current node in history
+ * \param prev previous node in history
+*/
+void player_substract_dist(SNode *curr, SNode *prev);
+
+/**
  * Render bonus stack and distance travelled by the player in terminal with ncurses
 */
 void player_stats_render();
