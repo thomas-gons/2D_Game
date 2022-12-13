@@ -215,6 +215,7 @@ void player_rewind() {
         SNode *tmp;
         tmp = player->history->head;
         int cnt = 0 ;
+        int rwd = 0;
         while(tmp->action == REWIND) {
             tmp = tmp->next;
             cnt++;
@@ -223,9 +224,8 @@ void player_rewind() {
             cnt--;
             tmp = tmp->next;
         }
-        if ( tmp->next != NULL) {
-        switch (tmp->action)
-        {
+        if ( tmp->next != NULL ) {
+        switch (tmp->action) {
             case USE_STACKED_BONUS :
                 player->stamina -= STAMINA_GAIN;
                 player->bonus_stack++;
@@ -257,17 +257,25 @@ void player_rewind() {
                 player->pos.l = tmp->next->pos.l;
                 player->pos.c = tmp->next->pos.c;
                 break;
+            case REWIND :
+                rwd = 1;
+                player_alert_render("You can't rewind a rewind !");
+                return;
+                break;
             default:
                 break;
             }
-            player->rewind_cnt--;
-            player->action = REWIND;
-            stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
+            if (rwd == 0) {
+                player->rewind_cnt--;
+                player->action = REWIND;
+                stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
+            }
         }
     }
 }
 
 void player_stats_render() {
+    werase(game.stats_win);
     // Render bonus stack
     mvwprintw(game.stats_win, 0, 3, "BONUS");
     mvwprintw(game.stats_win, 0, 12, ".  .");
@@ -287,6 +295,7 @@ void player_stats_render() {
 }
 
 void player_alert_render(char *alert_msg) {
+    werase(game.alert_win);
     mvwprintw(game.alert_win, 1, 2, alert_msg);
     box(game.alert_win, ACS_VLINE, ACS_HLINE);
     wrefresh(game.alert_win);
