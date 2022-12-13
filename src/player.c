@@ -4,8 +4,10 @@
 extern Game game;
 extern Map *map;
 extern Player *player;
-
+extern Enemy *enemy;
 extern int8_t moveset[MOVESET_LEN][2];
+
+unsigned frames = 0;
 
 void player_init(Level level) {
     player = calloc(1, sizeof *player);
@@ -44,7 +46,7 @@ void player_inputs() {
     player->action = NO_ACTION;
     player->move = NO_MOVE;
     cbreak();
-    halfdelay(12);
+    halfdelay(7);
     switch (getch()) {
     case KEY_ESC:
         // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
@@ -75,6 +77,7 @@ void player_inputs() {
         break;
     default: break;
     }
+    frames++;
 }
 
 void player_update() {
@@ -107,6 +110,23 @@ void player_update() {
     player->pos.c += move[1];
     player_visited_cell_alert(player->pos.l, player->pos.c);
     map->map_grid[player->pos.l][player->pos.c].visited = true;
+    for (uint8_t i = 0; i < ENEMY_NB; i++) {
+        if (enemy[i].alive == false)
+            continue;
+
+        if (player->pos.l == enemy[i].house.l && player->pos.c == enemy[i].house.c) {
+            player->stamina += STAMINA_GAIN_ENM_DEFEAT;
+            player_alert_render("You have destroyed the house of %s enemy ! You gained %d STM !",
+                (ENEMY_NB > 1) ? "an": "the", STAMINA_GAIN_ENM_DEFEAT);
+
+            enemy[i].alive = false;
+        }
+        if (enemy[i].current.l == player->pos.l && enemy[i].current.c == player->pos.c) {
+            player_alert_render("%s enemy \u2620 killed you !", (ENEMY_NB > 1) ? "An": "The");
+            game.gameover = true;
+            return;
+        }
+    }
     stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
 }
 
@@ -142,7 +162,7 @@ void player_obstacle_alert(uint8_t line, uint8_t col) {
     wattron(game.game_win, A_BOLD);
     wrefresh(game.game_win);
     
-    player_alert_render("You have hit an obstacle ! You lost 10 STM !");
+    player_alert_render("You have hit an obstacle ! You lost %d STM !", STAMINA_COST_OBS);
 }
 
 void player_visited_cell_alert(uint8_t line, uint8_t col) {
@@ -183,8 +203,9 @@ void player_stack_bonus(uint8_t line, uint8_t col) {
         player->action = STACK_BONUS;
     } else {
         system("aplay -q assets/sfx/eat-apple.wav &");
-        player_alert_render("You have used a bonus ! You gained 10 STM !");
         player->stamina += STAMINA_GAIN;
+        player_alert_render("You have used a bonus ! You gained %d STM !",
+            (player->stamina > STAMINA_MAX) ? STAMINA_GAIN - (player->stamina - STAMINA_MAX): STAMINA_GAIN);
         map->map_grid[line][col].cell_type = NO_BONUS;
         player->action = USE_BONUS;
     }
@@ -193,8 +214,9 @@ void player_stack_bonus(uint8_t line, uint8_t col) {
 void player_use_bonus() {
     if (player->bonus_stack > BONUS_STACK_MIN) {
         system("aplay -q assets/sfx/eat-apple.wav &");
-        player_alert_render("You have used a bonus from your pocket ! You gained 10 STM !");
         player->stamina += STAMINA_GAIN;
+        player_alert_render("You have used a bonus from your pocket ! You gained %d STM !",
+            (player->stamina > STAMINA_MAX) ? STAMINA_GAIN - (player->stamina - STAMINA_MAX): STAMINA_GAIN);
         player->bonus_stack--;
         player->action = USE_STACKED_BONUS;
         if (player->stamina > STAMINA_MAX) {
@@ -223,10 +245,14 @@ void player_stats_render() {
     wrefresh(game.stats_win);
 }
 
-void player_alert_render(char *alert_msg) {
-    mvwprintw(game.alert_win, 1, 2, alert_msg);
+void player_alert_render(const char *__restrict__fmt, ...) {
+    va_list arg;
+    va_start(arg, __restrict__fmt);
+    wmove(game.alert_win, 1, 2);
+    vw_printw(game.alert_win, __restrict__fmt, arg);
     box(game.alert_win, ACS_VLINE, ACS_HLINE);
     wrefresh(game.alert_win);
+    va_end(arg);
 }
 
 void player_render() {
@@ -236,9 +262,84 @@ void player_render() {
     wattroff(game.game_win, COLOR_PAIR(FORMAT_COLOR_CYAN));
     wattroff(game.stats_win, A_BOLD);
     player_stats_render();
+    chase_player();
 }
 
 void player_free() {
     stack_free(player->history);
     free(player);
+    free(enemy);
+}
+
+void enemy_init() {
+    enemy = calloc(ENEMY_NB, sizeof(Enemy));
+    uint8_t l, c;
+    for (uint8_t i = 0; i < ENEMY_NB; i++) {
+        do {
+            l = rand() % MAP_LINES;
+            c = rand() % MAP_COLS;
+        } while (sqrt(pow(l, 2) + pow(c, 2)) < ENEMY_INIT_DIST && map->map_grid[l][c].cell_type == ROAD);
+        enemy[i].house = (Position) {l, c};
+        enemy[i].current = (Position) {l, c};
+        enemy[i].alive = true;
+    } 
+}
+
+void chase_player() {
+    if (!(frames % ENEMY_SPEED)) {
+        enemy_render();
+        return;
+    }
+    Stack *chase_path = NULL;
+    uint8_t l, c;
+    for (uint8_t i = 0; i < ENEMY_NB; i++) {
+        if (enemy[i].alive == false)
+            continue;
+
+        // Clear previous position of the enemy
+        l = enemy[i].current.l;
+        c = enemy[i].current.c;
+        switch (map->map_grid[l][c].cell_type) {
+            case ROAD:
+                mvwaddch(game.game_win, l, c,
+                    ((map->map_grid[l][c].visited) ? PATH_VISITED_CHAR : ' ') | COLOR_PAIR(FORMAT_COLOR_CYAN));
+                break;
+            case BONUS:
+                wattron(game.game_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
+                mvwaddstr(game.game_win, l, c, BONUS_CHAR);
+                wattroff(game.game_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
+                break;
+            case NO_BONUS:
+                mvwaddch(game.game_win, l, c, ',' | COLOR_PAIR(FORMAT_COLOR_YELLOW));
+                break;
+            default: break;
+        }
+        // refresh shortest path to the player
+        chase_path = a_star(enemy[i].current, player->pos, false);
+        if (chase_path)
+            enemy[i].current = chase_path->head->next->pos;
+        // check if player and the enemy are colliding
+        if (enemy[i].current.l == player->pos.l && enemy[i].current.c == player->pos.c) {
+            player_alert_render("%s enemy \u2620 killed you !", (ENEMY_NB > 1) ? "An": "The");
+            stack_free(chase_path);
+            game.gameover = true;
+            return;
+        }
+        stack_free(chase_path);
+    }
+    enemy_render();
+}
+
+void enemy_render() {
+    wattron(game.game_win, A_BOLD);
+    for (uint8_t i = 0; i < ENEMY_NB; i++) {
+        if (enemy[i].alive == false) {
+            mvwaddstr(game.game_win, enemy[i].house.l, enemy[i].house.c, ENEMY_BROKEN_HOUSE_CHAR);
+            continue;
+        }
+
+        mvwaddstr(game.game_win, enemy[i].current.l, enemy[i].current.c, ENEMY_CHAR);
+        mvwaddstr(game.game_win, enemy[i].house.l, enemy[i].house.c, ENEMY_HOUSE_CHAR);
+    }
+    wattroff(game.game_win, A_BOLD);
 }

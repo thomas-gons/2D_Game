@@ -99,5 +99,10 @@ typedef struct Player {
     Stack *history;
 } Player;
 
+typedef struct Enemy {
+    Position house;
+    Position current;
+    bool alive;
+} Enemy;
 
 #endif

@@ -13,14 +13,14 @@ int8_t moveset[MOVESET_LEN][2] = {  // {line, col}
     {-1, 0}     // Top         
 }; 
 
-Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], bool with_stm) {
+Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], Position start, Position end, bool with_stm) {
     unsigned cost;
     // closed array will be filled with all tested position
     unsigned closed[MAP_LINES][MAP_COLS] = {0};
-    closed[START.l][START.c] = 1;
+    closed[start.l][start.c] = 1;
     int action[MAP_LINES][MAP_COLS] = {0};
 
-    uint8_t l = START.l, c = START.c;
+    uint8_t l = start.l, c = start.c;
     int8_t tmp_l, tmp_c;
     // g -> the movement cost to move from the starting point to a given square on the grid,
     //  following the path generated to get there
@@ -35,7 +35,7 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], bool with_stm) {
             return NULL;
         }
         Point next_cell = pqueue_dequeue(opened);
-        if (next_cell.pos.l == END.l && next_cell.pos.c == END.c)
+        if (next_cell.pos.l == end.l && next_cell.pos.c == end.c)
             found = true;
         else {
             for (uint8_t i = 0; i < MOVESET_LEN; i++) {
@@ -76,11 +76,11 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], bool with_stm) {
     }
     pqueue_free(opened);
     Stack *inverted_path = stack_init();
-    l = END.l;
-    c = END.c;
+    l = end.l;
+    c = end.c;
     stack_push(inverted_path, (Position) {.l=l, .c=c}, NO_ACTION);
     unsigned path_len = 0;
-    while (l != START.l || c != START.c) {
+    while (l != start.l || c != start.c) {
         switch (action[l][c]) {
             case 0: path_len += map->map_grid[l][c - 1].distance[0]; break;
             case 1: path_len += map->map_grid[l - 1][c].distance[1]; break;
@@ -105,18 +105,18 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], bool with_stm) {
     return inverted_path;
 }
 
-Stack *a_star(bool with_stm) {
+Stack *a_star(Position start, Position end, bool with_stm) {
     unsigned heuristic[MAP_LINES][MAP_COLS] = {0};
 
     for (uint8_t l = 0; l < MAP_LINES; l++) {
         for (uint8_t c = 0; c < MAP_COLS; c++) {
             // h -> estimated cost of moving from a specific grid square to the final destination
-            heuristic[l][c] = abs(l - END.l) + abs(c - END.c);
+            heuristic[l][c] = abs(l - end.l) + abs(c - end.c);
             // If the cell type is OBSTACLE, then the heuristic should infinite (big value in our case)
             if (IS_OBSTACLE_CELL(l, c)) {
                 heuristic[l][c] = 999;
             }
         }
     }
-    return search_path(heuristic, with_stm);
+    return search_path(heuristic, start, end, with_stm);
 }
