@@ -34,7 +34,7 @@
 #define BONUS_STACK_MAX 2
 
 #define ENEMY_SPEED         2
-#define ENEMY_NB            3
+#define ENEMY_NB            5
 #define ENEMY_INIT_DIST     (sqrt(pow((MAP_LINES / 2), 2) + pow((MAP_COLS / 2), 2)))
 
 /************************* FUNCTIONS *************************/

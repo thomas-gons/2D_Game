@@ -278,7 +278,7 @@ void enemy_init() {
         do {
             l = rand() % MAP_LINES;
             c = rand() % MAP_COLS;
-        } while (sqrt(pow(l, 2) + pow(c, 2)) < ENEMY_INIT_DIST && map->map_grid[l][c].cell_type == ROAD);
+        } while (sqrt(pow(l, 2) + pow(c, 2)) < ENEMY_INIT_DIST || map->map_grid[l][c].cell_type != ROAD);
         enemy[i].house = (Position) {l, c};
         enemy[i].current = (Position) {l, c};
         enemy[i].alive = true;

@@ -58,7 +58,7 @@
 #define PATH_VISITED_CHAR       ('.')
 #define BONUS_CHAR              ("\u2726")          // star 2726
 #define PLAYER_CHAR             ("\U0001F397")      // mdedal 1F396; ribbon 1F397; chessking 265A;
-#define ENEMY_HOUSE_CHAR        ("\u2634")          // trigram for wind 2634
+#define ENEMY_HOUSE_CHAR        ("\u26EB")          // trigram for wind 2634
 #define ENEMY_BROKEN_HOUSE_CHAR ("\U0001D13C")      // half rest 1D13C
 #define ENEMY_CHAR              ("\u2620")          // skull 2620;
 #define OBSTACLE_CHAR           ("X")               // chains 26D3; triforce 26FC;
