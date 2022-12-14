@@ -190,7 +190,7 @@ void game_init_new_game() {
     // Create game subwindows
     ncs_create_game_windows();
     // Initialize map
-    map_init(MEDIUM);
+    map_init(EASY);
     // Initialize player entity
     player_init(map->level);
     // Generate random map

@@ -118,10 +118,10 @@ void player_update() {
             continue;
 
         if (player->pos.l == enemy[i].house.l && player->pos.c == enemy[i].house.c) {
-            player->stamina += STAMINA_GAIN_ENM_DEFEAT;
             player_alert_render("You have destroyed the house of %s enemy ! You gained %d STM !",
-                (ENEMY_NB > 1) ? "an": "the", STAMINA_GAIN_ENM_DEFEAT);
-
+                (ENEMY_NB > 1) ? "an": "the", (player->stamina + STAMINA_GAIN_ENM_DEFEAT > 100) ?
+                    STAMINA_GAIN_ENM_DEFEAT - (player->stamina + STAMINA_GAIN_ENM_DEFEAT - 100) : STAMINA_GAIN_ENM_DEFEAT);
+            player->stamina += STAMINA_GAIN_ENM_DEFEAT;
             enemy[i].alive = false;
         }
         if (enemy[i].current.l == player->pos.l && enemy[i].current.c == player->pos.c) {
@@ -209,7 +209,7 @@ void player_stack_bonus(uint8_t line, uint8_t col) {
         system("aplay -q assets/sfx/eat-apple.wav &");
         player->stamina += STAMINA_GAIN;
         player_alert_render("You have used a bonus ! You gained %d STM !",
-            (player->stamina > STAMINA_MAX) ? STAMINA_GAIN - (player->stamina - STAMINA_MAX): STAMINA_GAIN);
+            (player->stamina > STAMINA_MAX) ? STAMINA_GAIN - (player->stamina - STAMINA_MAX) : STAMINA_GAIN);
         map->map_grid[line][col].cell_type = NO_BONUS;
         player->action = USE_BONUS;
     }
@@ -221,7 +221,7 @@ void player_use_bonus() {
         system("aplay -q assets/sfx/eat-apple.wav &");
         player->stamina += STAMINA_GAIN;
         player_alert_render("You have used a bonus from your pocket ! You gained %d STM !",
-            (player->stamina > STAMINA_MAX) ? STAMINA_GAIN - (player->stamina - STAMINA_MAX): STAMINA_GAIN);
+            (player->stamina > STAMINA_MAX) ? STAMINA_GAIN - (player->stamina - STAMINA_MAX) : STAMINA_GAIN);
         player->bonus_stack--;
         player->action = USE_STACKED_BONUS;
         if (player->stamina > STAMINA_MAX) {
