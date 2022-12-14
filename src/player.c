@@ -229,6 +229,9 @@ void player_use_bonus() {
         }
         stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
     }
+    else if (player->stamina >= 100) {
+        player_alert_render("You are full of energy ! ");
+    }
 }
 
 void player_rewind() {
@@ -249,7 +252,7 @@ void player_rewind() {
         }
         // Apply rewind
         if ( tmp->next != NULL ) {
-        switch (tmp->action) {
+            switch (tmp->action) {
             case USE_STACKED_BONUS :
                 player->stamina -= STAMINA_GAIN;
                 player->bonus_stack++;
@@ -288,8 +291,7 @@ void player_rewind() {
                 player_alert_render("You can't rewind a rewind !");
                 return;
                 break;
-            default:
-                break;
+            default: break;
             }
             if (rwd == 0) {
                 if (player->rewind_cnt >= 0) {
@@ -309,11 +311,11 @@ void player_rewind() {
 void player_substract_dist(SNode *curr, SNode *prev) {
     // Rewind Right move by going back Left
     if (curr->pos.l == prev->pos.l && curr->pos.c > prev->pos.c) {
-    player->distance -= map->map_grid[prev->pos.l][prev->pos.c].distance[0];
+        player->distance -= map->map_grid[prev->pos.l][prev->pos.c].distance[0];
     }
     // Rewind Down move by boing back Up
     if (prev->pos.l < curr->pos.l && prev->pos.c == curr->pos.c) {
-    player->distance -= map->map_grid[prev->pos.l][prev->pos.c].distance[1];
+        player->distance -= map->map_grid[prev->pos.l][prev->pos.c].distance[1];
     }
     // Rewind Left move by going back Right
     if (curr->pos.l == prev->pos.l && curr->pos.c < prev->pos.c) {
@@ -348,7 +350,7 @@ void player_stats_render() {
 void player_alert_render(const char *__restrict__fmt, ...) {
     va_list arg;
     va_start(arg, __restrict__fmt);
-    wclear(game.alert_win);
+    werase(game.alert_win);
     wmove(game.alert_win, 1, 2);
     vw_printw(game.alert_win, __restrict__fmt, arg);
     box(game.alert_win, ACS_VLINE, ACS_HLINE);
@@ -394,32 +396,33 @@ void chase_player() {
     Stack *chase_path = NULL;
     uint8_t l, c;
     for (uint8_t i = 0; i < ENEMY_NB; i++) {
-        if (enemy[i].alive == false)
+        if (enemy[i].alive == false) {
             continue;
-
-        // Clear previous position of the enemy
+        }
+        // Render again previous position of the enemy
         l = enemy[i].current.l;
         c = enemy[i].current.c;
         switch (map->map_grid[l][c].cell_type) {
-            case ROAD:
-                mvwaddch(game.game_win, l, c,
-                    ((map->map_grid[l][c].visited) ? PATH_VISITED_CHAR : ' ') | COLOR_PAIR(FORMAT_COLOR_CYAN));
-                break;
-            case BONUS:
-                wattron(game.game_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
-                mvwaddstr(game.game_win, l, c, BONUS_CHAR);
-                wattroff(game.game_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
-                break;
-            case NO_BONUS:
-                mvwaddch(game.game_win, l, c, ',' | COLOR_PAIR(FORMAT_COLOR_YELLOW));
-                break;
-            default: break;
+        case ROAD:
+            mvwaddch(game.game_win, l, c,
+                ((map->map_grid[l][c].visited) ? PATH_VISITED_CHAR : ' ') | COLOR_PAIR(FORMAT_COLOR_CYAN));
+            break;
+        case BONUS:
+            wattron(game.game_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
+            mvwaddstr(game.game_win, l, c, BONUS_CHAR);
+            wattroff(game.game_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
+            break;
+        case NO_BONUS:
+            mvwaddch(game.game_win, l, c, ',' | COLOR_PAIR(FORMAT_COLOR_YELLOW));
+            break;
+        default: break;
         }
-        // refresh shortest path to the player
+        // Refresh shortest path to the player
         chase_path = a_star(enemy[i].current, player->pos, false);
-        if (chase_path)
+        if (chase_path) {
             enemy[i].current = chase_path->head->next->pos;
-        // check if player and the enemy are colliding
+        }
+        // Check if player and the enemy are colliding
         if (enemy[i].current.l == player->pos.l && enemy[i].current.c == player->pos.c) {
             player_alert_render("%s enemy \u2620 killed you !", (ENEMY_NB > 1) ? "An": "The");
             stack_free(chase_path);
@@ -438,7 +441,6 @@ void enemy_render() {
             mvwaddstr(game.game_win, enemy[i].house.l, enemy[i].house.c, ENEMY_BROKEN_HOUSE_CHAR);
             continue;
         }
-
         mvwaddstr(game.game_win, enemy[i].current.l, enemy[i].current.c, ENEMY_CHAR);
         mvwaddstr(game.game_win, enemy[i].house.l, enemy[i].house.c, ENEMY_HOUSE_CHAR);
     }

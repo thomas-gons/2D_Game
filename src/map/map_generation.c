@@ -26,12 +26,12 @@ void map_random_fill() {
             prob_obs = PROB_OBS / (dn * LAMBDA_OBS);
             // Tile type is based on the probability distribution model (radial here)
             // bonus probabilty does not depend on the map's level
-            if (prob_bonus > PROB_MAX_BONUS)
+            if (prob_bonus > PROB_MAX_BONUS) {
                 prob_bonus = PROB_MAX_BONUS;
-            
-            if (prob_obs > (PROB_MAX_OBS * map->level / 2))
+            }
+            if (prob_obs > (PROB_MAX_OBS * map->level / 2)) {
                 prob_obs = PROB_MAX_OBS * map->level / 2;
-            
+            }
             map->map_grid[l][c].cell_type = (prob <= prob_bonus) ? BONUS :
                 (prob <= prob_obs) ? OBSTACLE : ROAD;
         }

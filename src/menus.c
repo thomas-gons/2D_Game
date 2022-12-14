@@ -1,5 +1,6 @@
 #include "menus.h"
 
+
 extern Game game;
 extern Map *map;
 extern Player *player;

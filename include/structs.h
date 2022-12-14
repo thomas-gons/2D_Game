@@ -100,10 +100,14 @@ typedef struct Player {
     Stack *history;
 } Player;
 
+/**
+ * Enemy structure, handle enemy data.
+*/
 typedef struct Enemy {
     Position house;
     Position current;
     bool alive;
 } Enemy;
+
 
 #endif

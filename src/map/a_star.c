@@ -10,7 +10,7 @@ int8_t moveset[MOVESET_LEN][2] = {  // {line, col}
     {0, 1},     // Right
     {1, 0},     // Down
     {0, -1},    // Left
-    {-1, 0}     // Top         
+    {-1, 0}     // Up         
 }; 
 
 Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], Position start, Position end, bool with_stm) {
@@ -35,37 +35,34 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], Position start, Posi
             return NULL;
         }
         Point next_cell = pqueue_dequeue(opened);
-        if (next_cell.pos.l == end.l && next_cell.pos.c == end.c)
+        if (next_cell.pos.l == end.l && next_cell.pos.c == end.c) {
             found = true;
-        else {
+        } else {
             for (uint8_t i = 0; i < MOVESET_LEN; i++) {
                 tmp_l = next_cell.pos.l + moveset[i][0];
                 tmp_c = next_cell.pos.c + moveset[i][1];
                 if (IS_NOT_OUT_OF_MAP(tmp_l, tmp_c)) {
                     if (!closed[tmp_l][tmp_c] && heuristic[tmp_l][tmp_c] != 999 && CONSIDER_STM(with_stm, next_cell.stm)) {
                         switch (i) {
-                            case 0:
-                                // right
-                                cost = map->map_grid[next_cell.pos.l][next_cell.pos.c].distance[0];
-                                break;
-                            case 1:
-                                // bottom
-                                cost = map->map_grid[next_cell.pos.l][next_cell.pos.c].distance[1];
-                                break;
-                            case 2:
-                                // left
-                                cost = map->map_grid[next_cell.pos.l][next_cell.pos.c - 1].distance[0];
-                                break;
-                            default:
-                                // top
-                                cost = map->map_grid[next_cell.pos.l - 1][next_cell.pos.c].distance[1];
-                                break;
+                        case 0:     // Right
+                            cost = map->map_grid[next_cell.pos.l][next_cell.pos.c].distance[0];
+                            break;
+                        case 1:     // Down
+                            cost = map->map_grid[next_cell.pos.l][next_cell.pos.c].distance[1];
+                            break;
+                        case 2:     // Left
+                            cost = map->map_grid[next_cell.pos.l][next_cell.pos.c - 1].distance[0];
+                            break;
+                        default:    // Up
+                            cost = map->map_grid[next_cell.pos.l - 1][next_cell.pos.c].distance[1];
+                            break;
                         }
                         tmp_g = next_cell.g + cost;
                         tmp_f = tmp_g + heuristic[tmp_l][tmp_c];
                         tmp_stm = next_cell.stm - 1;
-                        if (map->map_grid[next_cell.pos.l][next_cell.pos.c].cell_type == BONUS)
+                        if (map->map_grid[next_cell.pos.l][next_cell.pos.c].cell_type == BONUS) {
                             tmp_stm += 10;
+                        }
                         pqueue_enqueue(opened, (Point) {(Position) {.l=tmp_l, .c=tmp_c}, tmp_stm, tmp_f, tmp_g});
                         closed[tmp_l][tmp_c] = 1;
                         action[tmp_l][tmp_c] = i;
@@ -97,10 +94,9 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], Position start, Posi
         game.path_stm_len = path_len;
         mvwprintw(game.dist_win, 13, 3, "BEST DISTANCE");
         mvwprintw(game.dist_win, 14, 8, "%u", game.path_stm_len);
-    }
-    else
+    } else {
         game.path_dist_len = path_len;
-    
+    }
     // revert the path
     return inverted_path;
 }

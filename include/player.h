@@ -120,17 +120,19 @@ void player_render();
 void player_free();
 
 /**
- * 
+ * Initialize enemy entities.
 */
 void enemy_init();
 
 /**
- * 
+ * Update enemy to chase the player.
 */
 void chase_player();
 
 /**
- *  
+ *  Render all enemies entity.
 */
 void enemy_render();
+
+
 #endif

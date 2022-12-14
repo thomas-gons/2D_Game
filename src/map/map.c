@@ -63,8 +63,9 @@ void map_display_path(Stack *stack) {
     SNode *tmp;
     for (uint8_t l = 0; l < MAP_LINES; l++) {
         for (uint8_t c = 0; c < MAP_COLS; c++) {
-            if (map->map_grid[l][c].cell_type == OBSTACLE)
+            if (map->map_grid[l][c].cell_type == OBSTACLE) {
                 printf("\033[31;1mX\033[0m ");
+            }
             else {
                 for (tmp = stack->head; tmp; tmp = tmp->next) {
                     if (tmp->pos.l == l && tmp->pos.c == c) {
@@ -72,8 +73,9 @@ void map_display_path(Stack *stack) {
                         break;
                     }
                 }
-                if (!tmp)
+                if (!tmp) {
                     printf(". ");
+                }
             }
         }
         printf("\n");
@@ -84,12 +86,15 @@ void map_display() {
     printf("\nMAP_DISPLAY\n");
     for (uint8_t l = 0, c; l < MAP_LINES; l++) {
         for (c = 0; c < MAP_COLS; c++) {
-            if (map->map_grid[l][c].cell_type == OBSTACLE)
+            if (map->map_grid[l][c].cell_type == OBSTACLE) {
                 printf("\033[31;1mX\033[0m ");
-            else if (map->map_grid[l][c].cell_type == BONUS)
+            }
+            else if (map->map_grid[l][c].cell_type == BONUS) {
                 printf("\033[32;1m@\033[0m ");
-            else
+            }
+            else {
                 printf(". ");
+            }
         }
         printf("\n");
     }
@@ -99,10 +104,11 @@ void map_display() {
 void map_render_path(Stack *path, uint8_t color) {
     SNode *tmp = path->head;
     for (; tmp; tmp = tmp->next) {
-        if (map->map_grid[tmp->pos.l][tmp->pos.c].cell_type == BONUS)
+        if (map->map_grid[tmp->pos.l][tmp->pos.c].cell_type == BONUS) {
             mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '@' | COLOR_PAIR(FORMAT_COLOR_GREEN));
-        else
+        } else {
             mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(color));
+        }
     }
     wrefresh(game.game_win);
 }

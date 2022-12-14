@@ -44,11 +44,11 @@
 #define GOAL ((Position) {.l=MAP_LINES - 1, .c=MAP_COLS - 1})
 #define MOVESET_LEN     4
 
-
 /**
- * 
+ * Tell if we consider the stamina to get the shortest path.
 */
 #define CONSIDER_STM(with_stm, stm) ((with_stm) ? (stm > 0): (true))
+
 /**
  * Check if position is within the map range.
 */
@@ -61,7 +61,6 @@
 */
 #define IS_OBSTACLE_CELL(line, col) (                               \
     map->map_grid[line][col].cell_type == OBSTACLE) ? true : false  \
-
 
 /**
  * Check if position is a bonus cell.
