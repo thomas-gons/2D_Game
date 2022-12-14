@@ -23,7 +23,7 @@ LDLIBS := -lm $(shell pkg-config ncursesw --cflags --libs)
 FSAN_FLAGS := -fsanitize=address
 
 # Files set up.
-TARGET := game
+TARGET := cailloux
 SRCS.c := $(shell find $(DIR_SRC)/ -name "*.c" 2> /dev/null)
 SRCS.cpp := $(shell find $(DIR_SRC)/ -name "*.cpp" 2> /dev/null)
 

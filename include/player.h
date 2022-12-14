@@ -18,12 +18,13 @@
 #define STAMINA_MEDIUM  70
 #define STAMINA_HARD    50
 
-#define STAMINA_COST        1
-#define STAMINA_COST_OBS    10
-#define STAMINA_GAIN        10
+#define STAMINA_COST            1
+#define STAMINA_COST_OBS        10
+#define STAMINA_GAIN            10
+#define STAMINA_GAIN_ENM_DEFEAT 25
 
-#define STAMINA_MAX         100
-#define STAMINA_MIN         0
+#define STAMINA_MAX             100
+#define STAMINA_MIN             0
 #define STAMINA_LIMIT_TO_STACK_BONUS 80
 
 /**
@@ -32,6 +33,9 @@
 #define BONUS_STACK_MIN 0
 #define BONUS_STACK_MAX 2
 
+#define ENEMY_SPEED         2
+#define ENEMY_NB            1
+#define ENEMY_INIT_DIST     (sqrt(pow((MAP_LINES / 2), 2) + pow((MAP_COLS / 2), 2)))
 
 /************************* FUNCTIONS *************************/
 
@@ -104,17 +108,29 @@ void player_stats_render();
  * Render an alert message.
  * \param alert_msg alert message to be rendered
 */
-void player_alert_render(char *alert_msg);
+void player_alert_render(const char *__restrict__fmt, ...);
 
 /**
  * Render player in terminal with ncurses.
 */
 void player_render();
-
 /**
  * Free allocated memory for player.
 */
 void player_free();
 
+/**
+ * 
+*/
+void enemy_init();
 
+/**
+ * 
+*/
+void chase_player();
+
+/**
+ *  
+*/
+void enemy_render();
 #endif

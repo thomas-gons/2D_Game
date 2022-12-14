@@ -41,7 +41,7 @@
  * Cells settings.
 */
 #define START ((Position) {.l=0, .c=0})
-#define END ((Position) {.l=MAP_LINES - 1, .c=MAP_COLS - 1})
+#define GOAL ((Position) {.l=MAP_LINES - 1, .c=MAP_COLS - 1})
 #define MOVESET_LEN     4
 
 
@@ -117,17 +117,21 @@ void map_free();
 /**
  * Search a valid path in the map.
  * \param heuristic matrix that stores distance between each cell and end cell
+ * \param start start path's position
+ * \param end end path's position
  * \param with_stm consider stamina in shortest path or not
  * \returns a valid path (stack of cells) on success, NULL on error.
 */
-Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], bool with_stm);
+Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], Position start, Position end, bool with_stm);
 
 /**
  * Implementation of A Star (A*) pathfinding algorithm.
+ * \param start start path's position
+ * \param end end path's position
  * \param with_stm consider stamina in shortest path or not
  * \returns a valid path (stack of cells) on success, NULL on error.
 */
-Stack *a_star(bool with_stm);
+Stack *a_star(Position start, Position end, bool with_stm);
 
 
 #endif

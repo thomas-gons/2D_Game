@@ -4,6 +4,7 @@
 extern Game game;
 extern Map *map;
 extern Player *player;
+extern Enemy *enemy;
 
 void ncs_init() {
     initscr();
@@ -188,12 +189,15 @@ void game_init_new_game() {
     game.gameover = false;
     // Create game subwindows
     ncs_create_game_windows();
-    // Generate random map
+    // Initialize map
     map_init(EASY);
     // Initialize player entity
     player_init(map->level);
+    // Generate random map
     game.path_stm = map_generate();
-    game.path_dist = a_star(false);
+    game.path_dist = a_star(START, GOAL, false);
+    // Initialize enemies entities
+    enemy_init();
     // First render of game
     game_render();
 }
