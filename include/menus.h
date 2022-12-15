@@ -4,6 +4,7 @@
 
 #include "common.h"
 #include "structs.h"
+#include "game.h"
 #include "map.h"
 
 

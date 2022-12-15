@@ -8,8 +8,8 @@ extern Player *player;
 void menu_create_entry_template(char **entry_list, int nb_entry) {
     // Create the menu window
     game.menu_win = subwin( stdscr,
-                            nb_entry + 2,
-                            (MAP_COLS + BAR_SIZE + 2)/2,
+                            nb_entry + 4,
+                            (uint8_t) (MAP_COLS + BAR_SIZE + 2)/2,
                             game.win_h/2 - (MAP_LINES + 2)/2 + 15,
                             game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 25
     );
@@ -22,18 +22,18 @@ void menu_create_entry_template(char **entry_list, int nb_entry) {
         else {
             wattroff(game.menu_win, A_STANDOUT);
         }
-        mvwprintw( game.menu_win, i+1, 2, "%s", entry_list[i] );
+        ncs_print_centered(game.menu_win, i + 2, entry_list[i]);    // mvwprintw(game.menu_win, i + 2, 2, entry_list[i]);
     }
     box(game.menu_win, ACS_VLINE, ACS_HLINE);
     wrefresh(game.menu_win);
 }
 
 int8_t menu_select_entry(char **entry_list, int nb_entry) {
-    // Input loop to select menu entries
+    // Input loop to select menu entry
     int ch;
     int8_t i = 0;
     while ((ch = getch()) != KEY_ENTR) {
-        mvwprintw(game.menu_win, i + 1, 2, "%s", entry_list[i] );
+        ncs_print_centered(game.menu_win, i + 2, entry_list[i]);    // mvwprintw(game.menu_win, i + 2, 2, entry_list[i]);
         switch (ch) {
         case KEY_UP:
         case 'Z':
@@ -57,7 +57,7 @@ int8_t menu_select_entry(char **entry_list, int nb_entry) {
         }
         // Refresh rendering of menu entries
         wattron(game.menu_win, A_STANDOUT );
-        mvwprintw(game.menu_win, i+1, 2, "%s", entry_list[i]);
+        ncs_print_centered(game.menu_win, i + 2, entry_list[i]);    // mvwprintw(game.menu_win, i + 2, 2, entry_list[i]);
         wattroff(game.menu_win, A_STANDOUT );
         wrefresh(game.menu_win );
     }
@@ -82,21 +82,21 @@ void distances_render() {
     wattroff(game.stats_win, A_BOLD);
 
     // Render directional arrows and their distance value
-    mvwprintw(game.dist_win, 2, BAR_SIZE / 2, "  ");
-    render_dist_obstacle(2, BAR_SIZE / 2, up);
-    mvwprintw(game.dist_win, 4, BAR_SIZE / 2, "🠱");
-
+    mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) + 5, "  ");
+    render_dist_obstacle(6, (BAR_SIZE / 2) + 6, right);
+    mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) + 3, "🠲");
+    
+    mvwprintw(game.dist_win, 10, BAR_SIZE / 2, "  ");
+    render_dist_obstacle(10, BAR_SIZE / 2, down);
+    mvwprintw(game.dist_win, 8, BAR_SIZE / 2, "🠳");
+    
     mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) - 7, "  ");
     render_dist_obstacle(6, (BAR_SIZE / 2) - ((left / 10) ? 7 : 6), left);
     mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) - 4 , "🠰");
 
-    mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) + 5, "  ");
-    render_dist_obstacle(6, (BAR_SIZE / 2) + 6, right);
-    mvwprintw(game.dist_win, 6, (BAR_SIZE / 2) + 3, "🠲");
-
-    mvwprintw(game.dist_win, 10, BAR_SIZE / 2, "  ");
-    render_dist_obstacle(10, BAR_SIZE / 2, down);
-    mvwprintw(game.dist_win, 8, BAR_SIZE / 2, "🠳");
+    mvwprintw(game.dist_win, 2, BAR_SIZE / 2, "  ");
+    render_dist_obstacle(2, BAR_SIZE / 2, up);
+    mvwprintw(game.dist_win, 4, BAR_SIZE / 2, "🠱");
 }
 
 void render_dist_obstacle(uint8_t line, uint8_t col, int8_t render_dist) {

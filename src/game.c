@@ -32,16 +32,17 @@ void ncs_init_colors() {
     init_pair(FORMAT_COLOR_WHITE_BG_RED, COLOR_WHITE, COLOR_RED);
 }
 
-void ncs_check_term_size() {
+bool ncs_check_term_size() {
     // Get size of current terminal window
     getmaxyx(stdscr, game.win_h, game.win_w);
-    if ((game.win_w < MAP_COLS + BAR_SIZE + 2) || (game.win_h < MAP_LINES + 2)) {
+    if ((game.win_w < MAP_COLS + BAR_SIZE + 2) || (game.win_h < MAP_LINES + 5)) {
         ncs_quit();
         fprintf(stderr,
-            "[ERROR] > Window is set to %d rows * %d cols.\n\t> Please enlarge it %d rows * %d cols minimum,\n\t> or to fullscreen.\n",
-            game.win_h, game.win_w, (MAP_LINES + 2), (MAP_COLS + BAR_SIZE + 2));
-        exit(1);
+            "\n[ERROR] > Window is set to [%d x %d] rows x cols.\n\t> Please enlarge it to minimum [%d x %d] rows x cols.\n\t> Enlarge it to Fullscreen for better experience.\n",
+            game.win_h, game.win_w, (MAP_LINES + 5), (MAP_COLS + BAR_SIZE + 2));
+        return false;
     }
+    return true;
 }
 
 void ncs_create_title_window() {
@@ -64,7 +65,7 @@ void ncs_create_game_windows() {
     // Create main window
     game.main_win = subwin( stdscr,
                             MAP_LINES + 2,
-                            MAP_COLS + BAR_SIZE + 3,
+                            MAP_COLS + BAR_SIZE + 2,
                             MAIN_WIN_L0,
                             MAIN_WIN_C0
     );
@@ -101,7 +102,7 @@ void ncs_create_game_windows() {
     );
     game.alert_win = subwin(stdscr,
                             4,
-                            MAP_COLS + 3,
+                            MAP_COLS + 2,
                             ALERT_WIN_L0,
                             ALERT_WIN_C0
     );
@@ -123,6 +124,12 @@ void ncs_refresh_game_windows() {
     wrefresh(game.alert_win);
 }
 
+void ncs_print_centered(WINDOW *win, uint8_t line, const char *msg) {
+    uint8_t half_len = (uint8_t) strlen(msg) / 2;
+    uint8_t ajusted_col = (uint8_t) (win->_maxx / 2) - half_len;
+    mvwprintw(win, line, ajusted_col, msg);
+}
+
 void ncs_destroy_win(WINDOW *win) {
     werase(win);
     delwin(win);
@@ -134,7 +141,9 @@ void ncs_quit() {
 }
 
 void run_game() {
-    game_init();
+    if (!game_init()) {
+        return;
+    }
     // Menu entries
     switch (game_start_menu()) {
     case 0: // New game
@@ -157,26 +166,29 @@ void run_game() {
     game_quit();
 }
 
-void game_init() {
+bool game_init() {
     // Initialize ncurses resources
     ncs_init();
+    if (!ncs_check_term_size()) {
+        return false;
+    }
     ncs_init_colors();
-    ncs_check_term_size();
     ncs_create_title_window();
+    return true;
 }
 
 uint8_t game_start_menu() {
     // Start menu, show game title
     ncs_create_title_window();
     // Start menu, select an entry
-    char *first_menu_list[] = { "Nouvelle partie", "Charger une partie", "Quitter" };
-    menu_create_entry_template(first_menu_list, 3);
-    uint8_t choice = menu_select_entry(first_menu_list, 3);
+    const uint8_t nb_entry = 4;
+    char *start_menu_list[] = { "New game", "Load game", "History", "Quit" };
+    menu_create_entry_template(start_menu_list, nb_entry);
+    uint8_t choice = menu_select_entry(start_menu_list, nb_entry);
     // Play sound effects
     if (choice == 0) {
         system("aplay -q assets/sfx/among-us.wav &");
-    }
-    else if (choice == 2) {
+    } else if (choice == 2) {
         system("aplay -q assets/sfx/fart.wav &");
     }
     ncs_destroy_win(game.title_win);

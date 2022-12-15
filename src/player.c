@@ -79,6 +79,16 @@ void player_inputs() {
     case 'R':
     case 'r':
         player_rewind();
+        break;
+    // Secret key bindings
+    case 'P':
+        player->anim_action = true;
+        map_render_path(game.path_dist, FORMAT_COLOR_CYAN);
+        break;
+    case 'O':
+        player->anim_action = true;
+        map_render_path(game.path_stm, FORMAT_COLOR_GREEN);
+        break;
     default: break;
     }
     frames++;
@@ -114,18 +124,18 @@ void player_update() {
     player_visited_cell_alert(player->pos.l, player->pos.c);
     map->map_grid[player->pos.l][player->pos.c].visited = true;
     for (uint8_t i = 0; i < ENEMY_NB; i++) {
-        if (enemy[i].alive == false)
+        if (enemy[i].alive == false) {
             continue;
-
+        }
         if (player->pos.l == enemy[i].house.l && player->pos.c == enemy[i].house.c) {
-            player_alert_render("You have destroyed the house of %s enemy ! You gained %d STM !",
-                (ENEMY_NB > 1) ? "an": "the", (player->stamina + STAMINA_GAIN_ENM_DEFEAT > 100) ?
+            player_alert_render("You have destroyed %s enemy's house ! You gained %d STM !",
+                (ENEMY_NB > 1) ? "an" : "the", (player->stamina + STAMINA_GAIN_ENM_DEFEAT > 100) ?
                     STAMINA_GAIN_ENM_DEFEAT - (player->stamina + STAMINA_GAIN_ENM_DEFEAT - 100) : STAMINA_GAIN_ENM_DEFEAT);
             player->stamina += STAMINA_GAIN_ENM_DEFEAT;
             enemy[i].alive = false;
         }
         if (enemy[i].current.l == player->pos.l && enemy[i].current.c == player->pos.c) {
-            player_alert_render("%s enemy \u2620 killed you !", (ENEMY_NB > 1) ? "An": "The");
+            player_alert_render("%s enemy \u2620 killed you !", (ENEMY_NB > 1) ? "An" : "The");
             game.gameover = true;
             return;
         }
@@ -228,8 +238,7 @@ void player_use_bonus() {
             player->stamina = STAMINA_MAX;
         }
         stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
-    }
-    else if (player->stamina >= 100) {
+    } else if (player->stamina >= 100) {
         player_alert_render("You are full of energy ! ");
     }
 }
@@ -247,17 +256,17 @@ void player_rewind() {
         }
         // Go to the right node in the stack to apply a rewind on it
         while (cnt != 0 && tmp->next != NULL) {
-            cnt--;
             tmp = tmp->next;
+            cnt--;
         }
         // Apply rewind
         if ( tmp->next != NULL ) {
             switch (tmp->action) {
-            case USE_STACKED_BONUS :
+            case USE_STACKED_BONUS:
                 player->stamina -= STAMINA_GAIN;
                 player->bonus_stack++;
                 break;
-            case USE_BONUS :
+            case USE_BONUS:
                 player->stamina++;
                 player->stamina -= STAMINA_GAIN;
                 map->map_grid[tmp->pos.l][tmp->pos.c].cell_type = BONUS;
@@ -266,11 +275,11 @@ void player_rewind() {
                 player->pos.l = tmp->next->pos.l;
                 player->pos.c = tmp->next->pos.c;
                 break;
-            case HIT_OBSTACLE :
+            case HIT_OBSTACLE:
                 player->stamina++;
                 player->stamina += STAMINA_COST_OBS;
                 break;
-            case STACK_BONUS :
+            case STACK_BONUS:
                 player->stamina++;
                 player->bonus_stack--;
                 map->map_grid[player->history->head->pos.l][player->history->head->pos.c].cell_type = BONUS;
@@ -279,28 +288,28 @@ void player_rewind() {
                 player->pos.l = tmp->next->pos.l;
                 player->pos.c = tmp->next->pos.c;
                 break;
-            case NO_ACTION :
+            case NO_ACTION:
                 player->stamina++;
                 map->map_grid[player->pos.l][player->pos.c].visited = false;
                 player_substract_dist(tmp, tmp->next);
                 player->pos.l = tmp->next->pos.l;
                 player->pos.c = tmp->next->pos.c;
                 break;
-            case REWIND :
+            case REWIND:
                 rwd = 1;
                 player_alert_render("You can't rewind a rewind !");
-                return;
                 break;
             default: break;
             }
-            if (rwd == 0) {
-                if (player->rewind_cnt >= 0) {
-                    player->rewind_cnt--;
-                }
-                player->action = REWIND;
-                stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
-                player_alert_render("You have rewind an action !");
+            if (rwd != 0) {
+                return;
             }
+            if (player->rewind_cnt >= 0) {
+                player->rewind_cnt--;
+            }
+            player->action = REWIND;
+            stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
+            player_alert_render("You have rewind an action !");
         }
     } else {
         player_alert_render("You don't have any rewind left !");
@@ -347,12 +356,12 @@ void player_stats_render() {
     wrefresh(game.stats_win);
 }
 
-void player_alert_render(const char *__restrict__fmt, ...) {
+void player_alert_render(const char *__restrict __fmt, ...) {
     va_list arg;
-    va_start(arg, __restrict__fmt);
+    va_start(arg, __fmt);
     werase(game.alert_win);
     wmove(game.alert_win, 1, 2);
-    vw_printw(game.alert_win, __restrict__fmt, arg);
+    vw_printw(game.alert_win, __fmt, arg);
     box(game.alert_win, ACS_VLINE, ACS_HLINE);
     wrefresh(game.alert_win);
     va_end(arg);
@@ -377,13 +386,14 @@ void player_free() {
 void enemy_init() {
     enemy = calloc(ENEMY_NB, sizeof(Enemy));
     uint8_t l, c;
+    // Place all enemies randomly on the map
     for (uint8_t i = 0; i < ENEMY_NB; i++) {
         do {
             l = rand() % MAP_LINES;
             c = rand() % MAP_COLS;
         } while (sqrt(pow(l, 2) + pow(c, 2)) < ENEMY_INIT_DIST || map->map_grid[l][c].cell_type != ROAD);
-        enemy[i].house = (Position) {l, c};
-        enemy[i].current = (Position) {l, c};
+        enemy[i].house = (Position) {.l=l, .c=c};
+        enemy[i].current = (Position) {.l=l, .c=c};
         enemy[i].alive = true;
     } 
 }
@@ -424,7 +434,7 @@ void chase_player() {
         }
         // Check if player and the enemy are colliding
         if (enemy[i].current.l == player->pos.l && enemy[i].current.c == player->pos.c) {
-            player_alert_render("%s enemy \u2620 killed you !", (ENEMY_NB > 1) ? "An": "The");
+            player_alert_render("%s enemy \u2620 killed you !", (ENEMY_NB > 1) ? "An" : "The");
             stack_free(chase_path);
             game.gameover = true;
             return;

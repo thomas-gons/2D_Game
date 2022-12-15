@@ -4,7 +4,8 @@
 PQueue *pqueue_init() {
     PQueue *q = calloc(1, sizeof *q);
     if (!q) {
-        fprintf(stderr, "[ERROR] > calloc, in func pqueue_init\n");
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m%s:%i: error: calloc failed\033[0m\n",
+            __FILE__, __func__, __FILE__, ((__LINE__) - 3));
         exit(2);
     }
     *q = (PQueue) {NULL, 0};
@@ -14,7 +15,8 @@ PQueue *pqueue_init() {
 void pqueue_enqueue(PQueue *q, Point p) {
     PQNode *new = calloc(1, sizeof *new);
     if (!new) {
-        fprintf(stderr, "[ERROR] > calloc, in func pqueue_enqueue\n");
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m%s:%i: error: calloc failed\033[0m\n",
+            __FILE__, __func__, __FILE__, ((__LINE__) - 3));
         exit(2);
     }
     *new = (PQNode) {p, NULL};
@@ -29,9 +31,9 @@ void pqueue_enqueue(PQueue *q, Point p) {
         q->head = new;
         return;
     }
-    while (tmp->next && new->p.f >= tmp->next->p.f)
+    while (tmp->next && new->p.f >= tmp->next->p.f) {
         tmp = tmp->next;
-
+    }
     new->next = tmp->next;
     tmp->next = new;
 }
@@ -53,8 +55,8 @@ void pqueue_free(PQueue *q) {
 }
 
 void pqueue_display(PQueue *q) {
-    for (PQNode *tmp = q->head; tmp; tmp = tmp->next)
+    for (PQNode *tmp = q->head; tmp; tmp = tmp->next) {
         printf("(%hhu, %hhu, %u, %u) ", tmp->p.pos.l, tmp->p.pos.c, tmp->p.f, tmp->p.g);
-    
+    }
     printf("\n");
 }

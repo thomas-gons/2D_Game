@@ -12,8 +12,7 @@ void stamina_update_val() {
         player->stamina = 100;
     }
     uint8_t stm_level = (player->stamina > STAMINA_HIGH) ? FORMAT_COLOR_GREEN :
-                        (player->stamina > STAMINA_MED) ?  FORMAT_COLOR_YELLOW :
-                                                           FORMAT_COLOR_RED;
+                        ((player->stamina > STAMINA_MED) ? FORMAT_COLOR_YELLOW : FORMAT_COLOR_RED);
     wattron(game.bar_win, COLOR_PAIR(stm_level));
     wattron(game.bar_win, A_BOLD);
     mvwprintw(  game.bar_win,
@@ -29,17 +28,18 @@ void stamina_update_val() {
 void stamina_bar_render() {
     // Render stamina bar
     uint8_t stm_level = (player->stamina > STAMINA_HIGH) ? FORMAT_BGCOLOR_GREEN :
-                        (player->stamina > STAMINA_MED) ?  FORMAT_BGCOLOR_YELLOW :
-                                                           FORMAT_BGCOLOR_RED;
+                        ((player->stamina > STAMINA_MED) ? FORMAT_BGCOLOR_YELLOW : FORMAT_BGCOLOR_RED);
     uint8_t threshold = (uint8_t)((player->stamina * STM_BAR_SIZE) / 100);
     uint8_t i, j;
     for (i = 0; i < STM_BAR_SIZE - threshold; i++) {
-        for (j = 0; j < STM_BAR_WIDTH; j++)
+        for (j = 0; j < STM_BAR_WIDTH; j++) {
             mvwaddch(game.stm_bar, i, j, ' ' | COLOR_PAIR(FORMAT_COLOR_EMPTY));
+        }
     }
     for (; i < STM_BAR_SIZE; i++) {
-        for (j = 0; j < STM_BAR_WIDTH; j++)
+        for (j = 0; j < STM_BAR_WIDTH; j++) {
             mvwaddch(game.stm_bar, i, j, ' ' | COLOR_PAIR(stm_level));
+        }
     }
 }
 

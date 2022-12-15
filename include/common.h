@@ -4,13 +4,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <math.h>
-#include <ncurses.h>
-#include <locale.h>
-#include <wchar.h>
-#include <unistd.h>
+#include <string.h>
 #include <stdarg.h>
+#include <math.h>
+#include <unistd.h>
+#include <time.h>
+#include <locale.h>
+#include <errno.h>
+#include <ncurses.h>
 
 
 /************************* DEFINES *************************/

@@ -15,22 +15,22 @@
 #define TITLE_WIN_L0 (game.win_h/2 - (MAP_LINES + 2)/2 + 6)
 #define TITLE_WIN_C0 (game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 13)
 
-#define MAIN_WIN_L0 1
+#define MAIN_WIN_L0 0
 #define MAIN_WIN_C0 (game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2)
 
-#define GAME_WIN_L0 2
+#define GAME_WIN_L0 1
 #define GAME_WIN_C0 (game.win_w/2 - (MAP_COLS + BAR_SIZE)/2)
 
-#define BAR_WIN_L0  1
-#define BAR_WIN_C0  (1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2)
+#define BAR_WIN_L0  0
+#define BAR_WIN_C0  (game.win_w/2 + (MAP_COLS - BAR_SIZE)/2)
 
-#define STM_BAR_L0  (STM_BAR_PAD_T + 1)
-#define STM_BAR_C0  (1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2 + STM_BAR_PAD_L + 1)
+#define STM_BAR_L0  (STM_BAR_PAD_T)
+#define STM_BAR_C0  (game.win_w/2 + (MAP_COLS - BAR_SIZE)/2 + STM_BAR_PAD_L + 1)
 
-#define HELP_WIN_L0 (MAP_LINES - HELP_SIZE + 3)
-#define HELP_WIN_C0 (1 + game.win_w/2 + (MAP_COLS - BAR_SIZE)/2)
+#define HELP_WIN_L0 (MAP_LINES - HELP_SIZE + 2)
+#define HELP_WIN_C0 (game.win_w/2 + (MAP_COLS - BAR_SIZE)/2)
 
-#define ALERT_WIN_L0 MAP_LINES + 2
+#define ALERT_WIN_L0 MAP_LINES + 1
 #define ALERT_WIN_C0 MAIN_WIN_C0
 
 
@@ -47,9 +47,10 @@ void ncs_init();
 void ncs_init_colors();
 
 /**
- * Check the terminal size and quit if to small.
+ * Check if the terminal size is large enough for game rendering.
+ * \returns true on success, false on error
 */
-void ncs_check_term_size();
+bool ncs_check_term_size();
 
 /**
  * Create a ncurses window to render the game title.
@@ -65,6 +66,14 @@ void ncs_create_game_windows();
  * Refresh ncurses game windows.
 */
 void ncs_refresh_game_windows();
+
+/**
+ * Print a centered text in an ncurses window.
+ * \param win ncurses window
+ * \param line line to print the message
+ * \param msg message to print
+*/
+void ncs_print_centered(WINDOW *win, uint8_t line, const char *msg);
 
 /**
  * Clear and destroy a ncurses window.
@@ -84,8 +93,9 @@ void run_game();
 
 /**
  * Initialize all game resources.
+ * \returns true on success, false on error
 */
-void game_init();
+bool game_init();
 
 /**
  * Title window and start menu window.

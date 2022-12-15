@@ -17,7 +17,6 @@ void map_random_fill() {
             }
             // prob between 0 and 1
             prob = (float) rand() / RAND_MAX;
-
             // distance between center and current position
             distance = sqrt(pow(CENTER_L - l, 2) + pow(CENTER_C - c, 2));
             // normalize the distance to be able to exploit it
@@ -33,7 +32,7 @@ void map_random_fill() {
                 prob_obs = PROB_MAX_OBS * map->level / 2;
             }
             map->map_grid[l][c].cell_type = (prob <= prob_bonus) ? BONUS :
-                (prob <= prob_obs) ? OBSTACLE : ROAD;
+                ((prob <= prob_obs) ? OBSTACLE : ROAD);
         }
     }
 }
@@ -45,7 +44,6 @@ Stack *map_generate() {
     do {
         map_random_fill();
         path = a_star(START, GOAL, true);
-        // think about path lenght
     } while (!path);
     return path;
 }
