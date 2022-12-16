@@ -9,6 +9,7 @@ Level difficulty = EASY;
 int main() {
     setlocale(LC_ALL, "");
     game.reload_game = true;
+    game.victory = false;
     while(game.reload_game == true){
         
         run_game();

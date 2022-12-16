@@ -62,6 +62,21 @@ void ncs_create_title_window() {
     wrefresh(game.title_win);
 }
 
+void ncs_create_title_win_window() {
+    game.title_win = subwin(stdscr,
+                            7,
+                            50,
+                            game.win_h/2 - (MAP_LINES + 2)/2 + 6,
+                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 28
+    );
+    wattron(game.title_win, A_BOLD);
+    mvwprintw(game.title_win, 1, 1, " _____ _____ _____ _____ _____ _____ __ __ ");
+    mvwprintw(game.title_win, 2, 1, "|  |  |     |     |_   _|     | __  |  |  |");
+    mvwprintw(game.title_win, 3, 1, "|  |  |-   -|   --| | | |  |  |    -|_   _|");
+    mvwprintw(game.title_win, 4, 1, "|____/|_____|_____| |_| |_____|__|__| |_|  ");
+    wrefresh(game.title_win);
+}
+
 void ncs_create_game_windows() {
     // Create main window
     game.main_win = subwin( stdscr,
@@ -139,7 +154,13 @@ void run_game() {
         game.reload_samegame = true;
         while( game.reload_samegame == true){
             game_loop();
-            game_lose_menu();
+            if( game.victory == true) {
+                game_victory_menu();
+                game.victory=false;
+            }
+            else{
+                game_lose_menu();
+            } 
         }
         // TODO: Game over screen + menu
         game_free();
@@ -212,7 +233,7 @@ void game_lose_menu() {
     werase(game.game_win);
     werase(game.bar_win);
     werase(game.dist_win);
-    char *lose_list[] = { "Recommencer", "Retourner au menu","quitter",};
+    char *lose_list[] = { "Recommencer", "Return to title menu","quitter",};
     menu_create_entry_template(lose_list, 3);
     uint8_t choice = menu_select_entry(lose_list, 3);
     // Play sound effects
@@ -237,31 +258,56 @@ void game_lose_menu() {
     game_render();
 }
 
+void game_victory_menu() {
+    ncs_destroy_win(game.game_win);
+    ncs_destroy_win(game.bar_win);
+    ncs_destroy_win(game.dist_win);
+    ncs_destroy_win(game.main_win);
+    game.reload_samegame = false;
+    ncs_create_title_win_window();
+    char *list[] = {"Return to title menu","Quit",};
+    menu_create_entry_template(list, 2);
+    uint8_t choice = menu_select_entry(list,2);
+    switch(choice) {
+        case 0:
+            break;
+        case 1:
+            game.reload_game = false;
+            break;
+        default:
+            break;
+    }
+    ncs_destroy_win(game.menu_win);
+    ncs_destroy_win(game.title_win);
+}
 
 
 // Menu escape in game
 void game_esc_menu() {
-    char *esc_list[] = { "Retour au jeu", "Sauvegarder", "Abandonner","Quitter" };
+    char *esc_list[] = { "Retour au jeu", "Aide", "Sauvegarder", "Abandonner","Quitter" };
     werase(game.game_win);
     werase(game.bar_win);
     werase(game.dist_win);
     
     refresh();
-    menu_create_entry_template(esc_list, 4);
-    uint8_t choice = menu_select_entry(esc_list, 4);
+    menu_create_entry_template(esc_list, 5);
+    uint8_t choice = menu_select_entry(esc_list, 5);
 
 
     switch(choice) {
         case 0:
             break;
-        case 1: //Save function
+        case 1:
+
+            break;
+        case 2: //Save function
                 
             break;
-        case 2:
+        case 3:
                 //Abandon
                 game.gameover = true;
             break;
-        case 3: //quit (function game_quit or game_free core dump)
+        case 4: //quit (function game_quit or game_free core dump)
             game.reload_game = false;
             game_free();
             game_quit();
@@ -270,6 +316,8 @@ void game_esc_menu() {
             break;
     }
 }
+
+
 
 
 void game_init_new_game(Level difficulty) {
@@ -287,6 +335,7 @@ void game_init_new_game(Level difficulty) {
 bool game_check_win() {
     if ((player->pos.l == MAP_LINES - 1) && (player->pos.c == MAP_COLS - 1)) {
         system("aplay -q assets/sfx/youu.wav &");
+        game.victory = true;
         return true;
     }
     return false;

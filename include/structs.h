@@ -13,6 +13,7 @@
 */
 typedef struct Game {
     bool gameover;
+    bool victory;
     bool reload_game;
     bool reload_samegame;
     uint16_t win_w;
@@ -25,6 +26,7 @@ typedef struct Game {
     WINDOW *stm_bar;
     WINDOW *stats_win;
     WINDOW *dist_win;
+    WINDOW *help_win;
     Stack *path;
     time_t date;
 } Game;

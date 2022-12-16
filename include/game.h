@@ -89,6 +89,7 @@ uint8_t game_start_menu();
 void game_esc_menu();
 void game_difficulty_menu(); 
 void game_lose_menu();
+void game_victory_menu();
 
 /**
  * Initialize in-game resources.
