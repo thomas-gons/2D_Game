@@ -27,8 +27,8 @@
 #define STM_BAR_L0  (STM_BAR_PAD_T)
 #define STM_BAR_C0  (game.win_w/2 + (MAP_COLS - BAR_SIZE)/2 + STM_BAR_PAD_L + 1)
 
-#define HELP_WIN_L0 (MAP_LINES - HELP_SIZE + 2)
-#define HELP_WIN_C0 (game.win_w/2 + (MAP_COLS - BAR_SIZE)/2)
+#define DIST_WIN_L0 (MAP_LINES - DIST_SIZE + 2)
+#define DIST_WIN_C0 (game.win_w/2 + (MAP_COLS - BAR_SIZE)/2)
 
 #define ALERT_WIN_L0 MAP_LINES + 1
 #define ALERT_WIN_C0 MAIN_WIN_C0
@@ -48,9 +48,8 @@ void ncs_init_colors();
 
 /**
  * Check if the terminal size is large enough for game rendering.
- * \returns true on success, false on error
 */
-bool ncs_check_term_size();
+void ncs_check_term_size();
 
 /**
  * Create a ncurses window to render the game title.
@@ -98,9 +97,8 @@ void run_game();
 
 /**
  * Initialize all game resources.
- * \returns true on success, false on error
 */
-bool game_init();
+void game_init();
 
 /**
  * Create and render Title and Start menu windows.
@@ -116,6 +114,7 @@ int8_t game_difficulty_menu();
 
 /**
  * Initialize in-game resources.
+ * \param difficulty game difficulty
 */
 void game_init_new_game(Level difficulty);
 

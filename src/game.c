@@ -34,7 +34,7 @@ void ncs_init_colors() {
     init_pair(FORMAT_COLOR_WHITE_BG_RED, COLOR_WHITE, COLOR_RED);
 }
 
-bool ncs_check_term_size() {
+void ncs_check_term_size() {
     // Get size of current terminal window
     getmaxyx(stdscr, game.win_h, game.win_w);
     if ((game.win_w < MAP_COLS + BAR_SIZE + 2) || (game.win_h < MAP_LINES + 5)) {
@@ -42,9 +42,8 @@ bool ncs_check_term_size() {
         fprintf(stderr,
             "\n[ERROR] > Window is set to [%d x %d] rows x cols.\n\t> Please enlarge it to minimum [%d x %d] rows x cols.\n\t> Enlarge it to Fullscreen for better experience.\n",
             game.win_h, game.win_w, (MAP_LINES + 5), (MAP_COLS + BAR_SIZE + 2));
-        return false;
+        exit(1);
     }
-    return true;
 }
 
 void ncs_create_title_window() {
@@ -94,7 +93,7 @@ void ncs_create_game_windows() {
                             GAME_WIN_C0
     );
     game.bar_win = subwin(  stdscr,
-                            MAP_LINES - HELP_SIZE + 3,
+                            MAP_LINES - DIST_SIZE + 3,
                             BAR_SIZE + 1,
                             BAR_WIN_L0,
                             BAR_WIN_C0
@@ -108,14 +107,14 @@ void ncs_create_game_windows() {
     game.stats_win = subwin(stdscr,
                             6,
                             BAR_SIZE + 1,
-                            HELP_WIN_L0 - 5,
+                            DIST_WIN_L0 - 5,
                             BAR_WIN_C0
     );
     game.dist_win = subwin( stdscr,
-                            HELP_SIZE + 3,
+                            DIST_SIZE + 3,
                             BAR_SIZE + 1,
-                            HELP_WIN_L0,
-                            HELP_WIN_C0
+                            DIST_WIN_L0,
+                            DIST_WIN_C0
     );
     game.alert_win = subwin(stdscr,
                             4,
@@ -158,9 +157,7 @@ void ncs_quit() {
 }
 
 void run_game() {
-    if (!game_init()) {
-        return;
-    }
+    game_init();
     // Start menu entries that handle going back to previous menu
     int8_t select = 0;
     do {
@@ -172,15 +169,11 @@ void run_game() {
         game_init_new_game(difficulty);
         game.keep_playing = true;
         while (game.keep_playing == true) {
+            // Main game loop
+            game.victory = false;
+            game.gameover = false;
             game_loop(); 
         }
-
-    // Menu entries
-    switch (game_start_menu()) {
-    case 0: // New game
-        game_init_new_game();
-        game_loop();
-        // TODO: Game over screen + menu
         game_free();
         break;
     case 1:     // Load Saved Game
@@ -198,15 +191,12 @@ void run_game() {
     game_quit();
 }
 
-bool game_init() {
+void game_init() {
     // Initialize ncurses resources
     ncs_init();
-    if (!ncs_check_term_size()) {
-        return false;
-    }
+    ncs_check_term_size();
     ncs_init_colors();
     ncs_create_title_window();
-    return true;
 }
 
 int8_t game_start_menu() {
@@ -217,18 +207,18 @@ int8_t game_start_menu() {
     menu_create_entry_template(start_list, nb_entry);
     int8_t select = menu_select_entry(start_list, nb_entry);
     switch (select) {
-    case 0:     // Select game difficulty
+    case 0:     // New Game
         ncs_destroy_win(game.menu_win);
         if (game_difficulty_menu() == -1) {
             // Go back to previous menu
             select = -1;
         }
         break;
-    case 1:     // Get saved game file
+    case 1:     // Load Saved Game
         // TODO: menu to select a saved but unfinished game (*.save)
         //       and return index of selected file in list
         break;
-    case 2:     // Get saved game for history
+    case 2:     // History
         // TODO: menu to select a saved and finished game (*.dat)
         //       and return index of selected file in list
         break;
@@ -244,11 +234,11 @@ int8_t game_start_menu() {
 int8_t game_difficulty_menu() {
     // Difficulty menu, select a difficulty
     const uint8_t nb_entry = 4;
-    char *difficulty_list[] = { "Easy", "Medium", "Hard", "Back to Title Menu" };
+    char *difficulty_list[] = { "Easy", "Medium", "Hard", "Return to Title Menu" };
     menu_create_entry_template(difficulty_list, nb_entry);
     int8_t select = menu_select_entry(difficulty_list, nb_entry);
     switch(select) {
-    case 3:     // Back to Title Menu
+    case 3:     // Return to Title Menu
         select = -1;
         break;
     default:    // Set game difficulty
@@ -261,35 +251,31 @@ int8_t game_difficulty_menu() {
 void game_init_new_game(Level difficulty) {
     // Create game subwindows
     ncs_create_game_windows();
-    // Generate random map and all shortest paths
+    // Initialize map according the difficulty
     map_init(difficulty);
-    game.path = map_generate();
     // Initialize player entity
     player_init(map->level);
     // Generate random map
     game.path_stm = map_generate();
     game.path_dist = a_star(START, GOAL, false);
-    // Initialize enemies entities
-    enemy_init();
     // First render of game
     game_render();
-    game.victory = false;
 }
 
 void game_loop() {
     system("aplay -q assets/sfx/among-us.wav &");
     // Main loop that handle game logic
-    while (!game.victory) {
+    while (!game.victory && !game.gameover) {
         game_inputs();
+        // Condition to exit the game loop
+        if (!game.keep_playing || !game.reload_game) {
+            return;
+        }
         game_update();
         game_render();
         game_check_win();
         // Limit framerate to 16ms per frame ~ 60fps
         usleep(16000);
-        // Condition to exit the game loop
-        if (!game.keep_playing || !game.reload_game) {
-            return;
-        }
     }
     // Render end game title and menu, victory or defeat
     if (game.victory == true) {
@@ -321,6 +307,7 @@ void game_check_win() {
     // Check for player stamina level
     if (player->stamina <= STAMINA_MIN) {
         game.victory = false;
+        game.gameover = true;
         return;
     }
     // Check if player has reach the goal cell
@@ -328,25 +315,27 @@ void game_check_win() {
         // TODO: change sfx
         system("aplay -q assets/sfx/youu.wav &");
         game.victory = true;
+        game.gameover = false;
     }
 }
 
 void game_victory_menu() {
     // Clear current render of the game
+    ncs_destroy_win(game.main_win);
     ncs_destroy_win(game.game_win);
     ncs_destroy_win(game.bar_win);
     ncs_destroy_win(game.dist_win);
-    ncs_destroy_win(game.main_win);
+    ncs_destroy_win(game.alert_win);
     // Victory title and menu, select an entry
-    ncs_create_title_window();
+    ncs_create_victory_window();
     const uint8_t nb_entry = 2;
-    char *victory_list[] = { "Back to Title Menu", "Quit" };
+    char *victory_list[] = { "Return to Title Menu", "Quit" };
     menu_create_entry_template(victory_list, nb_entry);
-    uint8_t choice = menu_select_entry(victory_list, nb_entry);
+    uint8_t select = menu_select_entry(victory_list, nb_entry);
 
     // TODO: save the game before processing the selected entry form menu
     
-    switch(choice) {
+    switch(select) {
     case 1:     // Quit
         game.reload_game = false;
         break;
@@ -358,10 +347,11 @@ void game_victory_menu() {
 }
 
 void game_defeat_menu() {
-    // Clear current render of the game
+    // // Clear current render of the game
     werase(game.game_win);
     werase(game.bar_win);
     werase(game.dist_win);
+    werase(game.alert_win);
     // Defeat menu, select an entry
     const uint8_t nb_entry = 3;
     char *defeat_list[] = { "Retry", "Return to Title Menu", "Quit" };
@@ -390,22 +380,23 @@ void game_pause_menu() {
     werase(game.game_win);
     werase(game.bar_win);
     werase(game.dist_win);
+    werase(game.alert_win);
     refresh();
     // In-game Pause menu, select an entry
     const uint8_t nb_entry = 4;
-    char *esc_list[] = { "Resume Game", "Help & Game Rules", "Save & Quit", "Exit" };
+    char *esc_list[] = { "Resume Game", "Help & Game Rules", "Save & Quit", "Quit" };
     menu_create_entry_template(esc_list, nb_entry);
     uint8_t select = menu_select_entry(esc_list, nb_entry);
     switch(select) {
     case 1:     // Help & Game Rules
-        // TODO: render Help and Rules windows
+        // TODO: render Help and Rules window
         // game_help_rules();
         break;
     case 2:     // Save & Quit
-        // TODO: call save function and back to Title menu
+        // TODO: call save function
         game.keep_playing = false;
         break;
-    case 3:     // Exit
+    case 3:     // Quit
         game.keep_playing = false;
         game.reload_game = false;
         break;
@@ -417,6 +408,7 @@ void game_pause_menu() {
 void game_free() {
     map_free();
     stack_free(game.path_stm);
+    stack_free(game.path_dist);
     player_free();
 }
 

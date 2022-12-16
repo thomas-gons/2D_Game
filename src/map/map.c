@@ -102,9 +102,13 @@ void map_render_path(Stack *path, uint8_t color) {
     SNode *tmp = path->head;
     for (; tmp; tmp = tmp->next) {
         if (map->map_grid[tmp->pos.l][tmp->pos.c].cell_type == BONUS) {
-            mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '@' | COLOR_PAIR(FORMAT_COLOR_GREEN));
+            wattron(game.game_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
+            mvwaddstr(game.game_win, tmp->pos.l, tmp->pos.c, BONUS_CHAR);
+            wattroff(game.game_win, COLOR_PAIR(FORMAT_COLOR_GREEN));
         } else {
-            mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, '+' | COLOR_PAIR(color));
+            wattron(game.game_win, COLOR_PAIR(color));
+            mvwaddch(game.game_win, tmp->pos.l, tmp->pos.c, PATH_REPLAY_CHAR);
+            wattroff(game.game_win, COLOR_PAIR(color));
         }
     }
     wrefresh(game.game_win);
@@ -119,12 +123,12 @@ void map_free() {
 }
 
 void map_visual_reset() {
-    Node *tmp = player->history->head;
-    while(tmp != NULL){
-        if(map->map_grid[tmp->pos.l][tmp->pos.c].cell_type == NO_FRUIT) {
-            map->map_grid[tmp->pos.l][tmp->pos.c].cell_type = FRUIT;
+    SNode *tmp = player->history->head;
+    while (tmp != NULL) {
+        if (map->map_grid[tmp->pos.l][tmp->pos.c].cell_type == NO_BONUS) {
+            map->map_grid[tmp->pos.l][tmp->pos.c].cell_type = BONUS;
         }
         map->map_grid[tmp->pos.l][tmp->pos.c].visited = false;
-        tmp=tmp->next;
+        tmp = tmp->next;
     }
 }

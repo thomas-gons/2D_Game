@@ -92,8 +92,6 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], Position start, Posi
     }
     if (with_stm) {
         game.path_stm_len = path_len;
-        mvwprintw(game.dist_win, 13, 3, "BEST DISTANCE");
-        mvwprintw(game.dist_win, 14, 8, "%u", game.path_stm_len);
     } else {
         game.path_dist_len = path_len;
     }

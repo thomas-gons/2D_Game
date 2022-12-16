@@ -37,6 +37,8 @@ void player_init(Level level) {
         break;
     default: break;
     }
+    // Initialize enemies entities
+    enemy_init();
 }
 
 void player_inputs() {
@@ -51,11 +53,6 @@ void player_inputs() {
     switch (getch()) {
     case KEY_ESC:
         game_pause_menu();
-        break;
-    case KEY_DOWN:
-    case 'S':
-    case 's':
-        player->move = DOWN;
         break;
     case KEY_RIGHT:
     case 'D':
@@ -84,7 +81,7 @@ void player_inputs() {
     case 'r':
         player_rewind();
         break;
-    // Secret key bindings
+    // Secret key bindings in caps
     case 'P':
         player->anim_action = true;
         map_render_path(game.path_dist, FORMAT_COLOR_CYAN);
@@ -171,7 +168,7 @@ bool player_is_colliding(uint8_t line, uint8_t col) {
 
 void player_obstacle_alert(uint8_t line, uint8_t col) {
     // TODO: change sfx => Aie ouille
-    system("aplay -q assets/sfx/fart.wav &");
+    system("aplay -q assets/sfx/caillou.wav &");
     // Render the obstacle to be disctincted
     wattron(game.game_win, A_BOLD);
     wattron(game.game_win, COLOR_PAIR(FORMAT_COLOR_WHITE_BG_RED));
@@ -357,6 +354,8 @@ void player_stats_render() {
     mvwprintw(game.stats_win, 4, 3, "DISTANCE  %u", player->distance);
     wattroff(game.stats_win, A_BOLD);
     wrefresh(game.stats_win);
+    mvwprintw(game.dist_win, 13, 3, "BEST DISTANCE");
+    mvwprintw(game.dist_win, 14, 8, "%u", game.path_stm_len);
 }
 
 void player_alert_render(const char *__restrict __fmt, ...) {
@@ -440,6 +439,7 @@ void chase_player() {
             player_alert_render("%s enemy \u2620 killed you !", (ENEMY_NB > 1) ? "An" : "The");
             stack_free(chase_path);
             game.gameover = true;
+            game.victory = false;
             return;
         }
         stack_free(chase_path);

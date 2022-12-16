@@ -37,6 +37,7 @@
 #define ENEMY_NB            1
 #define ENEMY_INIT_DIST     (sqrt(pow((MAP_LINES / 2), 2) + pow((MAP_COLS / 2), 2)))
 
+
 /************************* FUNCTIONS *************************/
 
 /**

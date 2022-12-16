@@ -13,7 +13,7 @@ LD := g++
 LDFLAGS := -I$(DIR_INC)/
 
 # Compiler flags.
-CFLAGS := -pedantic -Wall -Wextra -Wno-type-limits -Wno-unused-result $(LDFLAGS)
+CFLAGS := -pedantic -Wall -Wextra -Wno-type-limits -Wno-unused-result -fshort-enums $(LDFLAGS)
 CXXFLAGS := $(CFLAGS) 
 
 # Library flags.
@@ -104,12 +104,12 @@ $(DIR_OBJ_DBG)/%.o: $(DIR_SRC)/%.cpp
 # Run release target.
 run:
 	@echo ":: Run '$(REL_TARGET)'..."
-	@./$(REL_TARGET)
+	-@./$(REL_TARGET) || true
 
 # Run debug target.
 rundbg:
 	@echo ":: Run '$(DBG_TARGET)'..."
-	@./$(DBG_TARGET)
+	-@./$(DBG_TARGET) || true
 
 # Remove bin and object directories.
 clean:
