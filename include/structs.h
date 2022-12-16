@@ -12,7 +12,6 @@
  * Game structure, handle game resources.
 */
 typedef struct Game {
-    bool gameover;
     bool victory;
     bool reload_game;
     bool keep_playing;

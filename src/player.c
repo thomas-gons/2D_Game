@@ -37,7 +37,7 @@ void player_inputs() {
     player->move = NONE;
     switch (getch()) {
     case KEY_ESC:
-        game_esc_menu();
+        game_pause_menu();
         break;
     case KEY_DOWN:
     case 'S':

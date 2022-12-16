@@ -26,7 +26,7 @@
 /************************* FUNCTIONS *************************/
 
 /**
- * Create template for menu with a list of entry.
+ * Create and render a menu template with a list of entry.
  * \param entry_list list of string that represents menu entries
  * \param nb_entry number of menu entries
 */

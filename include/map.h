@@ -109,7 +109,7 @@ void map_render_path(Stack *path);
 void map_free();
 
 /**
- * Reset visited path for restarted games
+ * Reset visited path for restarted games.
 */
 void map_visual_reset();
 
