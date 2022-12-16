@@ -57,23 +57,23 @@ void ncs_create_title_window() {
     wattron(game.title_win, A_BOLD);
     mvwprintw(game.title_win, 1, 1, "  ______  _______  _______  _____    _____    _______  ___ ___  ___ ___  ");
     mvwprintw(game.title_win, 2, 1, " |      ||   _   ||_     _||     |_ |     |_ |       ||   |   ||   |   | ");
-    mvwprintw(game.title_win, 3, 1, " |   --- |       | _|   |_ |       ||       ||   -   ||   |   ||-     -| ");
+    mvwprintw(game.title_win, 3, 1, " |   --- |       | _|   |_ |       ||       ||   |   ||   |   ||-     -| ");
     mvwprintw(game.title_win, 4, 1, " |______||___|___||_______||_______||_______||_______||_______||___|___| ");
     wrefresh(game.title_win);
 }
 
-void ncs_create_title_win_window() {
+void ncs_create_title_window_win() {
     game.title_win = subwin(stdscr,
                             7,
-                            50,
+                            60,
                             game.win_h/2 - (MAP_LINES + 2)/2 + 6,
-                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 28
+                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 22
     );
     wattron(game.title_win, A_BOLD);
-    mvwprintw(game.title_win, 1, 1, " _____ _____ _____ _____ _____ _____ __ __ ");
-    mvwprintw(game.title_win, 2, 1, "|  |  |     |     |_   _|     | __  |  |  |");
-    mvwprintw(game.title_win, 3, 1, "|  |  |-   -|   --| | | |  |  |    -|_   _|");
-    mvwprintw(game.title_win, 4, 1, "|____/|_____|_____| |_| |_____|__|__| |_|  ");
+    mvwprintw(game.title_win, 1, 1, " __ __  _____  _____  _____  _____  _____  __ __    _");
+    mvwprintw(game.title_win, 2, 1, "|  |  ||     ||     ||_   _||     || __  ||  |  |  | |");
+    mvwprintw(game.title_win, 3, 1, "|  |  / |   | |  ---   | |  |  |  ||    -||_   _|  \\ /");
+    mvwprintw(game.title_win, 4, 1, "|____/ |_____||_____|  |_|  |_____||__|__|  |_|     O");
     wrefresh(game.title_win);
 }
 
@@ -126,7 +126,7 @@ void ncs_refresh_game_windows() {
     box(game.stm_bar, ACS_VLINE, ACS_HLINE);
     box(game.dist_win, ACS_VLINE, ACS_HLINE);
     // Render game windows
-    // wrefresh(game.main_win);
+    wrefresh(game.main_win);
     wrefresh(game.game_win);
     wrefresh(game.bar_win);
     wrefresh(game.stm_bar);
@@ -151,14 +151,13 @@ void run_game() {
     case 0: // New game
         game_difficulty_menu();
         game_init_new_game(difficulty);
-        game.reload_samegame = true;
-        while( game.reload_samegame == true){
+        game.keep_playing = true;
+        while (game.keep_playing == true){
             game_loop();
-            if( game.victory == true) {
+            if (game.victory == true) {
                 game_victory_menu();
-                game.victory=false;
-            }
-            else{
+                game.victory = false;
+            } else{
                 game_lose_menu();
             } 
         }
@@ -245,10 +244,10 @@ void game_lose_menu() {
         player_init(map->level);
         break;
     case 1:
-        game.reload_samegame = false;
+        game.keep_playing = false;
         break;
     case 2:
-        game.reload_samegame = false;
+        game.keep_playing = false;
         game.reload_game = false;
         break;
     default:
@@ -263,8 +262,8 @@ void game_victory_menu() {
     ncs_destroy_win(game.bar_win);
     ncs_destroy_win(game.dist_win);
     ncs_destroy_win(game.main_win);
-    game.reload_samegame = false;
-    ncs_create_title_win_window();
+    game.keep_playing = false;
+    ncs_create_title_window_win();
     char *list[] = {"Return to title menu","Quit",};
     menu_create_entry_template(list, 2);
     uint8_t choice = menu_select_entry(list,2);

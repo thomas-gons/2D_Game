@@ -51,6 +51,11 @@ void ncs_check_term_size();
 void ncs_create_title_window();
 
 /**
+ * Create a ncurses window to render the win title.
+*/
+void ncs_create_title_window_win();
+
+/**
  * Create all ncurses game windows.
 */
 void ncs_create_game_windows();
