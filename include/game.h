@@ -58,6 +58,11 @@ bool ncs_check_term_size();
 void ncs_create_title_window();
 
 /**
+ * Create a ncurses window to render the Victory title.
+*/
+void ncs_create_victory_window();
+
+/**
  * Create all ncurses game windows.
 */
 void ncs_create_game_windows();
@@ -98,26 +103,26 @@ void run_game();
 bool game_init();
 
 /**
- * Title window and start menu window.
- * \returns Index of start menu entry
+ * Create and render Title and Start menu windows.
+ * \returns Index of start menu entry, or -1 to go back to previous menu
 */
-uint8_t game_start_menu();
+int8_t game_start_menu();
+
+/**
+ * Create and render Difficulty menu window.
+ * \returns Index of start menu entry, or -1 to go back to previous menu
+*/
+int8_t game_difficulty_menu(); 
 
 /**
  * Initialize in-game resources.
 */
-void game_init_new_game();
+void game_init_new_game(Level difficulty);
 
 /**
  * Game loop.
 */
 void game_loop();
-
-/**
- * Check if game is win.
- * \returns true on success, false on error
-*/
-bool game_check_win();
 
 /**
  * Handle game inputs.
@@ -133,6 +138,26 @@ void game_update();
  * Render current game state.
 */
 void game_render();
+
+/**
+ * Check if game is win.
+*/
+void game_check_win();
+
+/**
+ * Create and render Victory Title and menu windows.
+*/
+void game_victory_menu();
+
+/**
+ * Create and render Defeat menu window.
+*/
+void game_defeat_menu();
+
+/**
+ * Create and render in-game pause menu window.
+*/
+void game_pause_menu();
 
 /**
  * Free all game resources.

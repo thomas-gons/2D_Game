@@ -12,7 +12,9 @@
  * Game structure, handle game resources.
 */
 typedef struct Game {
-    bool gameover;
+    bool victory;
+    bool reload_game;
+    bool keep_playing;
     uint16_t win_w;
     uint16_t win_h;
     WINDOW *title_win;

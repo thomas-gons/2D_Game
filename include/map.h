@@ -114,6 +114,11 @@ void map_render_path(Stack *path, uint8_t color);
 void map_free();
 
 /**
+ * Reset visited path for restarted games.
+*/
+void map_visual_reset();
+
+/**
  * Search a valid path in the map.
  * \param heuristic matrix that stores distance between each cell and end cell
  * \param start start path's position

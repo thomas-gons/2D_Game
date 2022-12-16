@@ -50,8 +50,12 @@ void player_inputs() {
     halfdelay(7);
     switch (getch()) {
     case KEY_ESC:
-        // TEMP /!\ To change with lucas menus to make a gameover screen + retry button...
-        game.gameover = true;
+        game_pause_menu();
+        break;
+    case KEY_DOWN:
+    case 'S':
+    case 's':
+        player->move = DOWN;
         break;
     case KEY_RIGHT:
     case 'D':
@@ -315,7 +319,6 @@ void player_rewind() {
         player_alert_render("You don't have any rewind left !");
     }
 }
-
 
 void player_substract_dist(SNode *curr, SNode *prev) {
     // Rewind Right move by going back Left
