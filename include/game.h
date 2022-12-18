@@ -159,6 +159,11 @@ void game_defeat_menu();
 void game_pause_menu();
 
 /**
+ * Restart game to original state, keep same same, reset player and enemies.
+*/
+void game_restart();
+
+/**
  * Free all game resources.
 */
 void game_free();

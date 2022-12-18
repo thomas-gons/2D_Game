@@ -32,6 +32,7 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], Position start, Posi
     bool found = false;
     while (!found) {
         if (!opened->nb_points) {
+            pqueue_free(opened);
             return NULL;
         }
         Point next_cell = pqueue_dequeue(opened);

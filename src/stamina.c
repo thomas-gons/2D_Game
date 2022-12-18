@@ -18,7 +18,7 @@ void stamina_update_val() {
     mvwprintw(  game.bar_win,
                 STM_BAR_SIZE + STM_BAR_PAD_T,
                 STM_BAR_PAD_L + 3,
-                (player->stamina == 100) ? "%d" : ((player->stamina >= 10) ? " %d" : "  %d"),
+                (player->stamina == 100) ? "%d" : " %d ",
                 player->stamina
     );
     wattroff(game.bar_win, A_BOLD);

@@ -37,8 +37,6 @@ void player_init(Level level) {
         break;
     default: break;
     }
-    // Initialize enemies entities
-    enemy_init();
 }
 
 void player_inputs() {
@@ -137,6 +135,7 @@ void player_update() {
         }
         if (enemy[i].current.l == player->pos.l && enemy[i].current.c == player->pos.c) {
             player_alert_render("%s enemy \u2620 killed you !", (ENEMY_NB > 1) ? "An" : "The");
+            enemy[i].alive = false;
             game.gameover = true;
             return;
         }
@@ -376,13 +375,12 @@ void player_render() {
     wattroff(game.game_win, COLOR_PAIR(FORMAT_COLOR_CYAN));
     wattroff(game.stats_win, A_BOLD);
     player_stats_render();
-    chase_player();
+    enemy_chase_player();
 }
 
 void player_free() {
     stack_free(player->history);
     free(player);
-    free(enemy);
 }
 
 void enemy_init() {
@@ -400,7 +398,7 @@ void enemy_init() {
     } 
 }
 
-void chase_player() {
+void enemy_chase_player() {
     if (!(frames % ENEMY_SPEED)) {
         enemy_render();
         return;

@@ -128,7 +128,7 @@ void enemy_init();
 /**
  * Update enemy to chase the player.
 */
-void chase_player();
+void enemy_chase_player();
 
 /**
  *  Render all enemies entity.

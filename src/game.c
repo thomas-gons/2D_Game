@@ -132,6 +132,7 @@ void ncs_refresh_game_windows() {
     box(game.dist_win, ACS_VLINE, ACS_HLINE);
     box(game.alert_win, ACS_VLINE, ACS_HLINE);
     // Render game windows
+    wrefresh(game.main_win);
     wrefresh(game.game_win);
     wrefresh(game.bar_win);
     wrefresh(game.stm_bar);
@@ -258,6 +259,8 @@ void game_init_new_game(Level difficulty) {
     // Generate random map
     game.path_stm = map_generate();
     game.path_dist = a_star(START, GOAL, false);
+    // Initialize enemies entities
+    enemy_init();
     // First render of game
     game_render();
 }
@@ -348,20 +351,19 @@ void game_victory_menu() {
 
 void game_defeat_menu() {
     // // Clear current render of the game
+    werase(game.main_win);
     werase(game.game_win);
     werase(game.bar_win);
     werase(game.dist_win);
     werase(game.alert_win);
     // Defeat menu, select an entry
     const uint8_t nb_entry = 3;
-    char *defeat_list[] = { "Retry", "Return to Title Menu", "Quit" };
+    char *defeat_list[] = { "Restart Game", "Return to Title Menu", "Quit" };
     menu_create_entry_template(defeat_list, nb_entry);
     uint8_t select = menu_select_entry(defeat_list, nb_entry);
     switch (select) {
-    case 0:     // Retry
-        map_visual_reset();
-        player_free();
-        player_init(map->level);
+    case 0:     // Restart Game
+        game_restart();
         break;
     case 1:     // Return to Title Menu
         game.keep_playing = false;
@@ -405,11 +407,22 @@ void game_pause_menu() {
     ncs_destroy_win(game.menu_win);
 }
 
+void game_restart() {
+    map_visual_reset();
+    player_free();
+    player_init(map->level);
+    for (uint8_t i = 0; i < ENEMY_NB; i++) {
+        enemy[i].current.l = enemy[i].house.l;
+        enemy[i].current.c = enemy[i].house.c;
+    }
+}
+
 void game_free() {
     map_free();
     stack_free(game.path_stm);
     stack_free(game.path_dist);
     player_free();
+    free(enemy);
 }
 
 void game_quit() {

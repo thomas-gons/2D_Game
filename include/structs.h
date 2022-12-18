@@ -107,8 +107,8 @@ typedef struct Player {
  * Enemy structure, handle enemy data.
 */
 typedef struct Enemy {
-    Position house;
     Position current;
+    Position house;
     bool alive;
 } Enemy;
 
