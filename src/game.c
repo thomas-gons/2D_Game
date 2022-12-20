@@ -180,9 +180,19 @@ void run_game() {
     case 1:     // Load Saved Game
         // TODO: load game resources from a save file (.save)
         // game_load_saved_game();
+
+        get_files(SAVES_DIR_PATH, SAVE_EXT);
+        game.reload_game = false;
+        sleep(2);
+
         break;
     case 2:     // History
         // TODO: history menu to select a saved game (.dat) and replay it
+
+        get_files(SAVES_DIR_PATH, DAT_EXT);
+        game.reload_game = false;
+        sleep(2);
+
         break;
     case 3:     // Quit
         game.reload_game = false;
