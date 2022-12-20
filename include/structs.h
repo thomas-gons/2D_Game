@@ -13,6 +13,9 @@
 */
 typedef struct Game {
     bool gameover;
+    bool victory;
+    bool reload_game;
+    bool keep_playing;
     uint16_t win_w;
     uint16_t win_h;
     WINDOW *title_win;
@@ -21,10 +24,13 @@ typedef struct Game {
     WINDOW *game_win;
     WINDOW *bar_win;
     WINDOW *stm_bar;
-    WINDOW *fruit_win;
-    WINDOW *help_win;
-    Stack *path;
-    time_t date;
+    WINDOW *stats_win;
+    WINDOW *dist_win;
+    WINDOW *alert_win;
+    Stack *path_dist;
+    uint16_t path_dist_len;
+    Stack *path_stm;
+    uint16_t path_stm_len; 
 } Game;
 
 
@@ -45,8 +51,8 @@ typedef enum Level {
 typedef enum Cell_type {
     EMPTY = -1,
     ROAD,
-    FRUIT,
-    NO_FRUIT,
+    BONUS,
+    NO_BONUS,
     OBSTACLE,
     FLAG
 } Cell_type;
@@ -56,6 +62,7 @@ typedef enum Cell_type {
 */
 typedef struct Cell {
     Cell_type cell_type;
+    uint8_t distance[2];
     bool visited;
 } Cell;
 
@@ -74,11 +81,11 @@ typedef struct Map {
  * Player movements.
 */
 typedef enum Move {
-    NONE = -1,
+    NO_MOVE = -1,
+    RIGHT,
     DOWN,
     LEFT,
-    UP,
-    RIGHT
+    UP
 } Move;
 
 /**
@@ -86,11 +93,24 @@ typedef enum Move {
 */
 typedef struct Player {
     Position pos;
+    Action action;
     Move move;
     int8_t stamina;
-    int8_t fruit_stack;
-    bool on_obstacle;
+    int8_t bonus_stack;
+    uint8_t rewind_cnt;
+    uint16_t distance;
+    bool anim_action;
+    Stack *history;
 } Player;
+
+/**
+ * Enemy structure, handle enemy data.
+*/
+typedef struct Enemy {
+    Position current;
+    Position house;
+    bool alive;
+} Enemy;
 
 
 #endif

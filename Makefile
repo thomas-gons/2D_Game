@@ -13,17 +13,17 @@ LD := g++
 LDFLAGS := -I$(DIR_INC)/
 
 # Compiler flags.
-CFLAGS := -pedantic -Wall -Wextra -Wno-type-limits -Wno-unused-result $(LDFLAGS)
-CXXFLAGS := $(CFLAGS)
+CFLAGS := -pedantic -Wall -Wextra -Wno-type-limits -Wno-unused-result -fshort-enums $(LDFLAGS)
+CXXFLAGS := $(CFLAGS) 
 
 # Library flags.
-LDLIBS := -lm -lncurses
+LDLIBS := -lm -lncursesw
 
 # Sanitizer flags
 FSAN_FLAGS := -fsanitize=address
 
 # Files set up.
-TARGET := game
+TARGET := cailloux
 SRCS.c := $(shell find $(DIR_SRC)/ -name "*.c" 2> /dev/null)
 SRCS.cpp := $(shell find $(DIR_SRC)/ -name "*.cpp" 2> /dev/null)
 
@@ -104,12 +104,12 @@ $(DIR_OBJ_DBG)/%.o: $(DIR_SRC)/%.cpp
 # Run release target.
 run:
 	@echo ":: Run '$(REL_TARGET)'..."
-	@./$(REL_TARGET)
+	-@./$(REL_TARGET) || true
 
 # Run debug target.
 rundbg:
 	@echo ":: Run '$(DBG_TARGET)'..."
-	@./$(DBG_TARGET)
+	-@./$(DBG_TARGET) || true
 
 # Remove bin and object directories.
 clean:

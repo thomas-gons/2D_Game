@@ -38,7 +38,7 @@ sudo pacman -S base-devel
 **Install** the ncurses library:
 * For Ubuntu Linux: 
 ```sh
-sudo apt install libncurses5-dev libncursesw5-dev
+sudo apt install libncurses6 libncursesw6
 ```
 * For Manjaro Linux:
 ```sh

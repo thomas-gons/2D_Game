@@ -16,19 +16,32 @@ typedef struct {
 } Position;
 
 /**
- * Node of stack.
+ * Player action.
 */
-typedef struct Node {
+typedef enum Action {
+    NO_ACTION = -1,
+    HIT_OBSTACLE,
+    USE_BONUS,
+    STACK_BONUS,
+    USE_STACKED_BONUS,
+    REWIND
+} Action;
+
+/**
+ * SNode of stack.
+*/
+typedef struct SNode {
     Position pos;
-    struct Node *next;
-} Node;
+    Action action;
+    struct SNode *next;
+} SNode;
 
 /**
  * Stack structure.
 */
 typedef struct Stack {
-    Node *head;
-    Node *tail;
+    SNode *head;
+    SNode *tail;
 } Stack;
 
 /**
@@ -36,25 +49,26 @@ typedef struct Stack {
 */
 typedef struct Point {
     Position pos;
+    int8_t stm;
     unsigned f;
     unsigned g;
 } Point;
 
 /**
- * Node of queue.
+ * Node of pqueue.
 */
-typedef struct NodeP {
+typedef struct PQNode {
     Point p;
-    struct NodeP *next;
-} NodeP;
+    struct PQNode *next;
+} PQNode;
 
 /**
- * Queue strcuture.
+ * Priority Queue strcuture.
 */
-typedef struct Queue {
-    NodeP *head;
+typedef struct PQueue {
+    PQNode *head;
     unsigned nb_points;
-} Queue;
+} PQueue;
 
 
 /************************* FUNCTIONS *************************/
@@ -68,9 +82,10 @@ Stack *stack_init();
 /**
  * Push a node to head of stack.
  * \param stack stack
- * \param pos data to push in stack
+ * \param pos position to push in stack
+ * \param act action to push in stack
 */
-void stack_push(Stack *stack, Position pos);
+void stack_push(Stack *stack, Position pos, Action act);
 
 /**
  * Pop a node from head of stack.
@@ -85,6 +100,14 @@ void stack_pop(Stack *stack);
  * \returns data of removed node
 */
 Position stack_remove(Stack *stack, uint16_t index);
+
+/**
+ * Get index of stack element of specific data.
+ * \param stack stack
+ * \param pos data to search the index
+ * \returns index of node on success, -1 on error
+*/
+int16_t stack_get_index(Stack *stack, Position pos);
 
 /**
  * Free allocated memory of stack.
@@ -113,29 +136,33 @@ bool stack_is_empty(Stack *stack);
 uint16_t stack_len(Stack *stack);
 
 /**
- * Initialize a queue.
- * \returns a valid queue on success, NULL on error
+ * Initialize a pqueue.
+ * \returns a valid pqueue on success, NULL on error
 */
-Queue *queue_init();
+PQueue *pqueue_init();
 
 /**
- * Enqueue item in queue.
- * \param q queue
+ * Enqueue item in pqueue according priority.
+ * \param q pqueue
  * \param p data of node to enqueue
 */
-void queue_enqueue(Queue *q, Point p);
+void pqueue_enqueue(PQueue *q, Point p);
 
 /**
- * Dequeue a queue.
- * \param q queue.
+ * Dequeue a pqueue.
+ * \param q pqueue.
  * \returns data of dequeued node
 */
-Point queue_dequeue(Queue *q);
+Point pqueue_dequeue(PQueue *q);
 
 /**
- * Free allocated memory of queue.
+ * Free allocated memory of pqueue.
 */
-void queue_free(Queue *q);
+void pqueue_free(PQueue *q);
 
+/**
+ *  Display the pqueue
+*/
+void pqueue_display(PQueue *q);
 
 #endif
