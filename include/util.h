@@ -137,5 +137,12 @@ Point queue_dequeue(Queue *q);
 */
 void queue_free(Queue *q);
 
+/**
+ * Change the order of the queue
+ * @param stack 
+ * @return stack in the other order 
+ */
+Stack* stack_change_order(Stack *stack);
+
 
 #endif

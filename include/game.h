@@ -94,6 +94,11 @@ uint8_t game_start_menu();
 void game_init_new_game();
 
 /**
+ * Initialize in-game resources based on backup.
+*/
+void game_init_save_game();
+
+/**
  * Game loop.
 */
 void game_loop();

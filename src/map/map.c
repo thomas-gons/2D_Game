@@ -28,6 +28,20 @@ void map_init(Level level) {
     }
 }
 
+void map_save_init(Level level) {
+    map = calloc(1, sizeof *map);
+    if (!map) {
+        fprintf(stderr, "[ERROR] > calloc, in func map_init\n");
+        exit(2);
+    }
+    *map = (Map) {.level=level, .map_grid=NULL};
+    map->map_grid = calloc(MAP_LINES, sizeof *map->map_grid);
+    // Fill the map with empty and unvisited cells
+    for (uint8_t i = 0; i < MAP_LINES; i++) {
+        map->map_grid[i] = calloc(MAP_COLS, sizeof *map->map_grid[i]);
+    }
+}
+
 void map_render() {
     wattron(game.game_win, A_BOLD);
     for (uint8_t l = 0; l < MAP_LINES; l++) {

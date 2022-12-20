@@ -78,6 +78,12 @@
 void map_init(Level level);
 
 /**
+ * Initialize a map based on backup.
+ * \param level game difficulty
+*/
+void map_save_init(Level level);
+
+/**
  * Render map in terminal with ncurses.
 */
 void map_render();

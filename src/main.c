@@ -9,6 +9,7 @@ SaveManager save = {0};
 int main() {
     setlocale(LC_ALL, "");
     run_game();
-    save_charging_game();
+    sleep(2);
+    run_game();
     return 0; 
 }

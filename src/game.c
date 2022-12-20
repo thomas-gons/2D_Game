@@ -131,19 +131,33 @@ void ncs_quit() {
 void run_game() {
     game_init();
     time_t begin = time(NULL);
+    time_t end;
     // Menu entries
     switch (game_start_menu()) {
     case 0: // New game
         game_init_new_game();
         game_loop();
-        time_t end = time(NULL);
+        end = time(NULL);
         save.playing_time = end - begin;
+        
+        stack_display(player->history);
+        
         save_game();
+
+        stack_display(player->history);
+
         // TODO: Game over screen + menu
         game_free();
         break;
     case 1: // Load game save
-        // game_load_saved_game();
+        game_init_save_game();
+        save_charging_game();
+        game_loop();
+        end = time(NULL);
+        save.playing_time = end - begin;
+        save_game();
+        // TODO: Game over screen + menu
+        game_free();
         break;
     case 2: // Quit game
         game_quit();
@@ -187,6 +201,18 @@ void game_init_new_game() {
     ncs_create_game_windows();
     // Generate random map
     map_init(EASY);
+    game.path = map_generate();
+    // Initialize player entity
+    player_init(map->level);
+    // First render of game
+    game_render();
+}
+
+void game_init_save_game() { //il y a plus de diff je crois
+    // Create game subwindows
+    ncs_create_game_windows();
+    // Generate random map
+    map_save_init(EASY);
     game.path = map_generate();
     // Initialize player entity
     player_init(map->level);

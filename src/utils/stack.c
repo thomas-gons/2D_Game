@@ -89,3 +89,15 @@ uint16_t stack_len(Stack *stack) {
     }
     return length;
 }
+
+Stack* stack_change_order(Stack *stack){
+    Stack *tmp;
+    tmp = stack_init();
+    // tmp->head = stack->head;
+    // tmp = tmp->next;
+    for (uint16_t i = 0; i < stack_len(stack); i++) {
+        stack_push(tmp, stack->head->pos);
+        stack_pop(stack);
+    }
+    return tmp;
+}
