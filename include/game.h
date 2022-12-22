@@ -108,12 +108,6 @@ void game_init();
 int8_t game_start_menu();
 
 /**
- * Create and render Difficulty menu window.
- * \returns Index of start menu entry, or -1 to go back to previous menu
-*/
-int8_t game_difficulty_menu(); 
-
-/**
  * Initialize in-game resources.
  * \param difficulty game difficulty
 */
@@ -143,21 +137,6 @@ void game_render();
  * Check if game is win.
 */
 void game_check_win();
-
-/**
- * Create and render Victory Title and menu windows.
-*/
-void game_victory_menu();
-
-/**
- * Create and render Defeat menu window.
-*/
-void game_defeat_menu();
-
-/**
- * Create and render in-game pause menu window.
-*/
-void game_pause_menu();
 
 /**
  * Restart game to original state, keep same same, reset player and enemies.

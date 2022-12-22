@@ -220,7 +220,7 @@ int8_t game_start_menu() {
     switch (select) {
     case 0:     // New Game
         ncs_destroy_win(game.menu_win);
-        if (game_difficulty_menu() == -1) {
+        if (menu_difficulty() == -1) {
             // Go back to previous menu
             select = -1;
         }
@@ -239,23 +239,6 @@ int8_t game_start_menu() {
     }
     ncs_destroy_win(game.title_win);
     ncs_destroy_win(game.menu_win);
-    return select;
-}
-
-int8_t game_difficulty_menu() {
-    // Difficulty menu, select a difficulty
-    const uint8_t nb_entry = 4;
-    char *difficulty_list[] = { "Easy", "Medium", "Hard", "Return to Title Menu" };
-    menu_create_entry_template(difficulty_list, nb_entry);
-    int8_t select = menu_select_entry(difficulty_list, nb_entry);
-    switch(select) {
-    case 3:     // Return to Title Menu
-        select = -1;
-        break;
-    default:    // Set game difficulty
-        difficulty = select + 1;
-        break;
-    }
     return select;
 }
 
@@ -292,9 +275,9 @@ void game_loop() {
     }
     // Render end game title and menu, victory or defeat
     if (game.victory == true) {
-        game_victory_menu();
+        menu_victory();
     } else {
-        game_defeat_menu();
+        menu_defeat();
     }
 }
 
@@ -326,95 +309,10 @@ void game_check_win() {
     // Check if player has reach the goal cell
     if ((player->pos.l == MAP_LINES - 1) && (player->pos.c == MAP_COLS - 1)) {
         // TODO: change sfx
-        system("aplay -q assets/sfx/youu.wav &");
+        system("aplay -q assets/sfx/victory.wav &");
         game.victory = true;
         game.gameover = false;
     }
-}
-
-void game_victory_menu() {
-    // Clear current render of the game
-    ncs_destroy_win(game.main_win);
-    ncs_destroy_win(game.game_win);
-    ncs_destroy_win(game.bar_win);
-    ncs_destroy_win(game.dist_win);
-    ncs_destroy_win(game.alert_win);
-    // Victory title and menu, select an entry
-    ncs_create_victory_window();
-    const uint8_t nb_entry = 2;
-    char *victory_list[] = { "Return to Title Menu", "Quit" };
-    menu_create_entry_template(victory_list, nb_entry);
-    uint8_t select = menu_select_entry(victory_list, nb_entry);
-
-    // TODO: save the game before processing the selected entry form menu
-    
-    switch(select) {
-    case 1:     // Quit
-        game.reload_game = false;
-        break;
-    default: break;
-    }
-    game.keep_playing = false;
-    ncs_destroy_win(game.title_win);
-    ncs_destroy_win(game.menu_win);
-}
-
-void game_defeat_menu() {
-    // // Clear current render of the game
-    werase(game.main_win);
-    werase(game.game_win);
-    werase(game.bar_win);
-    werase(game.dist_win);
-    werase(game.alert_win);
-    // Defeat menu, select an entry
-    const uint8_t nb_entry = 3;
-    char *defeat_list[] = { "Restart Game", "Return to Title Menu", "Quit" };
-    menu_create_entry_template(defeat_list, nb_entry);
-    uint8_t select = menu_select_entry(defeat_list, nb_entry);
-    switch (select) {
-    case 0:     // Restart Game
-        game_restart();
-        break;
-    case 1:     // Return to Title Menu
-        game.keep_playing = false;
-        break;
-    case 2:     // Quit
-        game.keep_playing = false;
-        game.reload_game = false;
-        break;
-    default: break;
-    }
-    ncs_destroy_win(game.menu_win);
-}
-
-void game_pause_menu() {
-    // Clear current render under the menu
-    werase(game.game_win);
-    werase(game.bar_win);
-    werase(game.dist_win);
-    werase(game.alert_win);
-    refresh();
-    // In-game Pause menu, select an entry
-    const uint8_t nb_entry = 4;
-    char *esc_list[] = { "Resume Game", "Help & Game Rules", "Save & Quit", "Quit" };
-    menu_create_entry_template(esc_list, nb_entry);
-    uint8_t select = menu_select_entry(esc_list, nb_entry);
-    switch(select) {
-    case 1:     // Help & Game Rules
-        // TODO: render Help and Rules window
-        // game_help_rules();
-        break;
-    case 2:     // Save & Quit
-        // TODO: call save function
-        game.keep_playing = false;
-        break;
-    case 3:     // Quit
-        game.keep_playing = false;
-        game.reload_game = false;
-        break;
-    default: break;
-    }
-    ncs_destroy_win(game.menu_win);
 }
 
 void game_restart() {

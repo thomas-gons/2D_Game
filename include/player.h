@@ -6,6 +6,7 @@
 #include "structs.h"
 #include "util.h"
 #include "game.h"
+#include "menu.h"
 #include "map.h"
 
 

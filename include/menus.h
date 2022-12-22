@@ -26,6 +26,27 @@ void menu_create_entry_template(char **entry_list, int nb_entry);
 int8_t menu_select_entry(char **entry_list, int nb_entry);
 
 /**
+ * Create and render Difficulty menu window.
+ * \returns Index of start menu entry, or -1 to go back to previous menu
+*/
+int8_t menu_difficulty();
+
+/**
+ * Create and render Victory Title and menu windows.
+*/
+void menu_victory();
+
+/**
+ * Create and render Defeat menu window.
+*/
+void menu_defeat();
+
+/**
+ * Create and render in-game pause menu window.
+*/
+void menu_pause();
+
+/**
  * Render distances for all four directions around player current position.
 */
 void distances_render();

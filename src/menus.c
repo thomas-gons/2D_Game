@@ -4,6 +4,7 @@
 extern Game game;
 extern Map *map;
 extern Player *player;
+extern Level difficulty;
 
 void menu_create_entry_template(char **entry_list, int nb_entry) {
     // Create the menu window
@@ -22,7 +23,7 @@ void menu_create_entry_template(char **entry_list, int nb_entry) {
         else {
             wattroff(game.menu_win, A_STANDOUT);
         }
-        ncs_print_centered(game.menu_win, i + 2, entry_list[i]);    // mvwprintw(game.menu_win, i + 2, 2, entry_list[i]);
+        ncs_print_centered(game.menu_win, i + 2, entry_list[i]);
     }
     box(game.menu_win, ACS_VLINE, ACS_HLINE);
     wrefresh(game.menu_win);
@@ -33,7 +34,7 @@ int8_t menu_select_entry(char **entry_list, int nb_entry) {
     int ch;
     int8_t i = 0;
     while ((ch = getch()) != KEY_ENTR) {
-        ncs_print_centered(game.menu_win, i + 2, entry_list[i]);    // mvwprintw(game.menu_win, i + 2, 2, entry_list[i]);
+        ncs_print_centered(game.menu_win, i + 2, entry_list[i]);
         switch (ch) {
         case KEY_UP:
         case 'Z':
@@ -57,11 +58,113 @@ int8_t menu_select_entry(char **entry_list, int nb_entry) {
         }
         // Refresh rendering of menu entries
         wattron(game.menu_win, A_STANDOUT );
-        ncs_print_centered(game.menu_win, i + 2, entry_list[i]);    // mvwprintw(game.menu_win, i + 2, 2, entry_list[i]);
+        ncs_print_centered(game.menu_win, i + 2, entry_list[i]);
         wattroff(game.menu_win, A_STANDOUT );
         wrefresh(game.menu_win );
     }
     return i;
+}
+
+int8_t menu_difficulty() {
+    // Difficulty menu, select a difficulty
+    const uint8_t nb_entry = 4;
+    char *difficulty_list[] = { "Easy", "Medium", "Hard", "Return to Title Menu" };
+    menu_create_entry_template(difficulty_list, nb_entry);
+    int8_t select = menu_select_entry(difficulty_list, nb_entry);
+    switch(select) {
+    case 3:     // Return to Title Menu
+        select = -1;
+        break;
+    default:    // Set game difficulty
+        difficulty = select + 1;
+        break;
+    }
+    return select;
+}
+
+void menu_victory() {
+    // Clear current render of the game
+    ncs_destroy_win(game.main_win);
+    ncs_destroy_win(game.game_win);
+    ncs_destroy_win(game.bar_win);
+    ncs_destroy_win(game.dist_win);
+    ncs_destroy_win(game.alert_win);
+    // Victory title and menu, select an entry
+    ncs_create_victory_window();
+    const uint8_t nb_entry = 2;
+    char *victory_list[] = { "Return to Title Menu", "Quit" };
+    menu_create_entry_template(victory_list, nb_entry);
+    uint8_t select = menu_select_entry(victory_list, nb_entry);
+
+    // TODO: save the game before processing the selected entry form menu
+    
+    switch(select) {
+    case 1:     // Quit
+        game.reload_game = false;
+        break;
+    default: break;
+    }
+    game.keep_playing = false;
+    ncs_destroy_win(game.title_win);
+    ncs_destroy_win(game.menu_win);
+}
+
+void menu_defeat() {
+    // // Clear current render of the game
+    werase(game.main_win);
+    werase(game.game_win);
+    werase(game.bar_win);
+    werase(game.dist_win);
+    werase(game.alert_win);
+    // Defeat menu, select an entry
+    const uint8_t nb_entry = 3;
+    char *defeat_list[] = { "Restart Game", "Return to Title Menu", "Quit" };
+    menu_create_entry_template(defeat_list, nb_entry);
+    uint8_t select = menu_select_entry(defeat_list, nb_entry);
+    switch (select) {
+    case 0:     // Restart Game
+        game_restart();
+        break;
+    case 1:     // Return to Title Menu
+        game.keep_playing = false;
+        break;
+    case 2:     // Quit
+        game.keep_playing = false;
+        game.reload_game = false;
+        break;
+    default: break;
+    }
+    ncs_destroy_win(game.menu_win);
+}
+
+void menu_pause() {
+    // Clear current render under the menu
+    werase(game.game_win);
+    werase(game.bar_win);
+    werase(game.dist_win);
+    werase(game.alert_win);
+    refresh();
+    // In-game Pause menu, select an entry
+    const uint8_t nb_entry = 4;
+    char *esc_list[] = { "Resume Game", "Help & Game Rules", "Save & Quit", "Quit" };
+    menu_create_entry_template(esc_list, nb_entry);
+    uint8_t select = menu_select_entry(esc_list, nb_entry);
+    switch(select) {
+    case 1:     // Help & Game Rules
+        // TODO: render Help and Rules window
+        // game_help_rules();
+        break;
+    case 2:     // Save & Quit
+        // TODO: call save function
+        game.keep_playing = false;
+        break;
+    case 3:     // Quit
+        game.keep_playing = false;
+        game.reload_game = false;
+        break;
+    default: break;
+    }
+    ncs_destroy_win(game.menu_win);
 }
 
 void distances_render() {

@@ -50,7 +50,7 @@ void player_inputs() {
     halfdelay(7);
     switch (getch()) {
     case KEY_ESC:
-        game_pause_menu();
+        menu_pause();
         break;
     case KEY_RIGHT:
     case 'D':
