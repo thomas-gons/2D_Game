@@ -139,10 +139,11 @@ void queue_free(Queue *q);
 
 /**
  * Change the order of the queue
- * @param stack 
- * @return stack in the other order 
+ * \param stack stack in the wrong way 
+ * \param new_stack stack in the right way
+ * \return stack in the other order 
  */
-Stack* stack_change_order(Stack *stack);
+Stack* stack_change_order(Stack *stack, Stack *new_stack);
 
 
 #endif

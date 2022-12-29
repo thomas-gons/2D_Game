@@ -139,13 +139,7 @@ void run_game() {
         game_loop();
         end = time(NULL);
         save.playing_time = end - begin;
-        
-        stack_display(player->history);
-        
         save_game();
-
-        stack_display(player->history);
-
         // TODO: Game over screen + menu
         game_free();
         break;
@@ -208,12 +202,12 @@ void game_init_new_game() {
     game_render();
 }
 
-void game_init_save_game() { //il y a plus de diff je crois
+void game_init_save_game() {
     // Create game subwindows
     ncs_create_game_windows();
-    // Generate random map
+    // Space allocation to retrieve the saved map 
     map_save_init(EASY);
-    game.path = map_generate();
+    game.path = stack_init();
     // Initialize player entity
     player_init(map->level);
     // First render of game

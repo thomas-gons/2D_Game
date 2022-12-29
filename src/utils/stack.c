@@ -9,7 +9,6 @@ Stack *stack_init() {
     }
     stack->head = NULL;
     stack->tail = NULL;
-
     return stack;
 }
 
@@ -90,14 +89,12 @@ uint16_t stack_len(Stack *stack) {
     return length;
 }
 
-Stack* stack_change_order(Stack *stack){
-    Stack *tmp;
-    tmp = stack_init();
-    // tmp->head = stack->head;
-    // tmp = tmp->next;
-    for (uint16_t i = 0; i < stack_len(stack); i++) {
-        stack_push(tmp, stack->head->pos);
-        stack_pop(stack);
+Stack *stack_change_order(Stack *stack, Stack *new_stack){
+    Node *tmp = stack->head;
+    while (tmp != NULL){
+        stack_push(new_stack, tmp->pos);
+        tmp = tmp->next;
     }
-    return tmp;
+    stack_free(stack);
+    return new_stack;
 }

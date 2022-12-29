@@ -104,7 +104,7 @@ typedef struct Player {
 typedef struct SaveManager {
     time_t playing_time;
     char *date_time;
-    char **save_files;
+    char *file_name;
 } SaveManager;
 
 
