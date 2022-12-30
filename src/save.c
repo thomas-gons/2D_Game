@@ -137,7 +137,7 @@ void save_read_player(FILE *f) {
 
 void save_read_game(FILE *f){
     save_read_stack(game.path, f, FALSE);
-    stack_pop(game.path);
+    stack_display(game.path);
 }
 
 void save_read_stack(Stack *stack, FILE *f, bool player_stack){
