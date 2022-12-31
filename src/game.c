@@ -5,7 +5,7 @@ extern Game game;
 extern Map *map;
 extern Player *player;
 extern Enemy *enemy;
-extern Level difficulty;
+extern Level level;
 
 void ncs_init() {
     initscr();
@@ -40,7 +40,7 @@ void ncs_check_term_size() {
     if ((game.win_w < MAP_COLS + BAR_SIZE + 2) || (game.win_h < MAP_LINES + 5)) {
         ncs_quit();
         fprintf(stderr,
-            "\n[ERROR] > Window is set to [%d x %d] rows x cols.\n\t> Please enlarge it to minimum [%d x %d] rows x cols.\n\t> Enlarge it to Fullscreen for better experience.\n",
+            "\n[ERROR] > Window is set to [%d x %d] rows x cols.\n\t> Please enlarge it to minimum [%d x %d] rows x cols.\n\t> Enlarge it to Fullscreen for better experience.\n\t> If the error still occurs, set your terminal font size to 12 or under.\n",
             game.win_h, game.win_w, (MAP_LINES + 5), (MAP_COLS + BAR_SIZE + 2));
         exit(1);
     }
@@ -64,7 +64,7 @@ void ncs_create_title_window() {
 
 void ncs_create_victory_window() {
     game.title_win = subwin(stdscr,
-                            7,
+                            6,
                             60,
                             game.win_h/2 - (MAP_LINES + 2)/2 + 6,
                             game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 22
@@ -74,6 +74,21 @@ void ncs_create_victory_window() {
     mvwprintw(game.title_win, 2, 1, "|  |  ||     ||     ||_   _||     || __  ||  |  |  | |");
     mvwprintw(game.title_win, 3, 1, "|  |  / |   | |  ---   | |  |  |  ||    -||_   _|  \\ /");
     mvwprintw(game.title_win, 4, 1, "|____/ |_____||_____|  |_|  |_____||__|__|  |_|     O");
+    wrefresh(game.title_win);
+}
+
+void ncs_create_defeat_window() {
+    game.title_win = subwin(stdscr,
+                            6,
+                            49,
+                            game.win_h/2 - (MAP_LINES + 2)/2 + 6,
+                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 25
+    );
+    wattron(game.title_win, A_BOLD);
+    mvwprintw(game.title_win, 1, 1, " ____  _____  _____  _____  _____  _____    _");
+    mvwprintw(game.title_win, 2, 1, "|    \\|  ___||  ___||  ___||  _  ||_   _|  | |");
+    mvwprintw(game.title_win, 3, 1, "|  | ||  ___||  __| |  ___||     |  | |    \\ /");
+    mvwprintw(game.title_win, 4, 1, "|____/|_____||__|   |_____||__|__|  |_|     O");
     wrefresh(game.title_win);
 }
 
@@ -167,7 +182,7 @@ void run_game() {
     // Process selected menu entry
     switch (select) {
     case 0:     // New Game
-        game_init_new_game(difficulty);
+        game_init_new_game(level);
         game.keep_playing = true;
         while (game.keep_playing == true) {
             // Main game loop
@@ -178,20 +193,12 @@ void run_game() {
         game_free();
         break;
     case 1:     // Load Saved Game
-        // TODO: load game resources from a save file (.save)
-        // game_load_saved_game();
-
-        get_files(SAVES_DIR_PATH, SAVE_EXT);
-        game.reload_game = false;
-        sleep(2);
+        // /!\ TODO /!\ : load game resources from a save file (.save)
+        //                  game_load_saved_game();
 
         break;
     case 2:     // History
-        // TODO: history menu to select a saved game (.dat) and replay it
-
-        get_files(SAVES_DIR_PATH, DAT_EXT);
-        game.reload_game = false;
-        sleep(2);
+        // /!\ TODO /!\ : replay selected save file
 
         break;
     case 3:     // Quit
@@ -214,24 +221,51 @@ int8_t game_start_menu() {
     // Title and Start menu, select an entry
     ncs_create_title_window();
     const uint8_t nb_entry = 4;
-    char *start_list[] = { "New Game", "Load Saved Game", "History", "Quit" };
-    menu_create_entry_template(start_list, nb_entry);
-    int8_t select = menu_select_entry(start_list, nb_entry);
+    char *array_start[] = { "New Game", "Load Saved Game", "History", "Quit" };
+    menu_create_entry_template(array_start, nb_entry, true);
+    int8_t select = menu_select_entry(array_start, nb_entry, true);
     switch (select) {
     case 0:     // New Game
-        ncs_destroy_win(game.menu_win);
-        if (menu_difficulty() == -1) {
-            // Go back to previous menu
+        // Get game level from menu
+        if (menu_level() == -1) {
             select = -1;
-        }
+        };
         break;
     case 1:     // Load Saved Game
-        // TODO: menu to select a saved but unfinished game (*.save)
-        //       and return index of selected file in list
+        // Init array of file names that match '.save' extension
+        uint8_t array_len1 = 1 + get_nb_files(SAVES_DIR_PATH, SAVE_EXT);
+        char **array_load = (char **) calloc(array_len1, sizeof (char *));
+        get_files(SAVES_DIR_PATH, SAVE_EXT, array_load);
+        // Get index of save file from array of file names
+        select = menu_select_file(array_load, array_len1);
+
+        // /!\ TODO /!\ : set string here for field of SaveManager (to create) : curr_load_file
+        //              => allow to read the file in run_game as this function will return 2 (case 2 of run_game for history)
+        //                 after setting the file name to SaveManager
+
+        // Free dynamic array
+        str_2d_array_free(array_load, array_len1);
+
+        // Return 1 to enter the right case in run_game
+        select = 1;
         break;
     case 2:     // History
-        // TODO: menu to select a saved and finished game (*.dat)
-        //       and return index of selected file in list
+        // Init array of file names that match '.dat' extension
+        uint8_t array_len2 = 1 + get_nb_files(SAVES_DIR_PATH, DAT_EXT);
+        char **array_history = (char **) calloc(array_len2, sizeof (char *));
+        get_files(SAVES_DIR_PATH, DAT_EXT, array_history);
+        // Get index of save file from array of file names
+        select = menu_select_file(array_history, array_len2);
+
+        // /!\ TODO /!\ : set string here for field of SaveManager (to create) : curr_history_file , curr_load_file
+        //              => allow to read the file in run_game as this function will return 2 (case 2 of run_game for history)
+        //                 after setting the file name to SaveManager
+
+        // Free dynamic array
+        str_2d_array_free(array_history, array_len2);
+
+        // Return 2 to enter the right case in run_game
+        select = 2;
         break;
     case 3:     // Quit sfx
         system("aplay -q assets/sfx/fart.wav &");
@@ -242,13 +276,13 @@ int8_t game_start_menu() {
     return select;
 }
 
-void game_init_new_game(Level difficulty) {
+void game_init_new_game() {
     // Create game subwindows
     ncs_create_game_windows();
-    // Initialize map according the difficulty
-    map_init(difficulty);
+    // Initialize map according to game level
+    map_init();
     // Initialize player entity
-    player_init(map->level);
+    player_init();
     // Generate random map
     game.path_stm = map_generate();
     game.path_dist = a_star(START, GOAL, false);
@@ -279,6 +313,7 @@ void game_loop() {
     } else {
         menu_defeat();
     }
+    system("killall aplay 2> /dev/null");
 }
 
 void game_inputs() {
@@ -308,31 +343,36 @@ void game_check_win() {
     }
     // Check if player has reach the goal cell
     if ((player->pos.l == MAP_LINES - 1) && (player->pos.c == MAP_COLS - 1)) {
-        // TODO: change sfx
-        system("aplay -q assets/sfx/victory.wav &");
         game.victory = true;
         game.gameover = false;
     }
 }
 
 void game_restart() {
+    system("killall aplay 2> /dev/null");
     map_visual_reset();
     player_free();
     player_init(map->level);
+    // Reset enemies position
     for (uint8_t i = 0; i < ENEMY_NB; i++) {
         enemy[i].current.l = enemy[i].house.l;
         enemy[i].current.c = enemy[i].house.c;
     }
 }
 
+void game_help_rules() {
+    
+}
+
 void game_free() {
-    map_free();
     stack_free(game.path_stm);
     stack_free(game.path_dist);
+    map_free();
     player_free();
     free(enemy);
 }
 
 void game_quit() {
+    system("killall aplay 2> /dev/null");
     ncs_quit();
 }

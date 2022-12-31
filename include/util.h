@@ -28,7 +28,7 @@ typedef enum Action {
 } Action;
 
 /**
- * SNode of stack.
+ * Node of stack.
 */
 typedef struct SNode {
     Position pos;
@@ -55,7 +55,7 @@ typedef struct Point {
 } Point;
 
 /**
- * Node of pqueue.
+ * Node of Priority Queue.
 */
 typedef struct PQNode {
     Point p;
@@ -63,11 +63,11 @@ typedef struct PQNode {
 } PQNode;
 
 /**
- * Priority Queue strcuture.
+ * Priority Queue structure.
 */
 typedef struct PQueue {
     PQNode *head;
-    unsigned nb_points;
+    uint16_t nb_points;
 } PQueue;
 
 

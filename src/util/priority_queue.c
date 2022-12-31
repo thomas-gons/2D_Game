@@ -2,7 +2,7 @@
 
 
 PQueue *pqueue_init() {
-    PQueue *q = calloc(1, sizeof *q);
+    PQueue *q = calloc(1, sizeof (*q));
     if (!q) {
         fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m%s:%i: error: calloc failed\033[0m\n",
             __FILE__, __func__, __FILE__, ((__LINE__) - 3));
@@ -13,7 +13,7 @@ PQueue *pqueue_init() {
 }
 
 void pqueue_enqueue(PQueue *q, Point p) {
-    PQNode *new = calloc(1, sizeof *new);
+    PQNode *new = calloc(1, sizeof (*new));
     if (!new) {
         fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m%s:%i: error: calloc failed\033[0m\n",
             __FILE__, __func__, __FILE__, ((__LINE__) - 3));

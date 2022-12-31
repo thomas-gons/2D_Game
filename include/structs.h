@@ -37,7 +37,7 @@ typedef struct Game {
 /************************* MAP *************************/
 
 /**
- * Game difficulty.
+ * Game level.
 */
 typedef enum Level {
     EASY = 1,

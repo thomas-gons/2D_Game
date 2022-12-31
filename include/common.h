@@ -71,9 +71,8 @@
  * Path of directories and files extensions.
 */
 #define SAVES_DIR_PATH          "./data/saves/"
-
 #define DAT_EXT                 ".dat"
-#define SAVE_EXT                 ".save"
+#define SAVE_EXT                ".save"
 
 
 #endif

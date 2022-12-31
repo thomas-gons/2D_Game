@@ -72,10 +72,9 @@
 /************************* FUNCTIONS *************************/
 
 /**
- * Initialize a map based on difficulty.
- * \param level game difficulty
+ * Initialize a map based on game level.
 */
-void map_init(Level level);
+void map_init();
 
 /**
  * Render map in terminal with ncurses.

@@ -14,22 +14,32 @@
  * Create and render a menu template with a list of entry.
  * \param entry_list list of string that represents menu entries
  * \param nb_entry number of menu entries
+ * \param centered center the text
 */
-void menu_create_entry_template(char **entry_list, int nb_entry);
+void menu_create_entry_template(char **entry_list, int nb_entry, bool centered);
 
 /**
  * Input and render loop to select a menu entry.
  * \param entry_list list of string that represents menu entries
  * \param nb_entry number of menu entries
+ * \param centered center the text
  * \returns index of selected menu entry
 */
-int8_t menu_select_entry(char **entry_list, int nb_entry);
+int8_t menu_select_entry(char **entry_list, int nb_entry, bool centered);
 
 /**
- * Create and render Difficulty menu window.
- * \returns Index of start menu entry, or -1 to go back to previous menu
+ * Create and render Level menu window.
+ * \returns Index of level menu entry, or -1 to go back to previous menu
 */
-int8_t menu_difficulty();
+int8_t menu_level();
+
+/**
+ * Create and render File selection menu window.
+ * \param arr_files array of file names
+ * \param arr_len length of array
+ * \returns Index of menu entry, or -1 to go back to previous menu
+*/
+int8_t menu_select_file(char ** arr_files, uint8_t arr_len);
 
 /**
  * Create and render Victory Title and menu windows.

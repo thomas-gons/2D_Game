@@ -63,6 +63,11 @@ void ncs_create_title_window();
 void ncs_create_victory_window();
 
 /**
+ * Create a ncurses window to render the Defeat title.
+*/
+void ncs_create_defeat_window();
+
+/**
  * Create all ncurses game windows.
 */
 void ncs_create_game_windows();
@@ -109,9 +114,8 @@ int8_t game_start_menu();
 
 /**
  * Initialize in-game resources.
- * \param difficulty game difficulty
 */
-void game_init_new_game(Level difficulty);
+void game_init_new_game();
 
 /**
  * Game loop.
@@ -142,6 +146,11 @@ void game_check_win();
  * Restart game to original state, keep same same, reset player and enemies.
 */
 void game_restart();
+
+/**
+ * Display help and game rules. 
+*/
+void game_help_rules();
 
 /**
  * Free all game resources.

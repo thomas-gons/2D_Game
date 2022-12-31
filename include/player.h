@@ -43,9 +43,8 @@
 
 /**
  * Initialize the player.
- * \param level difficulty of game
 */
-void player_init(Level level);
+void player_init();
 
 /**
  * Handle inputs using ncurses library.
@@ -110,12 +109,13 @@ void player_stats_render();
  * Render an alert message.
  * \param alert_msg alert message to be rendered
 */
-void player_alert_render(const char *__restrict__fmt, ...);
+void player_alert_render(const char *__restrict __fmt, ...);
 
 /**
  * Render player in terminal with ncurses.
 */
 void player_render();
+
 /**
  * Free allocated memory for player.
 */

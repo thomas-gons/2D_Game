@@ -43,7 +43,6 @@ void stamina_bar_render() {
     }
 }
 
-
 void stamina_render() {
     mvwprintw(game.bar_win, 1, STM_BAR_PAD_L + 3, "STM");
     stamina_update_val();
