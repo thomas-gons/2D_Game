@@ -382,7 +382,6 @@ void game_load_save() {
         game.gameover = false;
         game_loop();
     }
-    save_free();
     game_free();
 }
 
@@ -398,6 +397,7 @@ void game_free() {
     if (enemy) {
         free(enemy);
     }
+    save_free();
 }
 
 void game_quit() {

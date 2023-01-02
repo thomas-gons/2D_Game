@@ -119,9 +119,8 @@ void save_read_game(FILE *f);
  * Read a stack saved in a binary file.
  * \param stack new empty stack that we will complete 
  * \param f the open binary file
- * \param player_stack indication whether it is the stack of a player's path or not
 */
-void save_read_stack(Stack *stack, FILE *f, bool player_stack);
+void save_read_stack(Stack *stack, FILE *f);
 
 /**
  * Save current state of the game into a binary file.

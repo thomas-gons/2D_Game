@@ -16,8 +16,8 @@
  * Stamina settings.
 */
 #define STAMINA_EASY    100
-#define STAMINA_MEDIUM  70
-#define STAMINA_HARD    50
+#define STAMINA_MEDIUM  80
+#define STAMINA_HARD    60
 
 #define STAMINA_COST            1
 #define STAMINA_COST_OBS        10

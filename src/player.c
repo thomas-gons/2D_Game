@@ -13,7 +13,7 @@ uint8_t frames = 0;
 void player_init() {
     player = calloc(1, sizeof (*player));
     if (!player) {
-        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m%s:%i: error: calloc failed\033[0m\n",
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m %s:%i: error: calloc failed\033[0m\n",
             __FILE__, __func__, __FILE__, ((__LINE__) - 3));
         exit(2);
     }
@@ -392,7 +392,7 @@ void player_free() {
 void enemy_init() {
     enemy = calloc(ENEMY_NB, sizeof (*enemy));
     if (!enemy) {
-        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m%s:%i: error: calloc failed\033[0m\n",
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m %s:%i: error: calloc failed\033[0m\n",
             __FILE__, __func__, __FILE__, ((__LINE__) - 3));
         exit(2);
     }

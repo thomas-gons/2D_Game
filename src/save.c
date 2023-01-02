@@ -46,7 +46,7 @@ void get_files(const char *dir_path, const char *ext, char **arr_files) {
     struct dirent **read_file;
     int n = scandir(dir_path, &read_file, NULL, alphasort);
     if (!n) {
-        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m%s:%i: error: cannot open directory '%s'\033[0m\n",
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m %s:%i: error: cannot open directory '%s'\033[0m\n",
             __FILE__, __func__, __FILE__, ((__LINE__) - 3), SAVES_DIR_PATH);
         exit(3);
     }
@@ -81,7 +81,7 @@ void save_write_file() {
     FILE *f;
     f = fopen(save.file_name, "wb");
     if (f == NULL) {
-        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m%s:%i: error: cannot open file '%s'\033[0m\n",
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m %s:%i: error: cannot open file '%s'\033[0m\n",
             __FILE__, __func__, __FILE__, ((__LINE__) - 3), save.file_name);
         exit(3);
     } else {
@@ -155,7 +155,7 @@ void save_read_file(const char *file_name) {
     FILE *f;
     f = fopen(file_name, "rb");
     if (f == NULL) {
-        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m%s:%i: error: cannot open file '%s'\033[0m\n",
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m %s:%i: error: cannot open file '%s'\033[0m\n",
             __FILE__, __func__, __FILE__, ((__LINE__) - 3), file_name);
         exit(3);
     } else {
@@ -174,9 +174,9 @@ void save_read_file(const char *file_name) {
 }
 
 void save_read_game(FILE *f) {
-    save_read_stack(game.path_dist, f, false);
+    save_read_stack(game.path_dist, f);
     fread(&game.path_dist_len, sizeof (uint16_t), 1, f);
-    save_read_stack(game.path_stm, f, false);
+    save_read_stack(game.path_stm, f);
     fread(&game.path_dist_len, sizeof (uint16_t), 1, f);
 }
 
@@ -197,7 +197,7 @@ void save_read_player(FILE *f) {
     fread(&player->rewind_cnt, sizeof (uint8_t), 1, f);
     fread(&player->distance, sizeof (uint16_t), 1, f);
     Stack *tmp_history = stack_init();
-    save_read_stack(tmp_history, f, true);
+    save_read_stack(tmp_history, f);
     // Recovery of the stack player history in the right order
     stack_pop(player->history);
     player->history = stack_change_order(tmp_history, player->history);
@@ -215,7 +215,7 @@ void save_read_enemy(FILE *f) {
     }
 }
 
-void save_read_stack(Stack *stack, FILE *f, bool player_stack) {
+void save_read_stack(Stack *stack, FILE *f) {
     char end_char;
     uint8_t line;
     uint8_t col;
@@ -231,9 +231,6 @@ void save_read_stack(Stack *stack, FILE *f, bool player_stack) {
             end_stack = true;
         }
     } while (end_stack == false);
-    // if (player_stack == true) {
-    //     stack_push(stack, (Position) {.l=0, .c=0}, NO_ACTION);
-    // }
 }
 
 void save_game(const char *ext) {
