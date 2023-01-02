@@ -153,16 +153,6 @@ void game_restart();
 void game_load_save();
 
 /**
- * Replay a game from the history.
-*/
-void game_replay_history();
-
-/**
- * Display help and game rules. 
-*/
-void game_help_rules();
-
-/**
  * Free all game resources.
 */
 void game_free();

@@ -27,11 +27,9 @@ void ncs_init_colors() {
     init_pair(FORMAT_COLOR_YELLOW, COLOR_YELLOW, -1);
     init_pair(FORMAT_COLOR_RED, COLOR_RED, -1);
     init_pair(FORMAT_COLOR_MAGENTA, COLOR_MAGENTA, -1);
-    
     init_pair(FORMAT_BGCOLOR_GREEN, -1, COLOR_GREEN);
     init_pair(FORMAT_BGCOLOR_YELLOW, -1, COLOR_YELLOW);
     init_pair(FORMAT_BGCOLOR_RED, -1, COLOR_RED);
-
     init_pair(FORMAT_COLOR_WHITE_BG_RED, COLOR_WHITE, COLOR_RED);
 }
 
@@ -81,9 +79,9 @@ void ncs_create_victory_window() {
 void ncs_create_defeat_window() {
     game.title_win = subwin(stdscr,
                             6,
-                            49,
+                            48,
                             game.win_h/2 - (MAP_LINES + 2)/2 + 6,
-                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 25
+                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 26
     );
     wattron(game.title_win, A_BOLD);
     mvwprintw(game.title_win, 1, 1, " ____  _____  _____  _____  _____  _____    _");
@@ -194,17 +192,15 @@ void run_game() {
         game_free();
         break;
     case 1:     // Load Saved Game
-        // /!\ TODO /!\ : load game resources from a save file (.save)
+        attron(A_BOLD);
         ncs_print_centered(stdscr, MAP_LINES / 2, "Loading save file...");
+        attroff(A_BOLD);
         refresh();
+        sleep(1);
         game_load_save();
-
         break;
     case 2:     // History
-        // /!\ TODO /!\ : replay selected save file
-        
-        game_replay_history();
-
+        // TODO : replay history file
         break;
     case 3:     // Quit
         game.reload_game = false;
@@ -254,10 +250,10 @@ int8_t game_start_menu() {
         }
         break;
     case 2:     // History
-        // Init array of file names that match '.dat' extension
-        uint8_t array_len2 = 1 + get_nb_files(SAVES_DIR_PATH, DAT_EXT);
+        // Init array of file names that match '.hist' extension
+        uint8_t array_len2 = 1 + get_nb_files(SAVES_DIR_PATH, HIST_EXT);
         save.history_files = (char **) calloc(array_len2, sizeof (char *));
-        get_files(SAVES_DIR_PATH, DAT_EXT, save.history_files);
+        get_files(SAVES_DIR_PATH, HIST_EXT, save.history_files);
         // Get index of save file from array of file names
         select = menu_select_file(save.history_files, array_len2);
         if (select != -1) {
@@ -290,9 +286,7 @@ void game_init_new_game() {
     game.path_stm = map_generate();
     game.path_dist = a_star(START, GOAL, false);
     // Initialize enemies entities
-
-    // enemy_init();
-
+    enemy_init();
     // First render of game
     game_render();
 }
@@ -362,38 +356,24 @@ void game_restart() {
     map_visual_reset();
     player_free();
     player_init(map->level);
-
     // Reset enemies position
-    // for (uint8_t i = 0; i < ENEMY_NB; i++) {
-    //     enemy[i].current.l = enemy[i].house.l;
-    //     enemy[i].current.c = enemy[i].house.c;
-    // }
+    for (uint8_t i = 0; i < ENEMY_NB; i++) {
+        enemy[i].current.l = enemy[i].house.l;
+        enemy[i].current.c = enemy[i].house.c;
+    }
 }
 
 void game_load_save() {
-    ncs_print_centered(stdscr, MAP_LINES / 2, "Loading save file.1.");
-    refresh();
     // Init game resources
     ncs_create_game_windows();
     game.path_stm = stack_init();
     game.path_dist = stack_init();
     map_save_init();
     player_init();
-    // enemy_init();
+    enemy_init();
     // Load data from save file
-    ncs_print_centered(stdscr, MAP_LINES / 2, "Loading save file.2.");
-    refresh();
-
     save_read_file(save.curr_load_file);
-
-    ncs_print_centered(stdscr, MAP_LINES / 2, "Loading save file.3.");
-    refresh();
-
     game_render();
-
-    ncs_print_centered(stdscr, MAP_LINES / 2, "Loading save file.4.");
-    refresh();
-
     // Game loop
     game.keep_playing = true;
     while (game.keep_playing == true) {
@@ -402,26 +382,22 @@ void game_load_save() {
         game.gameover = false;
         game_loop();
     }
+    save_free();
     game_free();
-    save_free();
-}
-
-void game_replay_history() {
-
-    save_free();
-}
-
-void game_help_rules() {
-
 }
 
 void game_free() {
-    stack_free(game.path_stm);
-    stack_free(game.path_dist);
+    if (!stack_is_empty(game.path_stm)) {
+        stack_free(game.path_stm);
+    }
+    if (!stack_is_empty(game.path_dist)) {
+        stack_free(game.path_dist);
+    }  
     map_free();
     player_free();
-    
-    // free(enemy);
+    if (enemy) {
+        free(enemy);
+    }
 }
 
 void game_quit() {

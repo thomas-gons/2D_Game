@@ -8,9 +8,6 @@ extern Player *player;
 extern Enemy *enemy;
 
 bool parse_file_ext(const struct dirent *read_file, const char *ext) {
-    if (!read_file) {
-       return false;
-    }
     // Get only regular files that are not read_fileectories
     if (read_file->d_type == DT_REG && read_file->d_type != DT_DIR) {
         // Extract the file extension to compare
@@ -46,24 +43,26 @@ void get_files(const char *dir_path, const char *ext, char **arr_files) {
     uint8_t i = 0;
     uint8_t name_len = 0;
     // Read the entire directory and parse files based on the extension
-    struct dirent *read_file;
-    DIR *dir = opendir(dir_path);
-    if (dir) {
-        while ((read_file = readdir(dir)) != NULL) {
-            if (parse_file_ext(read_file, ext)) {
-                // Get lenght of file name
-                name_len = 1 + strlen(read_file->d_name);
-                // Copy string in allocated array
-                arr_files[i] = (char *) calloc(name_len, sizeof (char));
-                strncpy(arr_files[i], read_file->d_name, name_len);
-                i++;
-            }
-        }
-        closedir(dir);
-        // Add "Return to Title Menu" string to end of array
-        arr_files[i] = (char *) calloc(21, sizeof (char));
-        strncpy(arr_files[i], "Return to Title Menu", 21);
+    struct dirent **read_file;
+    int n = scandir(dir_path, &read_file, NULL, alphasort);
+    if (!n) {
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m%s:%i: error: cannot open directory '%s'\033[0m\n",
+            __FILE__, __func__, __FILE__, ((__LINE__) - 3), SAVES_DIR_PATH);
+        exit(3);
     }
+    while (n--) {
+        if (parse_file_ext(read_file[n], ext)) {
+            // Get lenght of file name
+            name_len = 1 + strlen(read_file[n]->d_name);
+            // Copy string in allocated array
+            arr_files[i] = (char *) calloc(name_len, sizeof (char));
+            strncpy(arr_files[i], read_file[n]->d_name, name_len);
+            i++;
+        }
+    }
+    // Add "Return to Title Menu" string to end of array
+    arr_files[i] = (char *) calloc(21, sizeof (char));
+    strncpy(arr_files[i], "Return to Title Menu", 21);
 }
 
 void save_get_date(const char *ext) {
@@ -95,14 +94,17 @@ void save_write_file() {
         // Writing the player struture
         save_write_player(f);
         // Writing the enemies strutures
-        // save_write_enemy(f);
+        save_write_enemy(f);
     }
     fclose(f);
 }
 
 void save_write_game(FILE *f){
     save_write_stack(game.path_dist, f);
+    fwrite(&game.path_dist_len, sizeof (uint16_t), 1, f);
     save_write_stack(game.path_stm, f);
+    fwrite(&game.path_stm_len, sizeof (uint16_t), 1, f);
+
 }
 
 void save_write_map(FILE *f) {
@@ -140,7 +142,6 @@ void save_write_stack(Stack *stack, FILE *f){
         fwrite(&tmp->pos.c, sizeof (uint8_t), 1, f);
         fwrite(&tmp->pos.l, sizeof (uint8_t), 1, f);
         fwrite(&tmp->action, sizeof (Action), 1, f);
-
         tmp = tmp->next;
         if (tmp == NULL) {
             fwrite(";", sizeof (char), 1, f);
@@ -167,14 +168,16 @@ void save_read_file(const char *file_name) {
         // Recovery of the backup of player
         save_read_player(f);
         // Recovery of the backup of enemies
-        // save_read_enemy(f);
+        save_read_enemy(f);
     }
     fclose(f);
 }
 
 void save_read_game(FILE *f) {
     save_read_stack(game.path_dist, f, false);
+    fread(&game.path_dist_len, sizeof (uint16_t), 1, f);
     save_read_stack(game.path_stm, f, false);
+    fread(&game.path_dist_len, sizeof (uint16_t), 1, f);
 }
 
 void save_read_map(FILE *f) {
@@ -189,32 +192,17 @@ void save_read_map(FILE *f) {
 }
 
 void save_read_player(FILE *f) {
-    fwrite(&player->stamina, sizeof (int8_t), 1, f);
-
-    printw(" %u ", player->stamina);
-    refresh();
-
-    fwrite(&player->bonus_stack, sizeof (int8_t), 1, f);
-
-    printw("%u ", player->bonus_stack);
-    refresh();
-
-    fwrite(&player->rewind_cnt, sizeof (uint8_t), 1, f);
-
-    printw("%u ", player->rewind_cnt);
-    refresh();
-    
-    fwrite(&player->distance, sizeof (uint16_t), 1, f);
-    
-    printw("%u ", player->distance);
-    refresh();
-
+    fread(&player->stamina, sizeof (int8_t), 1, f);
+    fread(&player->bonus_stack, sizeof (int8_t), 1, f);
+    fread(&player->rewind_cnt, sizeof (uint8_t), 1, f);
+    fread(&player->distance, sizeof (uint16_t), 1, f);
     Stack *tmp_history = stack_init();
     save_read_stack(tmp_history, f, true);
     // Recovery of the stack player history in the right order
     stack_pop(player->history);
     player->history = stack_change_order(tmp_history, player->history);
-    player->pos = player->history->head->pos;
+    player->pos.l = player->history->head->pos.l;
+    player->pos.c = player->history->head->pos.c;
 }
 
 void save_read_enemy(FILE *f) {
@@ -243,9 +231,9 @@ void save_read_stack(Stack *stack, FILE *f, bool player_stack) {
             end_stack = true;
         }
     } while (end_stack == false);
-    if (player_stack == true) {
-        stack_push(stack, (Position) {.l=0, .c=0}, NO_ACTION);
-    }
+    // if (player_stack == true) {
+    //     stack_push(stack, (Position) {.l=0, .c=0}, NO_ACTION);
+    // }
 }
 
 void save_game(const char *ext) {
@@ -264,12 +252,12 @@ void save_free() {
         str_2d_array_free(save.load_files, get_nb_files(SAVES_DIR_PATH, SAVE_EXT) + 1);
     }
     if (save.history_files) {
-        str_2d_array_free(save.history_files, get_nb_files(SAVES_DIR_PATH, DAT_EXT) + 1);
+        str_2d_array_free(save.history_files, get_nb_files(SAVES_DIR_PATH, HIST_EXT) + 1);
     }
 }
 
 void str_2d_array_free(char **arr, uint8_t arr_len) {
-    for (uint8_t i = 0; i < arr_len; i++) {
+    for (uint8_t i = 0; i < arr_len - 1; i++) {
         free(arr[i]);
     }
     free(arr);

@@ -137,8 +137,8 @@ uint16_t stack_len(Stack *stack);
 
 /**
  * Change the order of the queue
- * \param stack stack in the wrong way 
- * \param new_stack stack in the right way
+ * \param stack stack in the wrong order 
+ * \param new_stack stack in the right order
  * \return stack in the other order 
  */
 Stack *stack_change_order(Stack *stack, Stack *new_stack);

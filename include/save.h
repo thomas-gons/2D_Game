@@ -130,11 +130,6 @@ void save_read_stack(Stack *stack, FILE *f, bool player_stack);
 void save_game(const char *ext);
 
 /**
- * Data recovery from save file.
- */
-void save_charging_game();
-
-/**
  * Free allocated memory for SaveManager structure.
 */
 void save_free();

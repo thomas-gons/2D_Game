@@ -127,6 +127,7 @@ void menu_victory() {
     wclear(game.bar_win);
     wclear(game.dist_win);
     wclear(game.alert_win);
+    refresh();
     ncs_create_victory_window();
     // Set menu entries
     const uint8_t nb_entry = 2;
@@ -135,7 +136,7 @@ void menu_victory() {
     menu_create_entry_template(array_victory, nb_entry, true);
     int8_t select = menu_select_entry(array_victory, nb_entry, true);
     // Save the game before processing the selected entry form menu
-    save_game(DAT_EXT);
+    save_game(HIST_EXT);
     if (select == nb_entry - 1) {
         // Quit
         game.reload_game = false;
@@ -146,7 +147,6 @@ void menu_victory() {
 }
 
 void menu_defeat() {
-    // /!\ TODO /!\ : change defeat sfx
     system("aplay -q assets/sfx/youu.wav &");
     // Clear current render of the game
     wclear(game.main_win);
@@ -154,6 +154,7 @@ void menu_defeat() {
     wclear(game.bar_win);
     wclear(game.dist_win);
     wclear(game.alert_win);
+    refresh();
     ncs_create_defeat_window();
     // Set menu entries
     const uint8_t nb_entry = 3;
@@ -186,28 +187,43 @@ void menu_pause() {
     werase(game.alert_win);
     refresh();
     // Set menu entries
-    const uint8_t nb_entry = 4;
-    char *array_pause[] = { "Resume Game", "Help & Game Rules", "Save & Quit", "Quit" };
+    const uint8_t nb_entry = 3;
+    char *array_pause[] = { "Resume Game", "Save & Quit", "Quit" };
     // In-game Pause menu, select an entry
     menu_create_entry_template(array_pause, nb_entry, true);
     uint8_t select = menu_select_entry(array_pause, nb_entry, true);
     switch(select) {
-    case 1:     // Help & Game Rules
-        // /!\ TODO /!\ : render Help and Rules window
-        //                  game_help_rules();
-        break;
-    case 2:     // Save & Quit
+    case 1:     // Save & Quit
         // Get played time
         game.end = time(NULL);
         save.play_time = game.end - game.begin;
         save_game(SAVE_EXT);
         game.keep_playing = false;
         break;
-    case 3:     // Quit
+    case 2:     // Quit
         game.keep_playing = false;
         game.reload_game = false;
         break;
     default: break;
+    }
+    ncs_destroy_win(game.menu_win);
+}
+
+void menu_replay() {
+    // Clear current render of the game
+    wclear(game.main_win);
+    wclear(game.game_win);
+    wclear(game.bar_win);
+    wclear(game.dist_win);
+    wclear(game.alert_win);
+    // Set menu entries
+    const uint8_t nb_entry = 1;
+    char *array_replay[] = { "Quit" };
+    // Replay menu, select an entry
+    menu_create_entry_template(array_replay, nb_entry, true);
+    uint8_t select = menu_select_entry(array_replay, nb_entry, true);
+    if (select == 0) {
+        game.keep_playing = false;
     }
     ncs_destroy_win(game.menu_win);
 }
