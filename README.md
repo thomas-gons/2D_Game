@@ -20,7 +20,17 @@ Project in C using the ncurses library to make a top-down 2D game (OS Linux only
 
 ## GAME RULES
 
+The player 🎗 has to come back to his house ⚑. On his trip, he will have to pick up stamina bonuses ✦ in order to have enough stamina to reach his house.
 
+Avoig the obstacles X or you will suffer by losing your stamina.
+
+But an enemy ☠ is chasing the player, so you can destroy his house ⛫ to be safe.
+
+Move using  Z Q S D or the arrow keys.
+
+Press SPACE to use a bonus you have picked up.
+
+Press R to rewind your move.
 
 <br>
 
