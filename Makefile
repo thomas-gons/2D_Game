@@ -13,7 +13,7 @@ LD := g++
 LDFLAGS := -I$(DIR_INC)/
 
 # Compiler flags.
-CFLAGS := -pedantic -Wall -Wextra -Wno-type-limits -Wno-unused-result -fshort-enums $(LDFLAGS)
+CFLAGS := -Wall -Wextra -Wno-type-limits -fshort-enums -Wno-unused-result $(LDFLAGS)
 CXXFLAGS := $(CFLAGS) 
 
 # Library flags.

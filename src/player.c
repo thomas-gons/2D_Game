@@ -5,14 +5,16 @@ extern Game game;
 extern Map *map;
 extern Player *player;
 extern Enemy *enemy;
+extern Level level;
 extern int8_t moveset[MOVESET_LEN][2];
 
-unsigned frames = 0;
+uint8_t frames = 0;
 
-void player_init(Level level) {
-    player = calloc(1, sizeof *player);
+void player_init() {
+    player = calloc(1, sizeof (*player));
     if (!player) {
-        fprintf(stderr, "[ERROR] > calloc, in func player_init\n");
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m %s:%i: error: calloc failed\033[0m\n",
+            __FILE__, __func__, __FILE__, ((__LINE__) - 3));
         exit(2);
     }
     player->pos = (Position) {.l=0, .c=0};
@@ -50,7 +52,7 @@ void player_inputs() {
     halfdelay(7);
     switch (getch()) {
     case KEY_ESC:
-        game_pause_menu();
+        menu_pause();
         break;
     case KEY_RIGHT:
     case 'D':
@@ -79,7 +81,7 @@ void player_inputs() {
     case 'r':
         player_rewind();
         break;
-    // Secret key bindings in caps
+    // Secret key bindings, only in caps
     case 'P':
         player->anim_action = true;
         map_render_path(game.path_dist, FORMAT_COLOR_CYAN);
@@ -126,13 +128,16 @@ void player_update() {
         if (enemy[i].alive == false) {
             continue;
         }
+        // Check for player to destroy ennemy house
         if (player->pos.l == enemy[i].house.l && player->pos.c == enemy[i].house.c) {
+            system("aplay -q assets/sfx/caillou.wav &");
             player_alert_render("You have destroyed %s enemy's house ! You gained %d STM !",
                 (ENEMY_NB > 1) ? "an" : "the", (player->stamina + STAMINA_GAIN_ENM_DEFEAT > 100) ?
                     STAMINA_GAIN_ENM_DEFEAT - (player->stamina + STAMINA_GAIN_ENM_DEFEAT - 100) : STAMINA_GAIN_ENM_DEFEAT);
             player->stamina += STAMINA_GAIN_ENM_DEFEAT;
             enemy[i].alive = false;
         }
+        // Check for player to encounter an enemy
         if (enemy[i].current.l == player->pos.l && enemy[i].current.c == player->pos.c) {
             player_alert_render("%s enemy \u2620 killed you !", (ENEMY_NB > 1) ? "An" : "The");
             enemy[i].alive = false;
@@ -166,8 +171,8 @@ bool player_is_colliding(uint8_t line, uint8_t col) {
 }
 
 void player_obstacle_alert(uint8_t line, uint8_t col) {
-    // TODO: change sfx => Aie ouille
     system("aplay -q assets/sfx/caillou.wav &");
+    player_alert_render("You have hit an obstacle ! You lost %d STM !", STAMINA_COST_OBS);
     // Render the obstacle to be disctincted
     wattron(game.game_win, A_BOLD);
     wattron(game.game_win, COLOR_PAIR(FORMAT_COLOR_WHITE_BG_RED));
@@ -175,8 +180,6 @@ void player_obstacle_alert(uint8_t line, uint8_t col) {
     wattroff(game.game_win, COLOR_PAIR(FORMAT_COLOR_WHITE_BG_RED));
     wattron(game.game_win, A_BOLD);
     wrefresh(game.game_win);
-    
-    player_alert_render("You have hit an obstacle ! You lost %d STM !", STAMINA_COST_OBS);
 }
 
 void player_visited_cell_alert(uint8_t line, uint8_t col) {
@@ -216,30 +219,33 @@ void player_stack_bonus(uint8_t line, uint8_t col) {
         map->map_grid[line][col].cell_type = NO_BONUS;
         player->action = STACK_BONUS;
     } else {
+        // /!\ TODO /!\ : change sfx to match with bonus
         system("aplay -q assets/sfx/eat-apple.wav &");
-        player->stamina += STAMINA_GAIN;
         player_alert_render("You have used a bonus ! You gained %d STM !",
             (player->stamina > STAMINA_MAX) ? STAMINA_GAIN - (player->stamina - STAMINA_MAX) : STAMINA_GAIN);
+        player->stamina += STAMINA_GAIN;
         map->map_grid[line][col].cell_type = NO_BONUS;
         player->action = USE_BONUS;
     }
-
 }
 
 void player_use_bonus() {
     if (player->bonus_stack > BONUS_STACK_MIN && player->stamina < 100) {
+        // /!\ TODO /!\ : change sfx to match with bonus
         system("aplay -q assets/sfx/eat-apple.wav &");
-        player->stamina += STAMINA_GAIN;
         player_alert_render("You have used a bonus from your pocket ! You gained %d STM !",
-            (player->stamina > STAMINA_MAX) ? STAMINA_GAIN - (player->stamina - STAMINA_MAX) : STAMINA_GAIN);
+            (player->stamina + STAMINA_GAIN > STAMINA_MAX) ? STAMINA_GAIN - (player->stamina + STAMINA_GAIN - STAMINA_MAX) : STAMINA_GAIN);
+        player->stamina += STAMINA_GAIN;
         player->bonus_stack--;
         player->action = USE_STACKED_BONUS;
         if (player->stamina > STAMINA_MAX) {
             player->stamina = STAMINA_MAX;
         }
         stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
-    } else if (player->stamina >= 100) {
-        player_alert_render("You are full of energy ! ");
+    } else if (player->stamina >= 100 && player->bonus_stack != 0) {
+        player_alert_render("You are full of energy !");
+    } else {
+        player_alert_render("You don't have any bonus left in your pocket !");
     }
 }
 
@@ -296,8 +302,8 @@ void player_rewind() {
                 player->pos.c = tmp->next->pos.c;
                 break;
             case REWIND:
-                rwd = 1;
                 player_alert_render("You can't rewind a rewind !");
+                rwd = 1;
                 break;
             default: break;
             }
@@ -384,8 +390,14 @@ void player_free() {
 }
 
 void enemy_init() {
-    enemy = calloc(ENEMY_NB, sizeof(Enemy));
-    uint8_t l, c;
+    enemy = calloc(ENEMY_NB, sizeof (*enemy));
+    if (!enemy) {
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m %s:%i: error: calloc failed\033[0m\n",
+            __FILE__, __func__, __FILE__, ((__LINE__) - 3));
+        exit(2);
+    }
+    uint8_t l = 0;
+    uint8_t c = 0;
     // Place all enemies randomly on the map
     for (uint8_t i = 0; i < ENEMY_NB; i++) {
         do {
@@ -399,7 +411,8 @@ void enemy_init() {
 }
 
 void enemy_chase_player() {
-    if (!(frames % ENEMY_SPEED)) {
+    frames %= ENEMY_SPEED;
+    if (!frames) {
         enemy_render();
         return;
     }
