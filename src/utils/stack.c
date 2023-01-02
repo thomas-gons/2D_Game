@@ -105,3 +105,13 @@ uint16_t stack_len(Stack *stack) {
     }
     return length;
 }
+
+Stack *stack_change_order(Stack *stack, Stack *new_stack) {
+    SNode *tmp = stack->head;
+    while (tmp != NULL){
+        stack_push(new_stack, tmp->pos, tmp->action);
+        tmp = tmp->next;
+    }
+    stack_free(stack);
+    return new_stack;
+}

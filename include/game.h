@@ -4,6 +4,7 @@
 
 #include "common.h"
 #include "structs.h"
+#include "save.h"
 #include "menus.h"
 #include "map.h"
 #include "player.h"

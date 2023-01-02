@@ -136,6 +136,14 @@ bool stack_is_empty(Stack *stack);
 uint16_t stack_len(Stack *stack);
 
 /**
+ * Change the order of the queue
+ * \param stack stack in the wrong way 
+ * \param new_stack stack in the right way
+ * \return stack in the other order 
+ */
+Stack *stack_change_order(Stack *stack, Stack *new_stack);
+
+/**
  * Initialize a pqueue.
  * \returns a valid pqueue on success, NULL on error
 */

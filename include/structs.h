@@ -113,4 +113,16 @@ typedef struct Enemy {
 } Enemy;
 
 
+/************************* SAVES *************************/
+
+/**
+ * Save structure
+ */
+typedef struct SaveManager {
+    time_t playing_time;
+    char *date_time;
+    char *file_name;
+} SaveManager;
+
+
 #endif

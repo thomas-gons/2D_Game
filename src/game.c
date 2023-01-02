@@ -2,6 +2,7 @@
 
 
 extern Game game;
+extern SaveManager save;
 extern Map *map;
 extern Player *player;
 extern Enemy *enemy;
@@ -158,6 +159,8 @@ void ncs_quit() {
 }
 
 void run_game() {
+    time_t begin;
+    time_t end;
     game_init();
     // Start menu entries that handle going back to previous menu
     int8_t select = 0;
@@ -167,13 +170,17 @@ void run_game() {
     // Process selected menu entry
     switch (select) {
     case 0:     // New Game
+        begin = time(NULL);
         game_init_new_game(difficulty);
         game.keep_playing = true;
         while (game.keep_playing == true) {
             // Main game loop
             game.victory = false;
             game.gameover = false;
-            game_loop(); 
+            game_loop();
+            // Get played time
+            end = time(NULL);
+            save.playing_time = end - begin; 
         }
         game_free();
         break;
@@ -335,9 +342,8 @@ void game_victory_menu() {
     char *victory_list[] = { "Return to Title Menu", "Quit" };
     menu_create_entry_template(victory_list, nb_entry);
     uint8_t select = menu_select_entry(victory_list, nb_entry);
-
-    // TODO: save the game before processing the selected entry form menu
-    
+    // Save the game before processing the selected entry form menu
+    save_game(".dat");
     switch(select) {
     case 1:     // Quit
         game.reload_game = false;
@@ -395,7 +401,7 @@ void game_pause_menu() {
         // game_help_rules();
         break;
     case 2:     // Save & Quit
-        // TODO: call save function
+        save_game(".save");
         game.keep_playing = false;
         break;
     case 3:     // Quit
@@ -418,9 +424,9 @@ void game_restart() {
 }
 
 void game_free() {
-    map_free();
     stack_free(game.path_stm);
     stack_free(game.path_dist);
+    map_free();
     player_free();
     free(enemy);
 }
