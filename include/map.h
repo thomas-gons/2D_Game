@@ -77,6 +77,11 @@
 void map_init();
 
 /**
+ * Initialize a map based on backup.
+*/
+void map_save_init();
+
+/**
  * Render map in terminal with ncurses.
 */
 void map_render();

@@ -2,6 +2,7 @@
 
 
 Game game = {0};
+SaveManager save = {0};
 Map *map = NULL;
 Player *player = NULL;
 Enemy *enemy = NULL;

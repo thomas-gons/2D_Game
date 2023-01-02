@@ -124,27 +124,27 @@ void player_update() {
     player->pos.c += move[1];
     player_visited_cell_alert(player->pos.l, player->pos.c);
     map->map_grid[player->pos.l][player->pos.c].visited = true;
-    for (uint8_t i = 0; i < ENEMY_NB; i++) {
-        if (enemy[i].alive == false) {
-            continue;
-        }
-        // Check for player to destroy ennemy house
-        if (player->pos.l == enemy[i].house.l && player->pos.c == enemy[i].house.c) {
-            // /!\ TODO /!\ : add destroy house sfx 
-            player_alert_render("You have destroyed %s enemy's house ! You gained %d STM !",
-                (ENEMY_NB > 1) ? "an" : "the", (player->stamina + STAMINA_GAIN_ENM_DEFEAT > 100) ?
-                    STAMINA_GAIN_ENM_DEFEAT - (player->stamina + STAMINA_GAIN_ENM_DEFEAT - 100) : STAMINA_GAIN_ENM_DEFEAT);
-            player->stamina += STAMINA_GAIN_ENM_DEFEAT;
-            enemy[i].alive = false;
-        }
-        // Check for player to encounter an enemy
-        if (enemy[i].current.l == player->pos.l && enemy[i].current.c == player->pos.c) {
-            player_alert_render("%s enemy \u2620 killed you !", (ENEMY_NB > 1) ? "An" : "The");
-            enemy[i].alive = false;
-            game.gameover = true;
-            return;
-        }
-    }
+    // for (uint8_t i = 0; i < ENEMY_NB; i++) {
+    //     if (enemy[i].alive == false) {
+    //         continue;
+    //     }
+    //     // Check for player to destroy ennemy house
+    //     if (player->pos.l == enemy[i].house.l && player->pos.c == enemy[i].house.c) {
+    //         // /!\ TODO /!\ : add destroy house sfx 
+    //         player_alert_render("You have destroyed %s enemy's house ! You gained %d STM !",
+    //             (ENEMY_NB > 1) ? "an" : "the", (player->stamina + STAMINA_GAIN_ENM_DEFEAT > 100) ?
+    //                 STAMINA_GAIN_ENM_DEFEAT - (player->stamina + STAMINA_GAIN_ENM_DEFEAT - 100) : STAMINA_GAIN_ENM_DEFEAT);
+    //         player->stamina += STAMINA_GAIN_ENM_DEFEAT;
+    //         enemy[i].alive = false;
+    //     }
+    //     // Check for player to encounter an enemy
+    //     if (enemy[i].current.l == player->pos.l && enemy[i].current.c == player->pos.c) {
+    //         player_alert_render("%s enemy \u2620 killed you !", (ENEMY_NB > 1) ? "An" : "The");
+    //         enemy[i].alive = false;
+    //         game.gameover = true;
+    //         return;
+    //     }
+    // }
     stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
 }
 
@@ -382,7 +382,7 @@ void player_render() {
     wattroff(game.game_win, COLOR_PAIR(FORMAT_COLOR_CYAN));
     wattroff(game.stats_win, A_BOLD);
     player_stats_render();
-    enemy_chase_player();
+    // enemy_chase_player();
 }
 
 void player_free() {

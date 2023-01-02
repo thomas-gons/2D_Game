@@ -5,6 +5,7 @@
 #include "common.h"
 #include "structs.h"
 #include "game.h"
+#include "save.h"
 #include "map.h"
 
 

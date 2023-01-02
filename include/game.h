@@ -4,11 +4,11 @@
 
 #include "common.h"
 #include "structs.h"
+#include "save.h"
 #include "menus.h"
 #include "map.h"
 #include "player.h"
 #include "stamina.h"
-#include "save.h"
 
 
 /************************* DEFINES *************************/
@@ -146,6 +146,16 @@ void game_check_win();
  * Restart game to original state, keep same same, reset player and enemies.
 */
 void game_restart();
+
+/**
+ * Load data from save file and start the game where it was left.
+*/
+void game_load_save();
+
+/**
+ * Replay a game from the history.
+*/
+void game_replay_history();
 
 /**
  * Display help and game rules. 

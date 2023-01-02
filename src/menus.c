@@ -2,6 +2,7 @@
 
 
 extern Game game;
+extern SaveManager save;
 extern Map *map;
 extern Player *player;
 extern Level level;
@@ -15,7 +16,8 @@ void menu_create_entry_template(char **entry_list, int nb_entry, bool centered) 
                             game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 25
     );
     // Render menu entries
-    for(uint8_t i = 0; i < nb_entry; i++ ) {
+    box(game.menu_win, ACS_VLINE, ACS_HLINE);
+    for (uint8_t i = 0; i < nb_entry; i++ ) {
         // Highlight the current menu entry
         if (i == 0) {
             wattron(game.menu_win, A_STANDOUT); 
@@ -30,7 +32,6 @@ void menu_create_entry_template(char **entry_list, int nb_entry, bool centered) 
             mvwprintw(game.menu_win, i + 2, 2, entry_list[i]);
         }
     }
-    box(game.menu_win, ACS_VLINE, ACS_HLINE);
     wrefresh(game.menu_win);
 }
 
@@ -102,8 +103,14 @@ int8_t menu_select_file(char **arr_files, uint8_t arr_len) {
     // Clear current render of menus
     ncs_destroy_win(game.menu_win);
     // Save file menu, select a save file
-    menu_create_entry_template(arr_files, arr_len, false);
-    int8_t select = menu_select_entry(arr_files, arr_len, false);
+    int8_t select;
+    if (arr_len == 1) {
+        menu_create_entry_template(arr_files, arr_len, true);
+        select = menu_select_entry(arr_files, arr_len, true);
+    } else {
+        menu_create_entry_template(arr_files, arr_len, false);
+        select = menu_select_entry(arr_files, arr_len, false);
+    }
     if (select == arr_len - 1) {
         // Return to Title Menu
         select = -1;
@@ -115,11 +122,11 @@ int8_t menu_select_file(char **arr_files, uint8_t arr_len) {
 void menu_victory() {
     system("aplay -q assets/sfx/victory.wav &");
     // Clear current render of the game
-    ncs_destroy_win(game.main_win);
-    ncs_destroy_win(game.game_win);
-    ncs_destroy_win(game.bar_win);
-    ncs_destroy_win(game.dist_win);
-    ncs_destroy_win(game.alert_win);
+    wclear(game.main_win);
+    wclear(game.game_win);
+    wclear(game.bar_win);
+    wclear(game.dist_win);
+    wclear(game.alert_win);
     ncs_create_victory_window();
     // Set menu entries
     const uint8_t nb_entry = 2;
@@ -127,9 +134,8 @@ void menu_victory() {
     // Victory title and menu, select an entry
     menu_create_entry_template(array_victory, nb_entry, true);
     int8_t select = menu_select_entry(array_victory, nb_entry, true);
-
-    // /!\ TODO /!\ : save the game before processing the selected entry from menu
-    
+    // Save the game before processing the selected entry form menu
+    save_game(DAT_EXT);
     if (select == nb_entry - 1) {
         // Quit
         game.reload_game = false;
@@ -191,7 +197,10 @@ void menu_pause() {
         //                  game_help_rules();
         break;
     case 2:     // Save & Quit
-        // TODO: call save function
+        // Get played time
+        game.end = time(NULL);
+        save.play_time = game.end - game.begin;
+        save_game(SAVE_EXT);
         game.keep_playing = false;
         break;
     case 3:     // Quit

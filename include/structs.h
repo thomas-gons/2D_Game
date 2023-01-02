@@ -30,7 +30,9 @@ typedef struct Game {
     Stack *path_dist;
     uint16_t path_dist_len;
     Stack *path_stm;
-    uint16_t path_stm_len; 
+    uint16_t path_stm_len;
+    time_t begin;
+    time_t end;
 } Game;
 
 
@@ -121,6 +123,10 @@ typedef struct Enemy {
 typedef struct SaveManager {
     time_t play_time;
     char *date_time;
+    char *file_name;
+    char *curr_load_file;
+    char *curr_history_file;
+    char **load_files;
     char **history_files;
 } SaveManager;
 

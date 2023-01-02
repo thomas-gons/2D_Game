@@ -2,6 +2,7 @@
 
 
 extern Game game;
+extern SaveManager save;
 extern Map *map;
 extern Player *player;
 extern Enemy *enemy;
@@ -65,7 +66,7 @@ void ncs_create_title_window() {
 void ncs_create_victory_window() {
     game.title_win = subwin(stdscr,
                             6,
-                            60,
+                            55,
                             game.win_h/2 - (MAP_LINES + 2)/2 + 6,
                             game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 22
     );
@@ -188,17 +189,21 @@ void run_game() {
             // Main game loop
             game.victory = false;
             game.gameover = false;
-            game_loop(); 
+            game_loop();
         }
         game_free();
         break;
     case 1:     // Load Saved Game
         // /!\ TODO /!\ : load game resources from a save file (.save)
-        //                  game_load_saved_game();
+        ncs_print_centered(stdscr, MAP_LINES / 2, "Loading save file...");
+        refresh();
+        game_load_save();
 
         break;
     case 2:     // History
         // /!\ TODO /!\ : replay selected save file
+        
+        game_replay_history();
 
         break;
     case 3:     // Quit
@@ -234,38 +239,36 @@ int8_t game_start_menu() {
     case 1:     // Load Saved Game
         // Init array of file names that match '.save' extension
         uint8_t array_len1 = 1 + get_nb_files(SAVES_DIR_PATH, SAVE_EXT);
-        char **array_load = (char **) calloc(array_len1, sizeof (char *));
-        get_files(SAVES_DIR_PATH, SAVE_EXT, array_load);
+        save.load_files = (char **) calloc(array_len1, sizeof (char *));
+        get_files(SAVES_DIR_PATH, SAVE_EXT, save.load_files);
         // Get index of save file from array of file names
-        select = menu_select_file(array_load, array_len1);
-
-        // /!\ TODO /!\ : set string here for field of SaveManager (to create) : curr_load_file
-        //              => allow to read the file in run_game as this function will return 2 (case 2 of run_game for history)
-        //                 after setting the file name to SaveManager
-
-        // Free dynamic array
-        str_2d_array_free(array_load, array_len1);
-
-        // Return 1 to enter the right case in run_game
-        select = 1;
+        select = menu_select_file(save.load_files, array_len1);
+        if (select != -1) {
+            // Set current load file name to be used in run_game function
+            uint8_t fname_len1 = 1 + strlen(save.load_files[select]);
+            save.curr_load_file = (char *) calloc(12 + fname_len1, sizeof (char));
+            strncat(save.curr_load_file, "data/saves/", 12);
+            strncat(save.curr_load_file, save.load_files[select], fname_len1);
+            // Return 1 to enter the right case in run_game
+            select = 1;
+        }
         break;
     case 2:     // History
         // Init array of file names that match '.dat' extension
         uint8_t array_len2 = 1 + get_nb_files(SAVES_DIR_PATH, DAT_EXT);
-        char **array_history = (char **) calloc(array_len2, sizeof (char *));
-        get_files(SAVES_DIR_PATH, DAT_EXT, array_history);
+        save.history_files = (char **) calloc(array_len2, sizeof (char *));
+        get_files(SAVES_DIR_PATH, DAT_EXT, save.history_files);
         // Get index of save file from array of file names
-        select = menu_select_file(array_history, array_len2);
-
-        // /!\ TODO /!\ : set string here for field of SaveManager (to create) : curr_history_file , curr_load_file
-        //              => allow to read the file in run_game as this function will return 2 (case 2 of run_game for history)
-        //                 after setting the file name to SaveManager
-
-        // Free dynamic array
-        str_2d_array_free(array_history, array_len2);
-
-        // Return 2 to enter the right case in run_game
-        select = 2;
+        select = menu_select_file(save.history_files, array_len2);
+        if (select != -1) {
+            // Set current history file name to be used in run_game function
+            uint8_t fname_len2 = 1 + strlen(save.history_files[select]);
+            save.curr_history_file = (char *) calloc(12 + fname_len2, sizeof (char));
+            strncat(save.curr_history_file, "data/saves/", 12);
+            strncat(save.curr_history_file, save.history_files[select], fname_len2);
+            // Return 2 to enter the right case in run_game
+            select = 2;
+        }
         break;
     case 3:     // Quit sfx
         system("aplay -q assets/sfx/fart.wav &");
@@ -287,12 +290,15 @@ void game_init_new_game() {
     game.path_stm = map_generate();
     game.path_dist = a_star(START, GOAL, false);
     // Initialize enemies entities
-    enemy_init();
+
+    // enemy_init();
+
     // First render of game
     game_render();
 }
 
 void game_loop() {
+    game.begin = time(NULL);
     system("aplay -q assets/sfx/among-us.wav &");
     // Main loop that handle game logic
     while (!game.victory && !game.gameover) {
@@ -307,6 +313,9 @@ void game_loop() {
         // Limit framerate to 16ms per frame ~ 60fps
         usleep(16000);
     }
+    // Get played time
+    game.end = time(NULL);
+    save.play_time = game.end - game.begin;
     // Render end game title and menu, victory or defeat
     if (game.victory == true) {
         menu_victory();
@@ -353,15 +362,57 @@ void game_restart() {
     map_visual_reset();
     player_free();
     player_init(map->level);
+
     // Reset enemies position
-    for (uint8_t i = 0; i < ENEMY_NB; i++) {
-        enemy[i].current.l = enemy[i].house.l;
-        enemy[i].current.c = enemy[i].house.c;
+    // for (uint8_t i = 0; i < ENEMY_NB; i++) {
+    //     enemy[i].current.l = enemy[i].house.l;
+    //     enemy[i].current.c = enemy[i].house.c;
+    // }
+}
+
+void game_load_save() {
+    ncs_print_centered(stdscr, MAP_LINES / 2, "Loading save file.1.");
+    refresh();
+    // Init game resources
+    ncs_create_game_windows();
+    game.path_stm = stack_init();
+    game.path_dist = stack_init();
+    map_save_init();
+    player_init();
+    // enemy_init();
+    // Load data from save file
+    ncs_print_centered(stdscr, MAP_LINES / 2, "Loading save file.2.");
+    refresh();
+
+    save_read_file(save.curr_load_file);
+
+    ncs_print_centered(stdscr, MAP_LINES / 2, "Loading save file.3.");
+    refresh();
+
+    game_render();
+
+    ncs_print_centered(stdscr, MAP_LINES / 2, "Loading save file.4.");
+    refresh();
+
+    // Game loop
+    game.keep_playing = true;
+    while (game.keep_playing == true) {
+        // Main game loop
+        game.victory = false;
+        game.gameover = false;
+        game_loop();
     }
+    game_free();
+    save_free();
+}
+
+void game_replay_history() {
+
+    save_free();
 }
 
 void game_help_rules() {
-    
+
 }
 
 void game_free() {
@@ -369,7 +420,8 @@ void game_free() {
     stack_free(game.path_dist);
     map_free();
     player_free();
-    free(enemy);
+    
+    // free(enemy);
 }
 
 void game_quit() {
