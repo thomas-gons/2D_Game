@@ -6,6 +6,7 @@
 #include "structs.h"
 #include "util.h"
 #include "game.h"
+#include "menu.h"
 #include "map.h"
 
 
@@ -15,8 +16,8 @@
  * Stamina settings.
 */
 #define STAMINA_EASY    100
-#define STAMINA_MEDIUM  70
-#define STAMINA_HARD    50
+#define STAMINA_MEDIUM  80
+#define STAMINA_HARD    60
 
 #define STAMINA_COST            1
 #define STAMINA_COST_OBS        10
@@ -42,9 +43,8 @@
 
 /**
  * Initialize the player.
- * \param level difficulty of game
 */
-void player_init(Level level);
+void player_init();
 
 /**
  * Handle inputs using ncurses library.
@@ -109,12 +109,13 @@ void player_stats_render();
  * Render an alert message.
  * \param alert_msg alert message to be rendered
 */
-void player_alert_render(const char *__restrict__fmt, ...);
+void player_alert_render(const char *__restrict __fmt, ...);
 
 /**
  * Render player in terminal with ncurses.
 */
 void player_render();
+
 /**
  * Free allocated memory for player.
 */

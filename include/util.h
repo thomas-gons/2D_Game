@@ -28,7 +28,7 @@ typedef enum Action {
 } Action;
 
 /**
- * SNode of stack.
+ * Node of stack.
 */
 typedef struct SNode {
     Position pos;
@@ -55,7 +55,7 @@ typedef struct Point {
 } Point;
 
 /**
- * Node of pqueue.
+ * Node of Priority Queue.
 */
 typedef struct PQNode {
     Point p;
@@ -63,11 +63,11 @@ typedef struct PQNode {
 } PQNode;
 
 /**
- * Priority Queue strcuture.
+ * Priority Queue structure.
 */
 typedef struct PQueue {
     PQNode *head;
-    unsigned nb_points;
+    uint16_t nb_points;
 } PQueue;
 
 
@@ -134,6 +134,14 @@ bool stack_is_empty(Stack *stack);
  * \returns number of nodes in stack
 */
 uint16_t stack_len(Stack *stack);
+
+/**
+ * Change the order of the queue
+ * \param stack stack in the wrong order 
+ * \param new_stack stack in the right order
+ * \return stack in the other order 
+ */
+Stack *stack_change_order(Stack *stack, Stack *new_stack);
 
 /**
  * Initialize a pqueue.

@@ -1,20 +1,23 @@
 #include "map.h"
 
-extern Player *player;
+
 extern Game game;
 extern Map *map;
+extern Player *player;
+extern Level level;
 
-void map_init(Level level) {
-    map = calloc(1, sizeof *map);
+void map_init() {
+    map = calloc(1, sizeof (*map));
     if (!map) {
-        fprintf(stderr, "[ERROR] > calloc, in func map_init\n");
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m %s:%i: error: calloc failed\033[0m\n",
+            __FILE__, __func__, __FILE__, ((__LINE__) - 3));
         exit(2);
     }
     *map = (Map) {.level=level, .map_grid=NULL};
-    map->map_grid = calloc(MAP_LINES, sizeof *map->map_grid);
+    map->map_grid = calloc(MAP_LINES, sizeof (*map->map_grid));
     // Fill the map with empty and unvisited cells
     for (uint8_t i = 0, j; i < MAP_LINES; i++) {
-        map->map_grid[i] = calloc(MAP_COLS, sizeof *map->map_grid[i]);
+        map->map_grid[i] = calloc(MAP_COLS, sizeof (*map->map_grid[i]));
         for (j = 0; j < MAP_COLS; j++) {
             if (j != MAP_COLS - 1) {
                 // Right direction
@@ -25,6 +28,21 @@ void map_init(Level level) {
                 map->map_grid[i][j].distance[1] = (rand() % (MAX_DISTANCE - MIN_DISTANCE - 1)) + MIN_DISTANCE;
             }
         }
+    }
+}
+
+void map_save_init() {
+    map = calloc(1, sizeof *map);
+    if (!map) {
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m %s:%i: error: calloc failed\033[0m\n",
+            __FILE__, __func__, __FILE__, ((__LINE__) - 3));
+        exit(2);
+    }
+    *map = (Map) {.level=EASY, .map_grid=NULL};
+    map->map_grid = calloc(MAP_LINES, sizeof *map->map_grid);
+    // Fill the map with empty and unvisited cells
+    for (uint8_t i = 0; i < MAP_LINES; i++) {
+        map->map_grid[i] = calloc(MAP_COLS, sizeof *map->map_grid[i]);
     }
 }
 

@@ -2,9 +2,9 @@
 
 
 Stack *stack_init() {
-    Stack *stack = calloc(1, sizeof *stack);
+    Stack *stack = calloc(1, sizeof (*stack));
     if (!stack) {
-        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m%s:%i: error: calloc failed\033[0m\n",
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m %s:%i: error: calloc failed\033[0m\n",
             __FILE__, __func__, __FILE__, ((__LINE__) - 3));
         exit(2);
     }
@@ -16,9 +16,9 @@ Stack *stack_init() {
 
 void stack_push(Stack *stack, Position pos, Action act) {
     // Create a new node to push
-    SNode *new = calloc(1, sizeof *new);
+    SNode *new = calloc(1, sizeof (*new));
     if (!new) {
-        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m%s:%i: error: calloc failed\033[0m\n",
+        fprintf(stderr, "\x1b[1m%s:\x1b[0m In function '%s':\033[31m %s:%i: error: calloc failed\033[0m\n",
             __FILE__, __func__, __FILE__, ((__LINE__) - 3));
         exit(2);
     }
@@ -104,4 +104,14 @@ uint16_t stack_len(Stack *stack) {
         length++;
     }
     return length;
+}
+
+Stack *stack_change_order(Stack *stack, Stack *new_stack) {
+    SNode *tmp = stack->head;
+    while (tmp != NULL){
+        stack_push(new_stack, tmp->pos, tmp->action);
+        tmp = tmp->next;
+    }
+    stack_free(stack);
+    return new_stack;
 }

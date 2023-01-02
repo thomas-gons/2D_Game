@@ -30,14 +30,16 @@ typedef struct Game {
     Stack *path_dist;
     uint16_t path_dist_len;
     Stack *path_stm;
-    uint16_t path_stm_len; 
+    uint16_t path_stm_len;
+    time_t begin;
+    time_t end;
 } Game;
 
 
 /************************* MAP *************************/
 
 /**
- * Game difficulty.
+ * Game level.
 */
 typedef enum Level {
     EASY = 1,
@@ -111,6 +113,22 @@ typedef struct Enemy {
     Position house;
     bool alive;
 } Enemy;
+
+
+/************************* SAVES *************************/
+
+/**
+ * Save structure, handle save system.
+ */
+typedef struct SaveManager {
+    time_t play_time;
+    char *date_time;
+    char *file_name;
+    char *curr_load_file;
+    char *curr_history_file;
+    char **load_files;
+    char **history_files;
+} SaveManager;
 
 
 #endif

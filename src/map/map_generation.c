@@ -7,7 +7,7 @@ extern Map *map;
 void map_random_fill() {
     float distance, dn;
     float prob;
-    // Tiles' probability distribution according to the difficulty
+    // Tiles' probability distribution according to game level
     float prob_bonus, prob_obs;
     for (uint8_t l = 0, c; l < MAP_LINES; l++) {
         for (c = 0; c < MAP_COLS; c++) {

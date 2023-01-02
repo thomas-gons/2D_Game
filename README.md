@@ -29,20 +29,20 @@ Project in C using the ncurses library to make a top-down 2D game (OS Linux only
 Make sure you **have installed** `gcc` and `make` on Linux:
 * For Ubuntu Linux:
 ```
-sudo apt install build-essential
+    sudo apt install build-essential
 ```
 * For Manjaro Linux:
 ```
-sudo pacman -S base-devel
+    sudo pacman -S base-devel
 ```
 **Install** the ncurses library:
 * For Ubuntu Linux: 
 ```sh
-sudo apt install libncurses6 libncursesw6
+    sudo apt install libncurses6 libncursesw6
 ```
 * For Manjaro Linux:
 ```sh
-sudo pacman -S ncurses
+    sudo pacman -S ncurses
 ```
 <br>
 
@@ -50,11 +50,11 @@ sudo pacman -S ncurses
 
 **Clone** this repository:
 ```sh
-git clone https://github.com/ThomasGons/2D_Game.git
+    git clone https://github.com/ThomasGons/2D_Game.git
 ```
 **Move** to the cloned directory :
 ```sh
-cd 2D_Game
+    cd 2D_Game
 ```
 <br>
 
@@ -62,7 +62,7 @@ cd 2D_Game
 
 In the cloned directory, **run**:
 ```sh
-make
+    make
 ```
 <br>
 
@@ -70,7 +70,7 @@ make
 
 In the cloned directory, **run**:
 ```sh
-make run
+    make run
 ```
 <br>
 
@@ -78,15 +78,15 @@ make run
 
 **Clean** the project directory :
 ```sh
-make clean
+    make clean
 ```
 **Display** info about files in project directory:
 ```sh
-make info
+    make info
 ```
 **Display** help message:
 ```sh
-make help
+    make help
 ```
 <br>
 
