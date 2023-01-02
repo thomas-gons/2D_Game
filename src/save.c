@@ -34,12 +34,15 @@ void save_write_file(){
         save_write_map(f);
         // Writing the player struture
         save_write_player(f);
+        // Writing the player struture
+        //save_write_enemy(f);
     }
     fclose(f);
 }
 
 void save_write_game(FILE *f){
     save_write_stack(game.path, f);
+    //ecrire les autres stacks de game
 }
 
 void save_write_map(FILE *f) {
@@ -65,6 +68,19 @@ void save_write_player(FILE *f) {
     fwrite(&player->distance, sizeof(uint16_t), 1, f);
     fwrite(";", sizeof(char), 1, f);
     save_write_stack(player->history, f);
+}
+
+void save_write_enemy(FILE *f) { // a modifier
+    fwrite(&enemy->current.c, sizeof(uint8_t), 1, f);
+    fwrite(",", sizeof(char), 1, f);
+    fwrite(&enemy->current.l, sizeof(uint8_t), 1, f);
+    fwrite(";", sizeof(char), 1, f);
+    fwrite(&enemy->house.c, sizeof(uint8_t), 1, f);
+    fwrite(",", sizeof(char), 1, f);
+    fwrite(&enemy->house.l, sizeof(uint8_t), 1, f);
+    fwrite(";", sizeof(char), 1, f);
+    fwrite(&enemy->alive, sizeof(bool), 1, f);
+    fwrite(";", sizeof(char), 1, f);
 }
 
 void save_write_stack(Stack *stack, FILE *f){
