@@ -4,29 +4,14 @@
 
 #include "common.h"
 #include "structs.h"
+#include "game.h"
 #include "map.h"
-
-
-/************************* DEFINES *************************/
-
-/**
- * Render whether the distance or the obstacle.
-*/
-#define RENDER_DIST_OBSTACLE(line, col, value, horz) {                                                   \
-    if ((value) == 'X') {                                                                                \
-        wattron(game.dist_win, A_BOLD);                                                                  \
-        mvwaddch(game.dist_win, (line), (col) + (horz), (char)(value) | COLOR_PAIR(FORMAT_COLOR_RED));   \
-        wattroff(game.dist_win, A_BOLD);                                                                 \
-    } else {                                                                                             \
-        mvwprintw(game.dist_win, (line), (col), "%hhd", (value));                                        \
-    }                                                                                                    \
-}
 
 
 /************************* FUNCTIONS *************************/
 
 /**
- * Create template for menu with a list of entry.
+ * Create and render a menu template with a list of entry.
  * \param entry_list list of string that represents menu entries
  * \param nb_entry number of menu entries
 */
@@ -44,6 +29,14 @@ int8_t menu_select_entry(char **entry_list, int nb_entry);
  * Render distances for all four directions around player current position.
 */
 void distances_render();
+
+/**
+ * Render whether the distance or the obstacle character.
+ * \param line line of cell
+ * \param col column of cell
+ * \param render_dist distance value to render, or -1 to render the obstacle character
+*/
+void render_dist_obstacle(uint8_t line, uint8_t col, int8_t render_dist);
 
 
 #endif
