@@ -177,7 +177,7 @@ void save_read_game(FILE *f) {
     save_read_stack(game.path_dist, f);
     fread(&game.path_dist_len, sizeof (uint16_t), 1, f);
     save_read_stack(game.path_stm, f);
-    fread(&game.path_dist_len, sizeof (uint16_t), 1, f);
+    fread(&game.path_stm_len, sizeof (uint16_t), 1, f);
 }
 
 void save_read_map(FILE *f) {

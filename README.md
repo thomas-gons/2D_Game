@@ -36,7 +36,7 @@ Press R to rewind your move.
 
 ## REQUIREMENTS
 
-Make sure you **have installed** `gcc` and `make` on Linux:
+Make sure you **have installed** `gcc`(12.2.0) and `make` on Linux:
 * For Ubuntu Linux:
 ```
     sudo apt install build-essential

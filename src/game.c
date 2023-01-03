@@ -425,6 +425,7 @@ Stack *game_replay_history_init() {
     // Load data from save file
     save_read_file(save.curr_history_file);
     map_clean();
+    player->distance = 0;
     player->stamina = (map->level == EASY) ?    STAMINA_EASY:  
                       (map->level == MEDIUM) ?  STAMINA_MEDIUM:
                                                 STAMINA_HIGH;
@@ -442,6 +443,7 @@ void game_replay_history() {
     Stack *tmp = game_replay_history_init();
     pthread_t th;
     unsigned sec_usleep = 30000;
+    Position prev = {0};
     pthread_create(&th, NULL, game_change_replay_speed, (void*)&sec_usleep);
     while (tmp->head != NULL) {
         player->pos = tmp->head->pos;
@@ -469,10 +471,15 @@ void game_replay_history() {
             default:
                 break;
         }
+        player->distance += (player->pos.l + 1 == prev.l) ? map->map_grid[prev.l - 1][prev.c].distance[1]:
+                            (player->pos.l - 1 == prev.l) ? map->map_grid[prev.l][prev.c].distance[1]:
+                            (player->pos.c + 1 == prev.c) ? map->map_grid[prev.l][prev.c - 1].distance[0]:
+                            (player->pos.c - 1 == prev.c) ? map->map_grid[prev.l][prev.c].distance[0]: 0;
+        prev = player->pos;
         player_is_colliding_enemy();
         frames++;
         game_render();
-        usleep((replay_speed * 2 + 1) * 2500);
+        usleep((replay_speed * 2 + 1) * 125000);
         tmp->head = tmp->head->next;
     }
     stack_free(tmp);
