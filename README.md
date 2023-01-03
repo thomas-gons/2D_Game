@@ -2,7 +2,7 @@
 
 # 2D_Game
 
-Project in C using the ncurses library to make a top-down 2D game (OS Linux only).
+Project in C using the Ncurses library to make a top-down 2D game (OS Linux only).
 
 <br>
 
@@ -22,11 +22,11 @@ Project in C using the ncurses library to make a top-down 2D game (OS Linux only
 
 The player 🎗 has to come back to his house ⚑. On his trip, he will have to pick up stamina bonuses ✦ in order to have enough stamina to reach his house.
 
-Avoig the obstacles X or you will suffer by losing your stamina.
+Avoid the obstacles X or you will suffer by losing your stamina.
 
-But an enemy ☠ is chasing the player, so you can destroy his house ⛫ to be safe.
+Also an enemy ☠ is chasing the player. Destroy his house ⛫ to be safe.
 
-Move using  Z Q S D or the arrow keys.
+Move using  Z Q S D or the 4 Arrow keys.
 
 Press SPACE to use a bonus you have picked up.
 
@@ -36,7 +36,7 @@ Press R to rewind your move.
 
 ## REQUIREMENTS
 
-Make sure you **have installed** `gcc`(12.2.0) and `make` on Linux:
+Make sure you **have installed** `gcc`(>= 12.2.0) and `make` on Linux:
 * For Ubuntu Linux:
 ```
     sudo apt install build-essential
