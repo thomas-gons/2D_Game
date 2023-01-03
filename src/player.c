@@ -130,6 +130,8 @@ void player_update() {
     map->map_grid[player->pos.l][player->pos.c].visited = true;
     if (no_history == false)
         stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
+    
+    player_is_colliding_enemy();
 }
 
 

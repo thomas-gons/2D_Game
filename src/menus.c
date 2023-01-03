@@ -7,13 +7,15 @@ extern Map *map;
 extern Player *player;
 extern Level level;
 
-void menu_create_entry_template(char **entry_list, int nb_entry, bool centered) {
+void menu_create_entry_template(char **entry_list, int nb_entry, bool centered, bool ingame) {
     // Create the menu window
+    uint8_t pad_l = (ingame == true) ? 3: 0;
+    uint8_t pad_c = (ingame == true) ? 9: 0;
     game.menu_win = subwin( stdscr,
                             nb_entry + 4,
                             (uint8_t) (MAP_COLS + BAR_SIZE + 2)/2,
-                            game.win_h/2 - (MAP_LINES + 2)/2 + 15,
-                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 25
+                            game.win_h/2 - (MAP_LINES + 2)/2 + 15 - pad_l,
+                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 25 - pad_c
     );
     // Render menu entries
     box(game.menu_win, ACS_VLINE, ACS_HLINE);
@@ -86,7 +88,7 @@ int8_t menu_level() {
     const uint8_t nb_entry = 4;
     char *level_list[] = { "Easy", "Medium", "Hard", "Return to Title Menu" };
     // level menu, select a level
-    menu_create_entry_template(level_list, nb_entry, true);
+    menu_create_entry_template(level_list, nb_entry, true, false);
     int8_t select = menu_select_entry(level_list, nb_entry, true);
     if (select == nb_entry - 1) {
         // Return to Title Menu
@@ -105,10 +107,10 @@ int8_t menu_select_file(char **arr_files, uint8_t arr_len) {
     // Save file menu, select a save file
     int8_t select;
     if (arr_len == 1) {
-        menu_create_entry_template(arr_files, arr_len, true);
+        menu_create_entry_template(arr_files, arr_len, true, false);
         select = menu_select_entry(arr_files, arr_len, true);
     } else {
-        menu_create_entry_template(arr_files, arr_len, false);
+        menu_create_entry_template(arr_files, arr_len, false, false);
         select = menu_select_entry(arr_files, arr_len, false);
     }
     if (select == arr_len - 1) {
@@ -133,7 +135,7 @@ void menu_victory() {
     const uint8_t nb_entry = 2;
     char *array_victory[] = { "Return to Title Menu", "Quit" };
     // Victory title and menu, select an entry
-    menu_create_entry_template(array_victory, nb_entry, true);
+    menu_create_entry_template(array_victory, nb_entry, true, true);
     int8_t select = menu_select_entry(array_victory, nb_entry, true);
     // Save the game before processing the selected entry form menu
     save_game(HIST_EXT);
@@ -147,7 +149,7 @@ void menu_victory() {
 }
 
 void menu_defeat() {
-    system("aplay -q assets/sfx/youu.wav &");
+    system("aplay -q assets/sfx/defeat.wav &");
     // Clear current render of the game
     wclear(game.main_win);
     wclear(game.game_win);
@@ -160,7 +162,7 @@ void menu_defeat() {
     const uint8_t nb_entry = 3;
     char *array_defeat[] = { "Restart Game", "Return to Title Menu", "Quit" };
     // Defeat menu, select an entry
-    menu_create_entry_template(array_defeat, nb_entry, true);
+    menu_create_entry_template(array_defeat, nb_entry, true, true);
     uint8_t select = menu_select_entry(array_defeat, nb_entry, true);
     switch (select) {
     case 0:     // Restart Game
@@ -190,7 +192,7 @@ void menu_pause() {
     const uint8_t nb_entry = 3;
     char *array_pause[] = { "Resume Game", "Save & Quit", "Quit" };
     // In-game Pause menu, select an entry
-    menu_create_entry_template(array_pause, nb_entry, true);
+    menu_create_entry_template(array_pause, nb_entry, true, true);
     uint8_t select = menu_select_entry(array_pause, nb_entry, true);
     switch(select) {
     case 1:     // Save & Quit
@@ -205,25 +207,6 @@ void menu_pause() {
         game.reload_game = false;
         break;
     default: break;
-    }
-    ncs_destroy_win(game.menu_win);
-}
-
-void menu_replay() {
-    // Clear current render of the game
-    wclear(game.main_win);
-    wclear(game.game_win);
-    wclear(game.bar_win);
-    wclear(game.dist_win);
-    wclear(game.alert_win);
-    // Set menu entries
-    const uint8_t nb_entry = 1;
-    char *array_replay[] = { "Quit" };
-    // Replay menu, select an entry
-    menu_create_entry_template(array_replay, nb_entry, true);
-    uint8_t select = menu_select_entry(array_replay, nb_entry, true);
-    if (select == 0) {
-        game.keep_playing = false;
     }
     ncs_destroy_win(game.menu_win);
 }

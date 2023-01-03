@@ -16,8 +16,9 @@
  * \param entry_list list of string that represents menu entries
  * \param nb_entry number of menu entries
  * \param centered center the text
+ * \param ingame center menu ingame
 */
-void menu_create_entry_template(char **entry_list, int nb_entry, bool centered);
+void menu_create_entry_template(char **entry_list, int nb_entry, bool centered, bool ingame);
 
 /**
  * Input and render loop to select a menu entry.

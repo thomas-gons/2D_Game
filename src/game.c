@@ -70,8 +70,8 @@ void ncs_create_victory_window() {
     game.title_win = subwin(stdscr,
                             6,
                             55,
-                            game.win_h/2 - (MAP_LINES + 2)/2 + 6,
-                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 22
+                            game.win_h/2 - (MAP_LINES + 2)/2 + 5,
+                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 13
     );
     wattron(game.title_win, A_BOLD);
     mvwprintw(game.title_win, 1, 1, " __ __  _____  _____  _____  _____  _____  __ __    _");
@@ -85,8 +85,8 @@ void ncs_create_defeat_window() {
     game.title_win = subwin(stdscr,
                             6,
                             48,
-                            game.win_h/2 - (MAP_LINES + 2)/2 + 6,
-                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 26
+                            game.win_h/2 - (MAP_LINES + 2)/2 + 5,
+                            game.win_w/2 - (MAP_COLS + BAR_SIZE + 2)/2 + 17
     );
     wattron(game.title_win, A_BOLD);
     mvwprintw(game.title_win, 1, 1, " ____  _____  _____  _____  _____  _____    _");
@@ -230,7 +230,7 @@ int8_t game_start_menu() {
     ncs_create_title_window();
     const uint8_t nb_entry = 4;
     char *array_start[] = { "New Game", "Load Saved Game", "History", "Quit" };
-    menu_create_entry_template(array_start, nb_entry, true);
+    menu_create_entry_template(array_start, nb_entry, true, false);
     int8_t select = menu_select_entry(array_start, nb_entry, true);
     switch (select) {
     case 0:     // New Game
@@ -404,7 +404,9 @@ void game_free() {
     if (enemy) {
         free(enemy);
     }
-    save_free();
+    if (game.keep_playing == true) {
+        save_free();
+    }
 }
 
 void game_quit() {
@@ -422,7 +424,7 @@ Stack *game_replay_history_init() {
     
     // Load data from save file
     save_read_file(save.curr_history_file);
-    map_clean();
+    map_visual_reset();
     player->distance = 0;
     player->stamina = (map->level == EASY) ?    STAMINA_EASY:  
                       (map->level == MEDIUM) ?  STAMINA_MEDIUM:
@@ -513,7 +515,7 @@ void game_replay_history_end() {
     werase(game.dist_win);
     werase(game.alert_win);
     refresh();
-    menu_create_entry_template(entries, 2, true);
+    menu_create_entry_template(entries, 2, true, true);
     int8_t select = menu_select_entry(entries, 2, true);
     if (select == 0)
         game_replay_history();
