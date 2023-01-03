@@ -34,6 +34,9 @@
 #define ALERT_WIN_L0 MAP_LINES + 1
 #define ALERT_WIN_C0 MAIN_WIN_C0
 
+#define REPLAY_SPEED_MIN 0
+#define REPLAY_SPEED_MAX 6
+
 
 /************************* FUNCTIONS *************************/
 
@@ -162,5 +165,15 @@ void game_free();
 */
 void game_quit();
 
+Stack *game_replay_history_init();
+
+/**
+ * Replay history
+*/
+void game_replay_history();
+
+void *game_change_replay_speed(void *sec_usleep);
+
+void game_replay_history_end();
 
 #endif

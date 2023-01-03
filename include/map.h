@@ -123,6 +123,12 @@ void map_free();
 void map_visual_reset();
 
 /**
+ * for history replay set all set visited to unvisited cell and
+ * all "NO_BONUS" cell_type to "BONUS" cell_type
+*/
+void map_clean();
+
+/**
  * Search a valid path in the map.
  * \param heuristic matrix that stores distance between each cell and end cell
  * \param start start path's position
@@ -140,6 +146,7 @@ Stack *search_path(unsigned heuristic[MAP_LINES][MAP_COLS], Position start, Posi
  * \returns a valid path (stack of cells) on success, NULL on error.
 */
 Stack *a_star(Position start, Position end, bool with_stm);
+
 
 
 #endif

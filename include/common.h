@@ -13,7 +13,7 @@
 #include <errno.h>
 #include <dirent.h>
 #include <ncurses.h>
-
+#include <pthread.h>
 
 /************************* DEFINES *************************/
 

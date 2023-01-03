@@ -65,6 +65,11 @@ void player_update();
 bool player_is_colliding(uint8_t line, uint8_t col);
 
 /**
+ * Check if player is colliding an enemy
+*/
+void player_is_colliding_enemy();
+
+/**
  * Alert player of collision with an obstacle.
  * \param line line of obstacle
  * \param col column of obstacle

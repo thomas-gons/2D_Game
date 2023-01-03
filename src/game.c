@@ -7,6 +7,11 @@ extern Map *map;
 extern Player *player;
 extern Enemy *enemy;
 extern Level level;
+extern uint8_t frames;
+
+static uint8_t replay_speed = 3;
+bool display_alert = true;
+bool no_history = false;
 
 void ncs_init() {
     initscr();
@@ -200,7 +205,9 @@ void run_game() {
         game_load_save();
         break;
     case 2:     // History
-        // TODO : replay history file
+        display_alert = false;
+        no_history = true;
+        game_replay_history();
         break;
     case 3:     // Quit
         game.reload_game = false;
@@ -405,4 +412,104 @@ void game_free() {
 void game_quit() {
     system("killall aplay 2> /dev/null");
     ncs_quit();
+}
+
+Stack *game_replay_history_init() {
+    ncs_create_game_windows();
+    game.path_stm = stack_init();
+    game.path_dist = stack_init();
+    map_save_init();
+    player_init();
+    enemy_init();
+    
+    // Load data from save file
+    save_read_file(save.curr_history_file);
+    map_clean();
+    player->stamina = (map->level == EASY) ?    STAMINA_EASY:  
+                      (map->level == MEDIUM) ?  STAMINA_MEDIUM:
+                                                STAMINA_HIGH;
+    
+    for (uint8_t i = 0; i < ENEMY_NB; i++) {
+        enemy[i].alive = true;
+        enemy[i].current = enemy[i].house;
+    }
+    game_render();
+    Stack *tmp = calloc(1, sizeof *tmp);
+    return stack_change_order(player->history, tmp);
+}
+
+void game_replay_history() {
+    Stack *tmp = game_replay_history_init();
+    pthread_t th;
+    unsigned sec_usleep = 30000;
+    pthread_create(&th, NULL, game_change_replay_speed, (void*)&sec_usleep);
+    while (tmp->head != NULL) {
+        player->pos = tmp->head->pos;
+        player->action = tmp->head->action;
+        switch (player->action) {
+            case HIT_OBSTACLE: 
+                player->stamina -= 10;
+                break;
+            case STACK_BONUS:
+                map->map_grid[player->pos.l][player->pos.c].visited = true;
+                map->map_grid[player->pos.l][player->pos.c].cell_type = NO_BONUS;
+                break;
+            case USE_BONUS:
+                map->map_grid[player->pos.l][player->pos.c].visited = true;
+                map->map_grid[player->pos.l][player->pos.c].cell_type = NO_BONUS;
+                player->stamina += 10;
+                break;
+            case USE_STACKED_BONUS: 
+                player->stamina += 10;
+                break;
+            case NO_ACTION: 
+                map->map_grid[player->pos.l][player->pos.c].visited = true;
+                player->stamina--;
+                break;
+            default:
+                break;
+        }
+        player_is_colliding_enemy();
+        frames++;
+        game_render();
+        usleep((replay_speed * 2 + 1) * 2500);
+        tmp->head = tmp->head->next;
+    }
+    stack_free(tmp);
+    pthread_cancel(th);
+    game_replay_history_end();
+}
+
+void *game_change_replay_speed(void *sec_usleep) {
+    unsigned *s_usleep = sec_usleep;
+    uint8_t speed = replay_speed;
+    while (1) {
+        switch (getch()) {
+            case KEY_UP:
+                if (speed > REPLAY_SPEED_MIN)
+                    speed--;
+                break;
+            case KEY_DOWN:
+                if (speed < REPLAY_SPEED_MAX)
+                    speed++;
+                break;
+            default: 
+                break;
+        }
+        replay_speed = speed;
+        usleep(*s_usleep);
+    }
+}
+
+void game_replay_history_end() {
+    char *entries[] = {"Replay", "Return to Title Menu"};
+    werase(game.game_win);
+    werase(game.bar_win);
+    werase(game.dist_win);
+    werase(game.alert_win);
+    refresh();
+    menu_create_entry_template(entries, 2, true);
+    int8_t select = menu_select_entry(entries, 2, true);
+    if (select == 0)
+        game_replay_history();
 }

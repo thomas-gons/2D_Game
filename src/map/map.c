@@ -150,3 +150,14 @@ void map_visual_reset() {
         tmp = tmp->next;
     }
 }
+
+void map_clean() {
+    for (uint8_t i = 0, j; i < MAP_LINES; i++) {
+        for (j = 0; j < MAP_COLS; j++) {
+            map->map_grid[i][j].visited = false;
+            if (map->map_grid[i][j].cell_type == NO_BONUS)
+                map->map_grid[i][j].cell_type = BONUS;
+
+        }
+    }
+}

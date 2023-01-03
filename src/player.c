@@ -7,6 +7,8 @@ extern Player *player;
 extern Enemy *enemy;
 extern Level level;
 extern int8_t moveset[MOVESET_LEN][2];
+extern bool display_alert;
+extern bool no_history;
 
 uint8_t frames = 0;
 
@@ -26,7 +28,9 @@ void player_init() {
     player->rewind_cnt = 6;
     player->anim_action = false;
     player->history = stack_init();
-    stack_push(player->history, player->pos, player->action);
+    if (no_history == false)
+        stack_push(player->history, player->pos, player->action);
+    
     switch (level) {
     case EASY:
         player->stamina = STAMINA_EASY;
@@ -124,6 +128,35 @@ void player_update() {
     player->pos.c += move[1];
     player_visited_cell_alert(player->pos.l, player->pos.c);
     map->map_grid[player->pos.l][player->pos.c].visited = true;
+    if (no_history == false)
+        stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
+}
+
+
+bool player_is_colliding(uint8_t line, uint8_t col) {
+    werase(game.alert_win);
+    // Check for out of bound values
+    if (IS_NOT_OUT_OF_MAP(line, col)) {         
+        // If player tries to cross an obstacle, loses more stamina
+        if (IS_OBSTACLE_CELL(line, col)) {
+            player->anim_action = true;
+            player->stamina -= STAMINA_COST_OBS;
+            player->action = HIT_OBSTACLE;
+            player_obstacle_alert(line, col);
+            if (no_history == false)
+                stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
+        } else {
+            // If player is on a bonus cell, he gains stamina or stack a bonus
+            if (IS_BONUS_CELL(line, col))  {
+                player_stack_bonus(line,col);
+            }
+        }
+        return (player->anim_action == true) ? true : false;
+    }
+    return true;
+}
+
+void player_is_colliding_enemy() {
     for (uint8_t i = 0; i < ENEMY_NB; i++) {
         if (enemy[i].alive == false) {
             continue;
@@ -145,29 +178,6 @@ void player_update() {
             return;
         }
     }
-    stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
-}
-
-bool player_is_colliding(uint8_t line, uint8_t col) {
-    werase(game.alert_win);
-    // Check for out of bound values
-    if (IS_NOT_OUT_OF_MAP(line, col)) {         
-        // If player tries to cross an obstacle, loses more stamina
-        if (IS_OBSTACLE_CELL(line, col)) {
-            player->anim_action = true;
-            player->stamina -= STAMINA_COST_OBS;
-            player->action = HIT_OBSTACLE;
-            player_obstacle_alert(line, col);
-            stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
-        } else {
-            // If player is on a bonus cell, he gains stamina or stack a bonus
-            if (IS_BONUS_CELL(line, col))  {
-                player_stack_bonus(line,col);
-            }
-        }
-        return (player->anim_action == true) ? true : false;
-    }
-    return true;
 }
 
 void player_obstacle_alert(uint8_t line, uint8_t col) {
@@ -241,7 +251,8 @@ void player_use_bonus() {
         if (player->stamina > STAMINA_MAX) {
             player->stamina = STAMINA_MAX;
         }
-        stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
+        if (no_history == false)
+            stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
     } else if (player->stamina >= 100 && player->bonus_stack != 0) {
         player_alert_render("You are full of energy !");
     } else {
@@ -288,7 +299,9 @@ void player_rewind() {
             case STACK_BONUS:
                 player->stamina++;
                 player->bonus_stack--;
-                map->map_grid[player->history->head->pos.l][player->history->head->pos.c].cell_type = BONUS;
+                if (no_history == false)
+                    map->map_grid[player->history->head->pos.l][player->history->head->pos.c].cell_type = BONUS;
+
                 map->map_grid[player->pos.l][player->pos.c].visited = false;
                 player_substract_dist(tmp, tmp->next);
                 player->pos.l = tmp->next->pos.l;
@@ -314,7 +327,8 @@ void player_rewind() {
                 player->rewind_cnt--;
             }
             player->action = REWIND;
-            stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
+            if (no_history == false)
+                stack_push(player->history, (Position) {.l=player->pos.l, .c=player->pos.c}, player->action);
             player_alert_render("You have rewind an action !");
         }
     } else {
@@ -364,6 +378,8 @@ void player_stats_render() {
 }
 
 void player_alert_render(const char *__restrict __fmt, ...) {
+    if (display_alert == false)
+        return;
     va_list arg;
     va_start(arg, __fmt);
     werase(game.alert_win);
