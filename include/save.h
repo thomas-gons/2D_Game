@@ -38,8 +38,9 @@ void get_files(const char *dir_path, const char *ext, char **arr_files);
 /**
  * Create the name of the save file.
  * \param ext save file extension
+ * \param ext_len extension string length
 */
-void save_get_date(const char *ext);
+void save_get_date(const char *ext, const uint8_t ext_len);
 
 /**
  * Open and write inside the save file.

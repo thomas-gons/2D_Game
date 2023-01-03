@@ -65,8 +65,7 @@ void get_files(const char *dir_path, const char *ext, char **arr_files) {
     strncpy(arr_files[i], "Return to Title Menu", 21);
 }
 
-void save_get_date(const char *ext) {
-    uint8_t ext_len = strlen(ext);
+void save_get_date(const char *ext, const uint8_t ext_len) {
     save.date_time = calloc(20 + ext_len, sizeof (char));
     time_t now = time(NULL);
     struct tm *date = localtime(&now);
@@ -234,7 +233,7 @@ void save_read_stack(Stack *stack, FILE *f) {
 }
 
 void save_game(const char *ext) {
-    save_get_date(ext);
+    save_get_date(ext, strlen(ext));
     save_write_file();
 }
 

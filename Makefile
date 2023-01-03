@@ -17,7 +17,7 @@ CFLAGS := -Wall -Wextra -Wno-type-limits -fshort-enums -Wno-unused-result $(LDFL
 CXXFLAGS := $(CFLAGS) 
 
 # Library flags.
-LDLIBS := -lm -lncursesw
+LDLIBS := -lm -lncursesw -lpthread
 
 # Sanitizer flags
 FSAN_FLAGS := -fsanitize=address

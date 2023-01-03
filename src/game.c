@@ -239,10 +239,9 @@ int8_t game_start_menu() {
             select = -1;
         };
         break;
-    case 1:     // Load Saved Game
+    case 1:;    // Load Saved Game
         // Init array of file names that match '.save' extension
-        uint8_t array_len1;
-        array_len1 = 1 + get_nb_files(SAVES_DIR_PATH, SAVE_EXT);
+        uint8_t array_len1 = 1 + get_nb_files(SAVES_DIR_PATH, SAVE_EXT);
         save.load_files = (char **) calloc(array_len1, sizeof (char *));
         get_files(SAVES_DIR_PATH, SAVE_EXT, save.load_files);
         // Get index of save file from array of file names
@@ -257,10 +256,9 @@ int8_t game_start_menu() {
             select = 1;
         }
         break;
-    case 2:     // History
+    case 2:;    // History
         // Init array of file names that match '.hist' extension
-        uint8_t array_len2;
-        array_len2 = 1 + get_nb_files(SAVES_DIR_PATH, HIST_EXT);
+        uint8_t array_len2 = 1 + get_nb_files(SAVES_DIR_PATH, HIST_EXT);
         save.history_files = (char **) calloc(array_len2, sizeof (char *));
         get_files(SAVES_DIR_PATH, HIST_EXT, save.history_files);
         // Get index of save file from array of file names
